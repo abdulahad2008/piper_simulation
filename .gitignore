@@ -1,0 +1,4 @@
+﻿*.pkl
+runs/sac_full/replay_buffer.pkl
+runs/corner_ft/replay_buffer.pkl
+runs/precision_ft/replay_buffer.pkl

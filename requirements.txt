@@ -1,0 +1,25 @@
+# AgileX PIPER pick-and-place RL stack
+# Python 3.10-3.12.  Install with:  pip install -r requirements.txt
+
+mujoco>=3.1
+gymnasium>=0.29
+stable-baselines3[extra]>=2.3
+torch>=2.2
+numpy>=1.24
+imageio>=2.31
+imageio-ffmpeg>=0.4          # mp4 writing for eval videos
+tensorboard>=2.14            # training curves
+
+# --- optional -------------------------------------------------------------- #
+# piper_sdk                  # AgileX SDK, ONLY needed for real-hardware work
+# opencv-python              # if you build the perception module for sim2real
+
+# --- Linux headless rendering ---------------------------------------------- #
+# MuJoCo needs a GL backend to render the forehead camera. On a desktop with a
+# display this is automatic. On a headless Linux box:
+#     sudo apt-get install libosmesa6 libgl1-mesa-dri
+#     export MUJOCO_GL=osmesa
+# or, with an NVIDIA GPU and EGL available:
+#     export MUJOCO_GL=egl
+# On Windows and macOS no extra step is needed (macOS: run viewers with
+# `mjpython` instead of `python`).

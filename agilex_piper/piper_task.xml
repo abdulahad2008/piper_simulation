@@ -1,0 +1,120 @@
+<mujoco model="piper_pick_place">
+  <!--
+    ===========================================================================
+    AgileX PIPER pick-and-place task scene.
+    ===========================================================================
+    Includes the PIPER model (piper.xml, which carries the fixed "forehead"
+    camera on the base, the eye-in-hand "wrist" camera, the `tcp` grasp site and
+    named finger-pad geoms) and adds:
+
+      * one work surface (table top at z = 0.20); the arm is bolted to it at the
+        world origin, so the reachable workspace is the desk in front of it,
+      * a movable object ("cup") on a free joint,
+      * a visual destination pad + `target` site that the env moves each reset,
+      * external POV cameras for third-person rendering.
+
+    Everything the RL env randomises at reset is addressed by NAME:
+      body  "obj"          - free-joint object
+      geom  "obj_geom"     - object geom (size, mass, friction, rgba randomised)
+      geom  "pad_dst"      - destination marker (moved with the target)
+      site  "target"       - destination position used by the reward
+      light "key_light"    - randomised position / intensity
+      geom  "table"        - randomised friction + colour
+
+    Cameras: "forehead" (primary, on the base), "wrist" (eye-in-hand),
+             "front", "side", "top", "overview" (third-person).
+
+    NOTE: this file lives inside agilex_piper/ so that piper.xml's
+    meshdir="assets" resolves.
+  -->
+  <include file="piper.xml"/>
+
+  <statistic center="0.3 0 0.35" extent="1.0"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.35 0.35 0.35" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="150" elevation="-25" offwidth="1280" offheight="960"/>
+    <quality shadowsize="2048"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0"
+             width="512" height="3072"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge"
+             rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3" markrgb="0.8 0.8 0.8"
+             width="300" height="300"/>
+    <texture type="2d" name="tabletex" builtin="checker" mark="none"
+             rgb1="0.55 0.45 0.35" rgb2="0.50 0.40 0.31" width="128" height="128"/>
+    <material name="groundplane" texture="groundplane" texuniform="true"
+              texrepeat="5 5" reflectance="0.2"/>
+    <material name="table" texture="tabletex" texuniform="true" texrepeat="4 4"
+              rgba="0.55 0.45 0.35 1"/>
+    <material name="cup" rgba="0.85 0.30 0.25 1"/>
+    <material name="src" rgba="0.30 0.50 0.85 0.9"/>
+    <material name="dst" rgba="0.30 0.80 0.40 0.9"/>
+  </asset>
+
+  <worldbody>
+    <!-- Key light. Position + diffuse are domain-randomised at reset. -->
+    <light name="key_light" pos="0.3 0 1.6" dir="0 0 -1" directional="true"
+           diffuse="0.75 0.75 0.75"/>
+    <light name="fill_light" pos="0.9 -0.7 1.2" dir="-0.5 0.4 -0.8"
+           directional="true" diffuse="0.25 0.25 0.28"/>
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
+
+    <!-- Work surface. Top at z=0.20; spans x in [-0.14,0.66], y in [-0.35,0.35]. -->
+    <geom name="table" type="box" size="0.40 0.35 0.10" pos="0.26 0 0.10"
+          material="table" friction="1.0 0.02 0.001"/>
+
+    <!-- ==================== OBJECT TO PICK ("cup") =========================
+         Cylinder, 4.8 cm diameter x 7 cm tall, 60 g -- a coffee-mug envelope.
+
+         Two hard constraints fix these numbers:
+           * WIDTH  <= 5.5 cm. The gripper's inner-face opening is
+             2 * ctrl_gripper = 0 .. 7 cm, so 4.8 cm leaves ~1.1 cm clearance
+             per side when fully open: reachable by an exploring policy, but
+             the grasp still has to be deliberate.
+           * HEIGHT <= ~9 cm total. link6's collision capsule (the gripper
+             "palm") sits ~4.6 cm above the TCP, so an object taller than that
+             is struck by the palm before the fingers ever close on it. The
+             original 9 cm cup did exactly this and made grasping unreliable.
+
+         Sits with its base on the table: z = 0.20 + 0.035 = 0.235.
+    ==================================================================== -->
+    <body name="obj" pos="0.36 -0.13 0.2351">
+      <freejoint name="obj_free"/>
+      <geom name="obj_geom" type="cylinder" size="0.024 0.035" material="cup"
+            mass="0.06" friction="1.5 0.05 0.005" solref="0.010 1.2"
+            solimp="0.92 0.97 0.001" condim="4"/>
+      <!-- Grasp reference: mid-height of the cup, used by the reward. -->
+      <site name="obj_center" pos="0 0 0" size="0.006" rgba="1 1 0 0.4" group="4"/>
+    </body>
+
+    <!-- Source (blue) and destination (green) pads. Visual only (no collision).
+         `pad_dst` and `target` are moved together by the env each reset. -->
+    <geom name="pad_src" type="cylinder" size="0.055 0.001" pos="0.36 -0.13 0.2015"
+          material="src" contype="0" conaffinity="0"/>
+    <geom name="pad_dst" type="cylinder" size="0.055 0.001" pos="0.36 0.15 0.2015"
+          material="dst" contype="0" conaffinity="0"/>
+    <site name="target" pos="0.36 0.15 0.235" size="0.010"
+          rgba="0.3 0.9 0.45 0.9"/>
+
+    <!-- ===================== THIRD-PERSON CAMERAS ======================== -->
+    <camera name="front"    pos="1.15 0 0.65"    xyaxes="0 1 0 -0.5 0 0.87"/>
+    <camera name="side"     pos="0.42 -1.0 0.65" xyaxes="1 0 0 0 0.5 0.87"/>
+    <camera name="top"      pos="0.42 0 1.35"    xyaxes="1 0 0 0 1 0"/>
+    <camera name="overview" pos="1.0 -0.85 0.85" xyaxes="0.65 0.76 0 -0.45 0.38 0.8"/>
+  </worldbody>
+
+  <keyframe>
+    <!-- qpos layout: arm joints 1..6 (6) + finger joint7, joint8 (2)
+                      + object free joint (3 pos + 4 quat) = 15
+         ctrl layout: joint1..joint6 + gripper = 7
+         Home pose puts the TCP in front of the base with the gripper pointing
+         down-forward and fully open. -->
+    <key name="home"
+         qpos="0 1.25 -1.15 0 0.55 0 0.035 -0.035 0.36 -0.13 0.2351 1 0 0 0"
+         ctrl="0 1.25 -1.15 0 0.55 0 0.035"/>
+  </keyframe>
+</mujoco>

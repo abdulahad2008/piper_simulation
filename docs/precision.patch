@@ -1,0 +1,130 @@
+--- /mnt/user-data/uploads/piper_sim/piper_rl/config.py	2026-08-01 06:25:33.778856987 +0000
++++ piper_rl/config.py	2026-08-01 06:43:05.778832925 +0000
+@@ -108,6 +108,16 @@
+     obj_azimuth: Tuple[float, float] = (-0.73, -0.17)   # -42 .. -10 deg
+     obj_yaw: Tuple[float, float] = (-np.pi, np.pi)
+ 
++    #: Fraction of episodes forced into the hard corner of the spawn region --
++    #: the outer radii and the far azimuth, where the 2026-08-01 evaluation put
++    #: essentially all of the remaining failures (success by radius quartile:
++    #: 98 / 100 / 98 / 88 %). 0.0 reproduces the uniform sampling exactly.
++    hard_corner_frac: float = 0.0
++    #: Which slice counts as "hard": the top `1 - hard_radius_lo` of the radius
++    #: range, and the first `hard_azimuth_hi` of the azimuth range.
++    hard_radius_lo: float = 0.70
++    hard_azimuth_hi: float = 0.50
++
+     #: Object geometry / dynamics. Radius is the *half-width* the gripper must
+     #: close on; the gripper's max inner opening is 0.07 m so keep 2*r < 0.055.
+     obj_radius_scale: Tuple[float, float] = (0.85, 1.15)
+@@ -225,6 +235,13 @@
+ 
+     # --- phase 5: place --------------------------------------------------- #
+     bonus_success: float = 200.0   # placed, released, settled
++    w_precision: float = 0.0       # extra, paid ONCE at success, scaled by how
++                                   # far inside the tolerance the object landed:
++                                   #   w * (1 - err / place_tol_xy)
++                                   # A threshold alone gives no gradient once you
++                                   # are inside it, which is why the policy sits
++                                   # at ~20 mm in a 45 mm circle. 0.0 reproduces
++                                   # the original reward exactly.
+     place_tol_xy: float = 0.045    # m, "at the target"
+     place_tol_z: float = 0.02      # m above resting height
+     settle_vel: float = 0.05       # m/s, object considered at rest
+--- /mnt/user-data/uploads/piper_sim/piper_rl/domain_rand.py	2026-08-01 06:29:38.046851400 +0000
++++ piper_rl/domain_rand.py	2026-08-01 06:43:21.310832570 +0000
+@@ -87,7 +87,16 @@
+         # ---------------- object pose (returned, applied to qpos by env) -- #
+         r = rng.uniform(*c.obj_radius)
+         th = rng.uniform(*c.obj_azimuth)
++        # Oversample the hard corner (outer radius + far azimuth). No-op at the
++        # default hard_corner_frac = 0.0.
++        if c.hard_corner_frac and rng.random() < c.hard_corner_frac:
++            r0, r1 = c.obj_radius
++            t0, t1 = c.obj_azimuth
++            r = rng.uniform(r0 + c.hard_radius_lo * (r1 - r0), r1)
++            th = rng.uniform(t0, t0 + c.hard_azimuth_hi * (t1 - t0))
+         obj_xy = np.array([r * np.cos(th), r * np.sin(th)])
++        info["obj_r"] = float(r)
++        info["obj_th"] = float(th)
+         obj_yaw = rng.uniform(*c.obj_yaw)
+         info["obj_xy"] = obj_xy
+         info["obj_yaw"] = obj_yaw
+--- /mnt/user-data/uploads/piper_sim/piper_rl/piper_env.py	2026-08-01 06:29:36.870851427 +0000
++++ piper_rl/piper_env.py	2026-08-01 06:43:13.134832757 +0000
+@@ -560,6 +560,14 @@
+         if success and not self._bonus.get("success", False):
+             self._bonus["success"] = True
+             r += R.bonus_success; C['success'] += R.bonus_success
++            # Precision top-up. Gated on success and paid once, so it cannot be
++            # farmed; bounded by w_precision, so it cannot dominate the success
++            # bonus. Pays for landing *well* inside the tolerance rather than
++            # merely inside it.
++            if R.w_precision:
++                _t = R.w_precision * max(
++                    0.0, 1.0 - d_place / max(R.place_tol_xy, 1e-6))
++                r += _t; C['precision'] += _t
+ 
+         # ---------------- drop ----------------------------------------- #
+         # A "drop" is losing the object *away from the target* after having
+--- /mnt/user-data/uploads/piper_sim/piper_rl/scripts/train.py	2026-08-01 06:25:24.218857205 +0000
++++ piper_rl/scripts/train.py	2026-08-01 06:43:38.750832171 +0000
+@@ -170,6 +170,19 @@
+     p.add_argument("--no-domain-rand", action="store_true")
+     p.add_argument("--no-noise", action="store_true")
+     p.add_argument("--max-episode-steps", type=int, default=None)
++    # --- precision / hard-corner fine-tuning (all no-ops if unset) --------- #
++    p.add_argument("--place-tol-xy", type=float, default=None,
++                   help="m, radius that counts as 'placed'. Default 0.045. "
++                        "Tighten it to trade success rate for precision. NOTE: "
++                        "this changes the success DEFINITION, so evaluate "
++                        "against the old value too before comparing runs.")
++    p.add_argument("--w-precision", type=float, default=None,
++                   help="one-off bonus at success, scaled by how far inside the "
++                        "tolerance the object landed. Default 0 (off). 60 is a "
++                        "reasonable value next to bonus_success=200.")
++    p.add_argument("--hard-corner-frac", type=float, default=None,
++                   help="fraction of episodes spawned in the outer-radius / "
++                        "far-azimuth corner where the failures live. Default 0.")
+     p.add_argument("--device", default="auto")
+     p.add_argument("--net-arch", type=int, nargs="+", default=None,
+                    help="hidden layer sizes, e.g. --net-arch 512 512 256")
+@@ -224,6 +237,14 @@
+     cfg.noise.enabled = not args.no_noise
+     if args.max_episode_steps:
+         cfg.max_episode_steps = args.max_episode_steps
++    if args.place_tol_xy is not None:
++        cfg.reward.place_tol_xy = args.place_tol_xy
++        print(f"place tolerance: {args.place_tol_xy*1000:.0f} mm "
++              f"(success is now scored against this, not 45 mm)")
++    if args.w_precision is not None:
++        cfg.reward.w_precision = args.w_precision
++    if args.hard_corner_frac is not None:
++        cfg.domain_rand.hard_corner_frac = args.hard_corner_frac
+ 
+     with open(out / "config.json", "w") as f:
+         json.dump({"args": vars(args), "env": cfg.to_dict()}, f, indent=2,
+--- /mnt/user-data/uploads/piper_sim/piper_rl/scripts/evaluate.py	2026-08-01 06:25:24.486857199 +0000
++++ piper_rl/scripts/evaluate.py	2026-08-01 06:43:47.966831960 +0000
+@@ -69,11 +69,21 @@
+     p.add_argument("--action-mode", choices=["cartesian", "joint"], default=None)
+     p.add_argument("--realtime", action="store_true",
+                    help="throttle the viewer to wall-clock speed")
++    p.add_argument("--place-tol-xy", type=float, default=None,
++                   help="m, score success against this tolerance instead of the "
++                        "default 0.045. Use it to compare runs on equal terms.")
++    p.add_argument("--hard-corner-frac", type=float, default=None,
++                   help="fraction of episodes spawned in the hard outer corner; "
++                        "use 1.0 to evaluate the worst case only")
+     args = p.parse_args(argv)
+ 
+     cfg = EnvConfig().eval_variant()
+     if args.action_mode:
+         cfg.action_mode = args.action_mode
++    if args.place_tol_xy is not None:
++        cfg.reward.place_tol_xy = args.place_tol_xy
++    if args.hard_corner_frac is not None:
++        cfg.domain_rand.hard_corner_frac = args.hard_corner_frac
+     cfg.domain_rand.enabled = not args.no_domain_rand
+     cfg.noise.enabled = not args.no_noise
+     cfg.render_camera = args.camera
