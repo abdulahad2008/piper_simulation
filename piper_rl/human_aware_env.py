@@ -243,6 +243,7 @@ class PiperHumanAwarePickPlaceEnv(PiperPickPlaceEnv):
             "human_safety_cost": float(self._human_safety_cost),
             "waiting_steps": int(self._waiting_steps),
             "completion_time": float(self._step_count * self.dt),
+            "human_difficulty": float(self.human_cfg.human_difficulty),
             "human_trajectory_type": self.human_trajectory.trajectory_type,
             "human_distribution": self.human_cfg.human_distribution,
         }

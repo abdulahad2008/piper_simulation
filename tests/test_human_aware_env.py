@@ -115,6 +115,20 @@ def test_no_human_preset_has_no_safety_events():
     env.close()
 
 
+def test_fixed_randomized_difficulty_is_reported_at_episode_end():
+    cfg = config("randomized")
+    cfg.max_episode_steps = 1
+    env = PiperHumanAwarePickPlaceEnv(cfg)
+    env.reset(seed=11)
+    for _ in range(env._episode_limit):
+        _, _, terminated, truncated, info = env.step(np.zeros(5))
+        if terminated or truncated:
+            break
+    assert truncated
+    assert info["episode_summary"]["human_difficulty"] == 1.0
+    env.close()
+
+
 def test_state_plus_rgb_extends_only_state_and_renders_headless():
     cfg = config()
     cfg.obs_mode = "state+rgb"
@@ -127,4 +141,3 @@ def test_state_plus_rgb_extends_only_state_and_renders_headless():
     assert frame.shape == (cfg.render_height, cfg.render_width, 3)
     assert frame.max() > frame.min()
     env.close()
-

@@ -28,7 +28,8 @@ class TaskMetricsCallback(BaseCallback):
             "max_lift", "collision_steps", "length", "safety_clamped",
             "safety_vetoed", "collision_free_success", "human_collision",
             "minimum_human_distance", "near_miss_events", "proximity_steps",
-            "human_safety_cost", "completion_time", "waiting_steps")
+            "human_safety_cost", "completion_time", "waiting_steps",
+            "human_difficulty")
 
     def __init__(self, window: int = 50, verbose: int = 0):
         super().__init__(verbose)
@@ -74,6 +75,7 @@ class TaskMetricsCallback(BaseCallback):
             "human_safety_cost": "human_safety_cost",
             "completion_time": "completion_time",
             "waiting_steps": "waiting_steps",
+            "human_difficulty": "human_difficulty",
         }
         for key, label in optional.items():
             if self.buf[key]:
