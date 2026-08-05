@@ -28,6 +28,9 @@ from .config import (EnvConfig, RewardConfig, DomainRandConfig, NoiseConfig,
 from .ik import PiperIK, ARM_JOINTS
 from .safety import SafetyLayer, SafetyReport
 from .piper_env import PiperPickPlaceEnv, TABLE_TOP, GRIP_OPEN, GRIP_CLOSED
+from .human_config import (HumanAwareEnvConfig, HumanMotionConfig,
+                           HumanSafetyConfig, HUMAN_MODEL_PATH)
+from .human_aware_env import PiperHumanAwarePickPlaceEnv
 
 __all__ = [
     "EnvConfig", "RewardConfig", "DomainRandConfig", "NoiseConfig",
@@ -35,6 +38,8 @@ __all__ = [
     "PiperIK", "ARM_JOINTS",
     "SafetyLayer", "SafetyReport",
     "PiperPickPlaceEnv", "TABLE_TOP", "GRIP_OPEN", "GRIP_CLOSED",
+    "HumanAwareEnvConfig", "HumanMotionConfig", "HumanSafetyConfig",
+    "HUMAN_MODEL_PATH", "PiperHumanAwarePickPlaceEnv",
 ]
 
 # Gymnasium registration, so `gym.make("PiperPickPlace-v0")` works.

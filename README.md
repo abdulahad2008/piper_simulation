@@ -78,3 +78,11 @@ piper_sim/
 ├─ out/              rendered proof frames and videos
 └─ requirements.txt
 ```
+
+## Human-aware research task
+
+`PiperHumanAwarePickPlace-v0` adds a seeded, collision-enabled human arm that
+crosses or reaches into the shared workspace while preserving the original
+environment and policy-compatible observation mode. See
+**[docs/HUMAN_AWARE_TASK.md](docs/HUMAN_AWARE_TASK.md)** for its exact state,
+reward, safety metrics, validation, training, and ID/OOD evaluation commands.

@@ -1,0 +1,29 @@
+<mujoco model="piper_human_aware_pick_place">
+  <!-- Separate human-aware scene. The original piper_task.xml is unchanged. -->
+  <include file="piper_task.xml"/>
+
+  <asset>
+    <material name="human_skin" rgba="0.95 0.45 0.16 1"/>
+  </asset>
+
+  <worldbody>
+    <!-- Independent mocap segments are positioned and oriented every physics
+         substep. Soft contacts limit impulses; the env terminates identified
+         robot-human contact before another policy step is executed. -->
+    <body name="human_upper_arm" mocap="true" pos="0.08 0.62 0.54">
+      <geom name="human_upper_arm_geom" type="capsule" size="0.035 0.14"
+            material="human_skin" mass="1.5" contype="2" conaffinity="3"
+            solref="0.02 1" solimp="0.85 0.95 0.002"/>
+    </body>
+    <body name="human_forearm" mocap="true" pos="0.22 0.56 0.43">
+      <geom name="human_forearm_geom" type="capsule" size="0.032 0.13"
+            material="human_skin" mass="1.0" contype="2" conaffinity="3"
+            solref="0.02 1" solimp="0.85 0.95 0.002"/>
+    </body>
+    <body name="human_hand" mocap="true" pos="0.34 0.62 0.36">
+      <geom name="human_hand_geom" type="capsule" size="0.045 0.055"
+            material="human_skin" mass="0.4" contype="2" conaffinity="3"
+            solref="0.02 1" solimp="0.85 0.95 0.002"/>
+    </body>
+  </worldbody>
+</mujoco>
