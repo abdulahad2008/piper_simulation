@@ -1,0 +1,47 @@
+{
+  "valid": true,
+  "checks": {
+    "rollout/human_difficulty_present": true,
+    "train/actor_loss_present": true,
+    "train/critic_loss_present": true,
+    "train/ent_coef_present": true,
+    "eval/mean_reward_present": true,
+    "eval/success_rate_present": true,
+    "rollout/human_difficulty_finite": true,
+    "train/actor_loss_finite": true,
+    "train/critic_loss_finite": true,
+    "train/ent_coef_finite": true,
+    "eval/mean_reward_finite": true,
+    "eval/success_rate_finite": true,
+    "difficulty_exactly_1": true,
+    "replay_buffer_written": true,
+    "checkpoint_written": true,
+    "best_model_written": true,
+    "final_model_written": true,
+    "tensorboard_written": true,
+    "eval_history_written": true,
+    "randomized_id_config": true,
+    "config_difficulty_1": true,
+    "manipulation_curriculum_enabled": true,
+    "obs_action_shapes_preserved": true,
+    "replay_buffer_filled": true
+  },
+  "replay_buffer_transitions": 500,
+  "difficulty_values": [
+    1.0
+  ],
+  "n_updates_last": null,
+  "actor_loss_last": -23.565067291259766,
+  "critic_loss_last": 29.428964614868164,
+  "entropy_coefficient_last": 0.13763266801834106,
+  "eval_mean_reward": [
+    -105.41548919677734,
+    -114.0655288696289
+  ],
+  "eval_success": [
+    0.0,
+    0.0
+  ],
+  "event_file": "runs\\_smoke_random_full_s0\\tb\\SAC_1\\events.out.tfevents.1785935517.WIN-E439EF4B96F.27184.0",
+  "note": "Smoke only; learning_starts=100 and buffer_size=5000 were deliberate non-research overrides."
+}

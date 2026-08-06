@@ -1,0 +1,2 @@
+experiment,distribution,episode,seed,trajectory_type,task_success,collision_free_success,human_collision,near_miss,near_miss_events,minimum_separation,completion_time,episode_duration,episode_length,placement_error,grasp_success,lift_success,safety_interventions,safety_clamped_steps,safety_vetoed_steps,safety_clamp_rate,proximity_steps,waiting_steps,waiting_time,human_safety_cost,reward,termination
+randomized-id,evaluation_id,0,60002,reverse,1,1,0,0,0,0.3385278931002902,3.1,3.1,62,0.022075658141814485,1,1,42,42,0,0.6774193548387096,0,0,0.0,0.0,278.37346901907625,success

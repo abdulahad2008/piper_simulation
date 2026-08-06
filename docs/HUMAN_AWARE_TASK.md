@@ -166,8 +166,11 @@ python -m piper_rl.scripts.evaluate_human_aware --model runs/human_randomized/be
 
 Prediction is deterministic unless `--stochastic` is supplied. Reports include
 task success, collision-free success, human collision and near-miss rates,
-Wilson binomial confidence intervals, mean/worst separation, completion time,
-placement error, grasp/lift rates, safety interventions, and safety cost.
+Wilson binomial confidence intervals, separation percentiles, successful-only
+completion time, episode duration, placement-error percentiles, grasp/lift
+rates, safety-clamp rate, waiting/proximity metrics, and safety cost. For the
+`no-human` experiment, the evaluator infers whether the saved policy expects 51
+or 64 state values; `--no-human-state` explicitly forces the legacy layout.
 
 ## Known limitations
 

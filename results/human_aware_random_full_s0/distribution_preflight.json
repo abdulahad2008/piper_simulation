@@ -1,0 +1,242 @@
+{
+  "resets": 200,
+  "seed_range": [
+    0,
+    199
+  ],
+  "human_difficulty_unique": [
+    1.0
+  ],
+  "trajectory_counts": {
+    "reverse": 61,
+    "reach_object": 32,
+    "cross_workspace": 32,
+    "pause_and_continue": 43,
+    "reach_target": 32
+  },
+  "manipulation_phase_counts": {
+    "reach": 94,
+    "grasped": 48,
+    "near": 33,
+    "over_target": 25
+  },
+  "start_side_counts": {
+    "-1": 92,
+    "1": 108
+  },
+  "appearance_time_observed": [
+    0.602857870245313,
+    2.196598579786071
+  ],
+  "motion_speed_observed": [
+    0.16073813228076866,
+    0.31951019515083773
+  ],
+  "peak_hand_speed_observed": 0.3195056622862618,
+  "pause_event_episodes": 90,
+  "reverse_trajectory_episodes": 61,
+  "observation_shapes": [
+    [
+      64
+    ]
+  ],
+  "configured_pause_probability": 0.25,
+  "configured_reverse_probability": 0.15,
+  "checks": {
+    "all_difficulties_exactly_1": true,
+    "multiple_trajectory_types": true,
+    "start_times_vary": true,
+    "speeds_vary": true,
+    "start_sides_vary": true,
+    "pause_events_observed": true,
+    "reverse_events_observed": true,
+    "human_observations_present": true,
+    "initial_poses_collision_free": true,
+    "training_distribution_only": true,
+    "manipulation_curriculum_enabled": true,
+    "all_manipulation_phases_observed": true,
+    "finite_observations_rewards": true,
+    "speed_limit_respected": true,
+    "no_ood_only_range_sampled": true
+  },
+  "evaluation_checks": {
+    "manipulation_curriculum_disabled": true,
+    "true_initial_phase_probabilities": true,
+    "human_difficulty_full": true,
+    "human_probability_full": true,
+    "randomized_id_distribution": true,
+    "human_ranges_propagated": true,
+    "domain_randomization_matches": true,
+    "noise_latency_matches": true,
+    "separate_seed_base": true
+  },
+  "distribution_classification": {
+    "trajectory_types": {
+      "cross_workspace": {
+        "training_id": true,
+        "validation_id": true,
+        "ood_evaluation_uses": true,
+        "ood_only": false
+      },
+      "reach_object": {
+        "training_id": true,
+        "validation_id": true,
+        "ood_evaluation_uses": false,
+        "ood_only": false
+      },
+      "reach_target": {
+        "training_id": true,
+        "validation_id": true,
+        "ood_evaluation_uses": false,
+        "ood_only": false
+      },
+      "pause_and_continue": {
+        "training_id": true,
+        "validation_id": true,
+        "ood_evaluation_uses": true,
+        "ood_only": false
+      },
+      "reverse": {
+        "training_id": true,
+        "validation_id": true,
+        "ood_evaluation_uses": true,
+        "ood_only": false
+      }
+    },
+    "numeric_ranges": {
+      "appearance_time_s": {
+        "training_id": [
+          0.6,
+          2.2
+        ],
+        "validation_id": [
+          0.6,
+          2.2
+        ],
+        "ood_evaluation": [
+          0.0,
+          4.0
+        ],
+        "ood_only_extensions": [
+          [
+            0.0,
+            0.6
+          ],
+          [
+            2.2,
+            4.0
+          ]
+        ]
+      },
+      "peak_speed_m_s": {
+        "training_id": [
+          0.16,
+          0.32
+        ],
+        "validation_id": [
+          0.16,
+          0.32
+        ],
+        "ood_evaluation": [
+          0.28,
+          0.4
+        ],
+        "ood_only_extensions": [
+          [
+            0.32,
+            0.4
+          ]
+        ]
+      },
+      "start_sides": {
+        "training_id": [
+          -1,
+          1
+        ],
+        "validation_id": [
+          -1,
+          1
+        ],
+        "ood_evaluation": [
+          -1
+        ],
+        "ood_only_extensions": []
+      },
+      "closest_approach_m": {
+        "training_id": [
+          0.04,
+          0.14
+        ],
+        "validation_id": [
+          0.04,
+          0.14
+        ],
+        "ood_evaluation": [
+          0.01,
+          0.08
+        ],
+        "ood_only_extensions": [
+          [
+            0.01,
+            0.04
+          ]
+        ]
+      },
+      "pause_duration_s": {
+        "training_id": [
+          0.35,
+          1.1
+        ],
+        "validation_id": [
+          0.35,
+          1.1
+        ],
+        "ood_evaluation": [
+          1.0,
+          2.5
+        ],
+        "ood_only_extensions": [
+          [
+            1.1,
+            2.5
+          ]
+        ]
+      },
+      "pause_probability": {
+        "training_id": 0.25,
+        "validation_id": 0.25,
+        "ood_evaluation": 0.55
+      },
+      "reverse_probability": {
+        "training_id": 0.15,
+        "validation_id": 0.15,
+        "ood_evaluation": 0.5
+      },
+      "human_observation_latency_steps": {
+        "training_id": 0,
+        "validation_id": 0,
+        "ood_evaluation": 3,
+        "ood_only_extensions": [
+          1,
+          2,
+          3
+        ]
+      },
+      "hand_height_m": {
+        "training_id": [
+          0.3,
+          0.42
+        ],
+        "validation_id": [
+          0.3,
+          0.42
+        ],
+        "ood_evaluation": [
+          0.3,
+          0.42
+        ],
+        "ood_only_extensions": []
+      }
+    }
+  }
+}

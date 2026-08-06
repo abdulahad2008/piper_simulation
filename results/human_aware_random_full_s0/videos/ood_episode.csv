@@ -1,0 +1,2 @@
+experiment,distribution,episode,seed,trajectory_type,task_success,collision_free_success,human_collision,near_miss,near_miss_events,minimum_separation,completion_time,episode_duration,episode_length,placement_error,grasp_success,lift_success,safety_interventions,safety_clamped_steps,safety_vetoed_steps,safety_clamp_rate,proximity_steps,waiting_steps,waiting_time,human_safety_cost,reward,termination
+ood,evaluation_ood,0,60003,cross_workspace,1,1,0,0,0,0.24396576906295184,2.9,2.9,58,0.043388752218972385,1,1,53,53,0,0.9137931034482759,0,0,0.0,0.0,272.0553902997957,success

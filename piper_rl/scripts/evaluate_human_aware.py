@@ -73,13 +73,23 @@ def main(argv=None):
     cfg.include_human_state = include_state and not args.no_human_state
     cfg.human_distribution = distribution_label
     cfg.render_camera = args.camera
+    policy_probe = _load_model(args.model, args.algo, None)
     env = PiperHumanAwarePickPlaceEnv(cfg)
-    policy = _load_model(args.model, args.algo, env)
-    if policy.observation_space != env.observation_space:
+    if (args.experiment == "no-human" and not args.no_human_state
+            and policy_probe.observation_space != env.observation_space):
+        # A no-human episode can serve either a legacy 51-state policy or a
+        # human-aware 64-state policy whose human channels remain zero. Infer
+        # that choice from the saved policy while retaining the explicit
+        # --no-human-state override.
+        env.close()
+        cfg.include_human_state = True
+        env = PiperHumanAwarePickPlaceEnv(cfg)
+    if policy_probe.observation_space != env.observation_space:
         raise ValueError(
-            f"policy observation space {policy.observation_space} does not match "
+            f"policy observation space {policy_probe.observation_space} does not match "
             f"environment {env.observation_space}; use the appropriate experiment "
             "or --no-human-state")
+    policy = _load_model(args.model, args.algo, env)
 
     rows: list[dict] = []
     frames = []
@@ -98,23 +108,34 @@ def main(argv=None):
             if args.video and episode < args.video_episodes:
                 frames.append(env.render(args.camera))
         summary = info["episode_summary"]
+        success = bool(summary["success"])
+        episode_duration = float(summary["length"] / cfg.control_hz)
+        safety_clamped = int(summary["safety_clamped"])
         rows.append({
             "experiment": args.experiment,
             "distribution": distribution_label,
             "episode": episode,
             "seed": episode_seed,
             "trajectory_type": reset_info["human_trajectory_type"],
-            "task_success": int(summary["success"]),
+            "task_success": int(success),
             "collision_free_success": int(summary["collision_free_success"]),
             "human_collision": int(summary["human_collision"]),
             "near_miss": int(summary["near_miss_events"] > 0),
             "near_miss_events": summary["near_miss_events"],
             "minimum_separation": summary["minimum_human_distance"],
-            "completion_time": summary["completion_time"],
+            "completion_time": episode_duration if success else "",
+            "episode_duration": episode_duration,
+            "episode_length": summary["length"],
             "placement_error": summary["placement_error"],
             "grasp_success": int(summary["grasp_success"]),
             "lift_success": int(summary["lift_success"]),
             "safety_interventions": summary["safety_clamped"] + summary["safety_vetoed"],
+            "safety_clamped_steps": safety_clamped,
+            "safety_vetoed_steps": summary["safety_vetoed"],
+            "safety_clamp_rate": safety_clamped / max(1, summary["length"]),
+            "proximity_steps": summary["proximity_steps"],
+            "waiting_steps": summary["waiting_steps"],
+            "waiting_time": summary["waiting_steps"] / cfg.control_hz,
             "human_safety_cost": summary["human_safety_cost"],
             "reward": total_reward,
             "termination": info["termination"],
@@ -123,6 +144,9 @@ def main(argv=None):
     n = len(rows)
     success_n = sum(row["task_success"] for row in rows)
     collision_n = sum(row["human_collision"] for row in rows)
+    success_rows = [row for row in rows if row["task_success"]]
+    separations = np.asarray([row["minimum_separation"] for row in rows], dtype=float)
+    placement_errors = np.asarray([row["placement_error"] for row in rows], dtype=float)
     summary = {
         "experiment": args.experiment,
         "distribution": distribution_label,
@@ -135,12 +159,25 @@ def main(argv=None):
         "human_collision_95ci": _wilson(collision_n, n),
         "near_miss_rate": _mean(rows, "near_miss"),
         "mean_minimum_separation": _mean(rows, "minimum_separation"),
+        "median_minimum_separation": float(np.median(separations)),
+        "p05_minimum_separation": float(np.percentile(separations, 5)),
         "worst_minimum_separation": min(row["minimum_separation"] for row in rows),
-        "mean_completion_time": _mean(rows, "completion_time"),
+        "mean_completion_time_successes": (
+            _mean(success_rows, "completion_time") if success_rows else None),
+        "mean_episode_duration": _mean(rows, "episode_duration"),
+        "mean_episode_length": _mean(rows, "episode_length"),
         "mean_placement_error": _mean(rows, "placement_error"),
+        "median_placement_error": float(np.median(placement_errors)),
+        "p90_placement_error": float(np.percentile(placement_errors, 90)),
         "grasp_rate": _mean(rows, "grasp_success"),
         "lift_rate": _mean(rows, "lift_success"),
         "mean_safety_interventions": _mean(rows, "safety_interventions"),
+        "mean_safety_clamped_steps": _mean(rows, "safety_clamped_steps"),
+        "mean_safety_clamp_rate": _mean(rows, "safety_clamp_rate"),
+        "mean_proximity_steps": _mean(rows, "proximity_steps"),
+        "mean_waiting_steps": _mean(rows, "waiting_steps"),
+        "mean_waiting_time": _mean(rows, "waiting_time"),
+        "mean_episode_reward": _mean(rows, "reward"),
         "mean_human_safety_cost": _mean(rows, "human_safety_cost"),
     }
 

@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "--task",
+    "human-aware",
+    "--human-preset",
+    "randomized",
+    "--human-difficulty",
+    "1.0",
+    "--algo",
+    "sac",
+    "--timesteps",
+    "2000",
+    "--n-envs",
+    "4",
+    "--seed",
+    "0",
+    "--run-name",
+    "_smoke_random_full_s0",
+    "--out",
+    "runs",
+    "--eval-freq",
+    "1000",
+    "--n-eval-episodes",
+    "2",
+    "--checkpoint-freq",
+    "1000",
+    "--device",
+    "auto"
+  ],
+  "learning_starts": 100,
+  "buffer_size": 5000,
+  "purpose": "force SAC updates inside the bounded smoke budget; not a research result"
+}

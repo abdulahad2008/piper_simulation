@@ -1,0 +1,91 @@
+{
+  "valid": true,
+  "normalization": "JSON arrays and Python tuples compared as arrays",
+  "differences": [
+    {
+      "path": "args.human_difficulty",
+      "reference": 0.0,
+      "proposed": 1.0,
+      "classification": "intended"
+    },
+    {
+      "path": "args.human_preset",
+      "reference": "curriculum",
+      "proposed": "randomized",
+      "classification": "intended"
+    },
+    {
+      "path": "args.run_name",
+      "reference": "human_aware_sac_v1",
+      "proposed": "human_aware_random_full_s0",
+      "classification": "intended"
+    },
+    {
+      "path": "env.human_difficulty",
+      "reference": 0.0,
+      "proposed": 1.0,
+      "classification": "intended"
+    },
+    {
+      "path": "env.human_distribution",
+      "reference": "curriculum_id",
+      "proposed": "training_id",
+      "classification": "intended"
+    },
+    {
+      "path": "env.human_episode_probability",
+      "reference": 0.25,
+      "proposed": 1.0,
+      "classification": "intended"
+    },
+    {
+      "path": "env.human_motion.appearance_time_range",
+      "reference": [
+        1.8,
+        3.0
+      ],
+      "proposed": [
+        0.6,
+        2.2
+      ],
+      "classification": "intended"
+    },
+    {
+      "path": "env.human_motion.closest_task_approach",
+      "reference": [
+        0.12,
+        0.18
+      ],
+      "proposed": [
+        0.04,
+        0.14
+      ],
+      "classification": "intended"
+    },
+    {
+      "path": "env.human_motion.pause_probability",
+      "reference": 0.05,
+      "proposed": 0.25,
+      "classification": "intended"
+    },
+    {
+      "path": "env.human_motion.reverse_probability",
+      "reference": 0.02,
+      "proposed": 0.15,
+      "classification": "intended"
+    },
+    {
+      "path": "env.human_motion.speed_range",
+      "reference": [
+        0.12,
+        0.18
+      ],
+      "proposed": [
+        0.16,
+        0.32
+      ],
+      "classification": "intended"
+    }
+  ],
+  "invalid_count": 0
+}
