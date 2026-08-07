@@ -1,8 +1,11 @@
 import numpy as np
 import pytest
 
-from piper_rl.human_config import HumanMotionConfig, TRAJECTORY_TYPES
-from piper_rl.human_motion import HumanTrajectoryGenerator
+from piper_rl.human_config import (FIXED_EXACT_H036_V1, HumanAwareEnvConfig,
+                                   HumanMotionConfig, TRAJECTORY_TYPES)
+from piper_rl.human_motion import (HumanTrajectoryGenerator,
+                                   trajectory_fingerprint,
+                                   trajectory_fingerprint_sha256)
 
 
 OBJ = np.array([0.35, -0.12, 0.235])
@@ -48,3 +51,13 @@ def test_different_seeds_vary_trajectory():
             or a.appearance_time != b.appearance_time
             or not np.array_equal(a.waypoints, b.waypoints))
 
+
+def test_exact_fixed_fingerprint_is_seed_invariant():
+    cfg = HumanAwareEnvConfig.from_preset(FIXED_EXACT_H036_V1).human_motion
+    generator = HumanTrajectoryGenerator(cfg)
+    a = generator.sample(np.random.default_rng(3), OBJ, TARGET)
+    b = generator.sample(np.random.default_rng(99), OBJ + 0.1, TARGET - 0.1)
+    fingerprint_a = trajectory_fingerprint(a, cfg)
+    fingerprint_b = trajectory_fingerprint(b, cfg)
+    assert fingerprint_a == fingerprint_b
+    assert trajectory_fingerprint_sha256(fingerprint_a) == trajectory_fingerprint_sha256(fingerprint_b)

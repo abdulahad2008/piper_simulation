@@ -2,7 +2,7 @@ import numpy as np
 
 from piper_rl import EnvConfig, PiperPickPlaceEnv
 from piper_rl.human_config import HumanAwareEnvConfig
-from piper_rl.scripts.train import build_vec_env
+from piper_rl.scripts.train import build_vec_env, default_hyperparams
 
 
 def _base_config():
@@ -50,3 +50,8 @@ def test_original_and_human_training_factories_start():
     human.reset()
     human.step([human.action_space.sample()])
     human.close()
+
+
+def test_sac_learning_starts_default_and_smoke_override():
+    assert default_hyperparams("sac", 4)["learning_starts"] == 5_000
+    assert default_hyperparams("sac", 4, learning_starts=100)["learning_starts"] == 100

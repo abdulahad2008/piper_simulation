@@ -20,6 +20,12 @@ TRAJECTORY_TYPES = (
     "pause_and_continue", "reverse",
 )
 
+# The historical ``fixed`` preset deliberately remains height-randomized for
+# reproducibility of already-published results.  New exact-fixed experiments
+# must use this named profile rather than changing the historical preset.
+FIXED_EXACT_H036_V1 = "fixed_exact_h036_v1"
+FIXED_EXACT_SHIFTED_H036_V1 = "fixed_exact_shifted_h036_v1"
+
 
 @dataclass
 class HumanMotionConfig:
@@ -67,6 +73,18 @@ class HumanAwareEnvConfig(EnvConfig):
     human_motion: HumanMotionConfig = field(default_factory=HumanMotionConfig)
     human_safety: HumanSafetyConfig = field(default_factory=HumanSafetyConfig)
 
+    @staticmethod
+    def _apply_historical_fixed_crossing(cfg: "HumanAwareEnvConfig") -> None:
+        """Apply the exact historical Fixed ID configuration in one place."""
+        cfg.human_motion.trajectory_types = ("cross_workspace",)
+        cfg.human_motion.appearance_time_range = (1.0, 1.0)
+        cfg.human_motion.speed_range = (0.22, 0.22)
+        cfg.human_motion.start_sides = (1,)
+        cfg.human_motion.end_position_jitter = 0.0
+        cfg.human_motion.closest_task_approach = (0.08, 0.08)
+        cfg.human_motion.pause_probability = 0.0
+        cfg.human_motion.reverse_probability = 0.0
+
     @classmethod
     def from_preset(cls, name: str, difficulty: float = 1.0) -> "HumanAwareEnvConfig":
         """Construct a documented human distribution preset."""
@@ -77,15 +95,21 @@ class HumanAwareEnvConfig(EnvConfig):
             cfg.human_episode_probability = 0.0
             cfg.human_distribution = "no_human"
         elif name == "fixed":
-            cfg.human_motion.trajectory_types = ("cross_workspace",)
-            cfg.human_motion.appearance_time_range = (1.0, 1.0)
-            cfg.human_motion.speed_range = (0.22, 0.22)
-            cfg.human_motion.start_sides = (1,)
-            cfg.human_motion.end_position_jitter = 0.0
-            cfg.human_motion.closest_task_approach = (0.08, 0.08)
-            cfg.human_motion.pause_probability = 0.0
-            cfg.human_motion.reverse_probability = 0.0
+            cfg._apply_historical_fixed_crossing(cfg)
             cfg.human_distribution = "fixed_id"
+        elif name == FIXED_EXACT_H036_V1:
+            cfg._apply_historical_fixed_crossing(cfg)
+            cfg.human_motion.hand_height = (0.36, 0.36)
+            cfg.human_distribution = FIXED_EXACT_H036_V1
+        elif name == FIXED_EXACT_SHIFTED_H036_V1:
+            cfg._apply_historical_fixed_crossing(cfg)
+            # Predeclared holdout: 0.2 s earlier, 0.02 m/s faster, and 1 cm
+            # closer than the exact training crossing. It is never tuned.
+            cfg.human_motion.appearance_time_range = (0.8, 0.8)
+            cfg.human_motion.speed_range = (0.24, 0.24)
+            cfg.human_motion.closest_task_approach = (0.07, 0.07)
+            cfg.human_motion.hand_height = (0.36, 0.36)
+            cfg.human_distribution = FIXED_EXACT_SHIFTED_H036_V1
         elif name in ("randomized", "evaluation_id"):
             cfg.human_distribution = "evaluation_id" if name == "evaluation_id" else "training_id"
         elif name == "curriculum":
@@ -126,4 +150,3 @@ class HumanAwareEnvConfig(EnvConfig):
         cfg.p_start_grasped = 0.0
         cfg.p_start_over_target = 0.0
         return cfg
-

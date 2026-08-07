@@ -102,7 +102,8 @@ def build_vec_env(cfg: EnvConfig, n_envs: int, seed: int, monitor_dir=None,
 # --------------------------------------------------------------------------- #
 def default_hyperparams(algo: str, n_envs: int, net_arch=None,
                         batch_size: int | None = None,
-                        gradient_steps: int | None = None) -> dict:
+                        gradient_steps: int | None = None,
+                        learning_starts: int | None = None) -> dict:
     """Hyper-parameters, with the reasoning for the non-default ones.
 
     The defaults are sized for a CPU box. On CPU the gradient update, not the
@@ -124,7 +125,7 @@ def default_hyperparams(algo: str, n_envs: int, net_arch=None,
                                             # critic variance
             train_freq=(1, "step"),
             gradient_steps=gradient_steps or max(1, n_envs),
-            learning_starts=5_000,          # random play fills the buffer first
+            learning_starts=(learning_starts if learning_starts is not None else 5_000),
             ent_coef="auto_0.1",            # start hot, let it anneal itself
             target_entropy="auto",
             use_sde=False,
@@ -155,7 +156,7 @@ def main(argv=None):
     p.add_argument("--task", choices=["pick-place", "human-aware"],
                    default="pick-place", help="environment task; default unchanged")
     p.add_argument("--human-preset",
-                   choices=["fixed", "randomized", "curriculum"],
+                   choices=["fixed", "fixed-exact-h036-v1", "randomized", "curriculum"],
                    default="randomized")
     p.add_argument("--human-difficulty", type=float, default=1.0)
     p.add_argument("--no-human-state", action="store_true",
@@ -206,6 +207,9 @@ def main(argv=None):
     p.add_argument("--learning-rate", type=float, default=None)
     p.add_argument("--gradient-steps", type=int, default=None,
                    help="gradient updates per vec-env step (SAC/TD3)")
+    p.add_argument("--learning-starts", type=int, default=None,
+                   help="random environment steps before SAC/TD3 updates; "
+                        "default preserves the experiment setting (5000)")
     p.add_argument("--torch-threads", type=int, default=None,
                    help="threads for the gradient update. On a many-core box "
                         "leave ~n_envs cores free for the simulators; see "
@@ -282,7 +286,8 @@ def main(argv=None):
     # ------------------------------------------------------------------ model
     Algo = ALGOS[args.algo]
     hp = default_hyperparams(args.algo, args.n_envs, args.net_arch,
-                             args.batch_size, args.gradient_steps)
+                             args.batch_size, args.gradient_steps,
+                             args.learning_starts)
     if args.algo == "td3":
         n_act = train_env.action_space.shape[0]
         hp["action_noise"] = NormalActionNoise(np.zeros(n_act),

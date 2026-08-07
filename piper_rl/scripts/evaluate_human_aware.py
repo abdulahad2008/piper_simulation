@@ -19,7 +19,13 @@ from piper_rl.human_config import HumanAwareEnvConfig
 EXPERIMENTS = {
     "no-human": ("no_human", False, "no_human"),
     "human-unaware": ("randomized", False, "evaluation_id_unaware"),
-    "fixed": ("fixed", True, "evaluation_fixed_id"),
+    # Historical fixed-ID evaluations randomized hand height. Keep their
+    # reports distinct from the new exact 0.36 m fixed crossing.
+    "fixed": ("fixed", True, "constrained_fixed_height_randomized"),
+    "fixed-exact-h036-v1": (
+        "fixed_exact_h036_v1", True, "fixed_exact_h036_v1"),
+    "fixed-exact-shifted-h036-v1": (
+        "fixed_exact_shifted_h036_v1", True, "fixed_exact_shifted_h036_v1"),
     "randomized-id": ("evaluation_id", True, "evaluation_id"),
     "ood": ("evaluation_ood", True, "evaluation_ood"),
 }

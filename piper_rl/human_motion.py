@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
+import json
 from typing import Sequence
 
 import numpy as np
@@ -145,3 +147,42 @@ class HumanTrajectoryGenerator:
         return HumanArmTrajectory(kind, appearance, points, durations, phases,
                                   side, speed, moving_shoulder)
 
+
+def trajectory_fingerprint(trajectory: HumanArmTrajectory,
+                           config: HumanMotionConfig) -> dict:
+    """Serialize every trajectory and motion-profile parameter reproducibly."""
+    motion_config = {
+        "trajectory_types": list(config.trajectory_types),
+        "appearance_time_range_s": list(config.appearance_time_range),
+        "speed_range_m_s": list(config.speed_range),
+        "start_sides": list(config.start_sides),
+        "end_position_jitter_m": config.end_position_jitter,
+        "closest_task_approach_m": list(config.closest_task_approach),
+        "pause_probability": config.pause_probability,
+        "pause_duration_range_s": list(config.pause_duration_range),
+        "reverse_probability": config.reverse_probability,
+        "max_hand_speed_m_s": config.max_hand_speed,
+        "parked_y_m": config.parked_y,
+        "hand_height_m": list(config.hand_height),
+    }
+    return {
+        "schema": "piper_human_trajectory_fingerprint_v1",
+        "motion_config": motion_config,
+        "trajectory": {
+            "type": trajectory.trajectory_type,
+            "appearance_time_s": trajectory.appearance_time,
+            "start_side": trajectory.start_side,
+            "speed_m_s": trajectory.speed,
+            "moving_shoulder": trajectory.moving_shoulder,
+            "waypoints_m": np.asarray(trajectory.waypoints, dtype=float).tolist(),
+            "durations_s": np.asarray(trajectory.durations, dtype=float).tolist(),
+            "phases": list(trajectory.phases),
+        },
+    }
+
+
+def trajectory_fingerprint_sha256(fingerprint: dict) -> str:
+    """Return the stable SHA-256 identifier for a serialized fingerprint."""
+    payload = json.dumps(fingerprint, sort_keys=True,
+                         separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()

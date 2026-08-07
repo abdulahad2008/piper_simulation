@@ -129,6 +129,28 @@ def test_fixed_randomized_difficulty_is_reported_at_episode_end():
     env.close()
 
 
+def test_fixed_exact_h036_trajectory_is_seed_invariant():
+    env = PiperHumanAwarePickPlaceEnv(config("fixed_exact_h036_v1"))
+    trajectories = []
+    objects = []
+    for seed in range(8):
+        env.reset(seed=seed)
+        traj = env.human_trajectory
+        trajectories.append((traj.trajectory_type, traj.appearance_time,
+                             traj.start_side, traj.speed, traj.waypoints.copy(),
+                             traj.durations.copy(), traj.phases))
+        objects.append(env.obj_pos.copy())
+    first = trajectories[0]
+    for value in trajectories[1:]:
+        assert value[:4] == first[:4]
+        assert np.array_equal(value[4], first[4])
+        assert np.array_equal(value[5], first[5])
+        assert value[6] == first[6]
+    assert np.array_equal(first[4][:, 2], [0.36, 0.34, 0.36])
+    assert any(not np.array_equal(objects[0], value) for value in objects[1:])
+    env.close()
+
+
 def test_state_plus_rgb_extends_only_state_and_renders_headless():
     cfg = config()
     cfg.obs_mode = "state+rgb"
