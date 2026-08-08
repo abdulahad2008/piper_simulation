@@ -1,0 +1,42 @@
+{
+  "schema": "piper_human_aware_multiseed_campaign_v1",
+  "created_at": "2026-08-08T05:45:46.335816+00:00",
+  "seed0_mapping": {
+    "fixed": "human_aware_fixed_s0",
+    "curriculum": "human_aware_sac_v1",
+    "full_random": "human_aware_random_full_s0"
+  },
+  "runs": {
+    "human_aware_fixed_s1": {
+      "method": "fixed",
+      "seed": 1,
+      "status": "pending"
+    },
+    "human_aware_curriculum_s1": {
+      "method": "curriculum",
+      "seed": 1,
+      "status": "pending"
+    },
+    "human_aware_random_full_s1": {
+      "method": "full_random",
+      "seed": 1,
+      "status": "pending"
+    },
+    "human_aware_fixed_s2": {
+      "method": "fixed",
+      "seed": 2,
+      "status": "pending"
+    },
+    "human_aware_curriculum_s2": {
+      "method": "curriculum",
+      "seed": 2,
+      "status": "pending"
+    },
+    "human_aware_random_full_s2": {
+      "method": "full_random",
+      "seed": 2,
+      "status": "pending"
+    }
+  },
+  "updated_at": "2026-08-08T05:46:48.842108+00:00"
+}
