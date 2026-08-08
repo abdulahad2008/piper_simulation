@@ -111,8 +111,20 @@ definition. `collision_free_success` means task success with no human collision.
 
 ## Training and evaluation distributions
 
-Presets are `no_human`, `fixed`, `randomized`, `curriculum`, `evaluation_id`,
-and `evaluation_ood`. Curriculum changes only the ID episode probability,
+Presets are `no_human`, `fixed`, `fixed_exact_h036_v1`, `randomized`,
+`curriculum`, `evaluation_id`, and `evaluation_ood`. `fixed` is the historical
+constrained fixed-type crossing: it fixes type, side, timing, speed, path, and
+approach but samples hand height uniformly in `[0.30, 0.42]` m. It must be
+labelled `constrained_fixed_height_randomized` in new reports and must not be
+described as an exact fixed trajectory. `fixed_exact_h036_v1` is the separate,
+authoritative exact crossing: it preserves the historical crossing parameters
+and sets hand height to exactly `0.36` m on every human-present reset. Its
+trajectory fingerprint is stable across seeds; object, target, manipulation,
+domain-randomization, and sensor-noise factors remain independently seeded.
+`fixed_exact_shifted_h036_v1` is a predeclared holdout with a 0.2 s earlier
+appearance, 0.02 m/s higher speed, and 0.01 m closer approach, all at 0.36 m.
+
+Curriculum changes only the ID episode probability,
 speed, appearance window, proximity, pause rate, and reversal rate from
 difficulty 0 to 1. It never selects the OOD preset.
 
@@ -146,6 +158,7 @@ Human-aware fixed and randomized examples:
 
 ```powershell
 python -m piper_rl.scripts.train --task human-aware --human-preset fixed --algo sac --timesteps 1500000 --run-name human_fixed
+python -m piper_rl.scripts.train --task human-aware --human-preset fixed-exact-h036-v1 --human-difficulty 1.0 --algo sac --timesteps 2000000 --n-envs 4 --seed 0 --run-name human_aware_fixed_s0
 python -m piper_rl.scripts.train --task human-aware --human-preset randomized --algo sac --timesteps 2000000 --n-envs 4 --run-name human_randomized
 python -m piper_rl.scripts.train --task human-aware --human-preset curriculum --human-difficulty 0 --algo sac --timesteps 2000000 --n-envs 4 --run-name human_curriculum
 ```
@@ -160,6 +173,8 @@ Each command requires an explicit seed and exports `<out>.csv` and `<out>.json`:
 python -m piper_rl.scripts.evaluate_human_aware --model runs/sac_full/best/best_model.zip --experiment no-human --episodes 50 --seed 100 --out out/existing_no_human
 python -m piper_rl.scripts.evaluate_human_aware --model runs/sac_full/best/best_model.zip --experiment human-unaware --episodes 50 --seed 100 --out out/existing_human_unaware --video out/existing_human_unaware.mp4
 python -m piper_rl.scripts.evaluate_human_aware --model runs/human_randomized/best/best_model.zip --experiment fixed --episodes 50 --seed 100 --out out/human_fixed
+python -m piper_rl.scripts.evaluate_human_aware --model runs/human_aware_fixed_s0/best/best_model.zip --experiment fixed-exact-h036-v1 --episodes 200 --seed 31000 --out out/human_exact_h036
+python -m piper_rl.scripts.evaluate_human_aware --model runs/human_aware_fixed_s0/best/best_model.zip --experiment fixed-exact-shifted-h036-v1 --episodes 200 --seed 32000 --out out/human_shifted_exact_h036
 python -m piper_rl.scripts.evaluate_human_aware --model runs/human_randomized/best/best_model.zip --experiment randomized-id --episodes 100 --seed 200 --out out/human_id
 python -m piper_rl.scripts.evaluate_human_aware --model runs/human_randomized/best/best_model.zip --experiment ood --episodes 100 --seed 300 --out out/human_ood
 ```

@@ -1,0 +1,82 @@
+{
+  "experiment": "human_aware_fixed_s0",
+  "git_commit_used_for_training": "70827c3cee4bcf5961f205618b501c69ed7f7444",
+  "exact_training_command": ".\\.venv\\Scripts\\python.exe -B -m piper_rl.scripts.train --task human-aware --human-preset fixed-exact-h036-v1 --human-difficulty 1.0 --algo sac --timesteps 2000000 --n-envs 4 --seed 0 --run-name human_aware_fixed_s0 --out runs --eval-freq 20000 --n-eval-episodes 15 --checkpoint-freq 50000 --action-mode cartesian --device auto",
+  "completed_timesteps": 2000000,
+  "training_wall_clock_seconds": 57626.6,
+  "training_wall_clock_hours": 16.00738888888889,
+  "final_reported_fps": 34.0,
+  "all_tensorboard_scalars_finite": true,
+  "human_difficulty_tensorboard": {
+    "count": 3839,
+    "min": 1.0,
+    "max": 1.0,
+    "last": 1.0,
+    "finite": true
+  },
+  "models": {
+    "callback_best": {
+      "path": "runs\\human_aware_fixed_s0\\best\\best_model.zip",
+      "sha256": "888b0c6c22ce6add8f1eef870c6dd8932cb389d33ca82a58b85d4501db0161c7",
+      "bytes": 3767790
+    },
+    "final": {
+      "path": "runs\\human_aware_fixed_s0\\final_model.zip",
+      "sha256": "18452de6ac4fe67bbb78f1ed8b5c9d17e6446a43a957cfd4fbae93086688cbcd",
+      "bytes": 3767773
+    },
+    "selected_common_id": {
+      "path": "runs\\human_aware_fixed_s0\\selected_common_id_model.zip",
+      "sha256": "888b0c6c22ce6add8f1eef870c6dd8932cb389d33ca82a58b85d4501db0161c7",
+      "bytes": 3767790
+    }
+  },
+  "callback_best_common_validation": {
+    "experiment": "randomized-id",
+    "distribution": "evaluation_id",
+    "episodes": 50,
+    "deterministic_prediction": true,
+    "task_success_rate": 0.36,
+    "task_success_95ci": [
+      0.24138562967182875,
+      0.49859237989698046
+    ],
+    "collision_free_success_rate": 0.36,
+    "human_collision_rate": 0.46,
+    "human_collision_95ci": [
+      0.3296943460178263,
+      0.5960136567161192
+    ],
+    "near_miss_rate": 0.66,
+    "mean_minimum_separation": 0.090392889084083,
+    "median_minimum_separation": 0.011110942863552832,
+    "p05_minimum_separation": -0.0006544538775557663,
+    "worst_minimum_separation": -0.06137102172382757,
+    "mean_completion_time_successes": 3.091666666666667,
+    "mean_episode_duration": 4.414000000000001,
+    "mean_episode_length": 88.28,
+    "mean_placement_error": 0.1927375003153182,
+    "median_placement_error": 0.21591092675863155,
+    "p90_placement_error": 0.38796190236028877,
+    "grasp_rate": 0.4,
+    "lift_rate": 0.4,
+    "mean_safety_interventions": 83.54,
+    "mean_safety_clamped_steps": 83.54,
+    "mean_safety_clamp_rate": 0.9300437445276245,
+    "mean_proximity_steps": 16.04,
+    "mean_waiting_steps": 11.64,
+    "mean_waiting_time": 0.582,
+    "mean_episode_reward": 24.813918820892404,
+    "mean_human_safety_cost": 61.83126050043137
+  },
+  "selected_common_id": {
+    "source": "callback_best",
+    "selection_metric": "highest task success on randomized-ID validation seeds 21000-21049",
+    "same_as_callback_best": true
+  },
+  "artifact_sizes_bytes": {
+    "final_model.zip": 3767773,
+    "replay_buffer.pkl": 217602223,
+    "config.json": 5967
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "schema": "piper_human_trajectory_fingerprint_v1",
+  "motion_config": {
+    "trajectory_types": [
+      "cross_workspace"
+    ],
+    "appearance_time_range_s": [
+      1.0,
+      1.0
+    ],
+    "speed_range_m_s": [
+      0.22,
+      0.22
+    ],
+    "start_sides": [
+      1
+    ],
+    "end_position_jitter_m": 0.0,
+    "closest_task_approach_m": [
+      0.08,
+      0.08
+    ],
+    "pause_probability": 0.0,
+    "pause_duration_range_s": [
+      0.35,
+      1.1
+    ],
+    "reverse_probability": 0.0,
+    "max_hand_speed_m_s": 0.4,
+    "parked_y_m": 0.62,
+    "hand_height_m": [
+      0.36,
+      0.36
+    ]
+  },
+  "trajectory": {
+    "type": "cross_workspace",
+    "appearance_time_s": 1.0,
+    "start_side": 1,
+    "speed_m_s": 0.22,
+    "moving_shoulder": true,
+    "waypoints_m": [
+      [
+        0.34,
+        0.62,
+        0.36
+      ],
+      [
+        0.36,
+        0.08,
+        0.34
+      ],
+      [
+        0.36,
+        -0.62,
+        0.36
+      ]
+    ],
+    "durations_s": [
+      4.608581534521288,
+      5.968343659094861
+    ],
+    "phases": [
+      "entering",
+      "crossing"
+    ]
+  },
+  "preset": "fixed_exact_h036_v1",
+  "fingerprint_sha256": "499cf653ba1edd4f5f83c4cfebaf4c23ca63e20fb1ce4e45eca8f1886d5355f1"
+}
