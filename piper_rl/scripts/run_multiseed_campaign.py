@@ -16,6 +16,7 @@ import hashlib
 import json
 import os
 import random
+import re
 import shutil
 import subprocess
 import sys
@@ -193,8 +194,10 @@ def deep_diff(before: Any, after: Any, path: str = "") -> list[dict]:
             child = f"{path}.{key}" if path else key
             result.extend(deep_diff(before.get(key), after.get(key), child))
         return result
-    if isinstance(before, list) and isinstance(after, list):
-        if before == after:
+    # Dataclasses serialize tuple-valued ranges as JSON lists.  Compare their
+    # values rather than flagging that representation-only conversion.
+    if isinstance(before, (list, tuple)) and isinstance(after, (list, tuple)):
+        if list(before) == list(after):
             return []
     elif before == after:
         return []
@@ -345,6 +348,16 @@ def run_is_trained(spec: RunSpec) -> bool:
                 and np.isfinite(values["results"]).all())
 
 
+def recorded_training_duration(spec: RunSpec) -> float:
+    """Recover a completed run's duration when an orchestration check failed."""
+    log = result_dir(spec) / "logs" / "training.log"
+    if not log.exists():
+        return 0.0
+    matches = re.findall(r"saved .*?\s\((\d+(?:\.\d+)?) s, 2000000 steps\)",
+                         log.read_text(encoding="utf-8", errors="replace"))
+    return float(matches[-1]) if matches else 0.0
+
+
 def assert_safe_run_directory(spec: RunSpec) -> None:
     run = run_dir(spec)
     if not run.exists():
@@ -492,6 +505,8 @@ def run_one(spec: RunSpec, current: dict) -> None:
         duration = time.monotonic() - t0
     else:
         duration = current["runs"][spec.run_name].get("duration_seconds", 0.0)
+        if not duration:
+            duration = recorded_training_duration(spec)
     validation = verify_trained(spec)
     set_status(current, spec, "trained", training_finished_at=now(), duration_seconds=duration,
                final_timestep=validation["final_timestep"], model_hashes=validation["model_hashes"])
