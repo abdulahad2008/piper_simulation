@@ -39,6 +39,7 @@ Examples
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import os
 import sys
@@ -60,7 +61,10 @@ from stable_baselines3.common.noise import NormalActionNoise
 
 from piper_rl.config import EnvConfig
 from piper_rl.piper_env import PiperPickPlaceEnv
-from piper_rl.callbacks import TaskMetricsCallback, PeriodicDumpCallback
+from piper_rl.human_config import HumanAwareEnvConfig
+from piper_rl.human_aware_env import PiperHumanAwarePickPlaceEnv
+from piper_rl.callbacks import (TaskMetricsCallback, PeriodicDumpCallback,
+                                HumanCurriculumCallback)
 
 ALGOS = {"sac": SAC, "td3": TD3, "ppo": PPO}
 
@@ -68,12 +72,16 @@ ALGOS = {"sac": SAC, "td3": TD3, "ppo": PPO}
 # --------------------------------------------------------------------------- #
 def make_env(cfg: EnvConfig, seed: int, rank: int = 0, monitor_dir=None):
     def _init():
-        c = EnvConfig(**{**cfg.__dict__})
-        env = PiperPickPlaceEnv(c)
+        c = copy.deepcopy(cfg)
+        env_cls = (PiperHumanAwarePickPlaceEnv
+                   if isinstance(c, HumanAwareEnvConfig) else PiperPickPlaceEnv)
+        env = env_cls(c)
         env.reset(seed=seed + rank)
         env.action_space.seed(seed + rank)
         path = None if monitor_dir is None else str(Path(monitor_dir) / f"m{rank}")
-        return Monitor(env, filename=path, info_keywords=("is_success",))
+        keywords = (("is_success", "human_collision", "collision_free_success")
+                    if isinstance(c, HumanAwareEnvConfig) else ("is_success",))
+        return Monitor(env, filename=path, info_keywords=keywords)
     return _init
 
 
@@ -94,7 +102,8 @@ def build_vec_env(cfg: EnvConfig, n_envs: int, seed: int, monitor_dir=None,
 # --------------------------------------------------------------------------- #
 def default_hyperparams(algo: str, n_envs: int, net_arch=None,
                         batch_size: int | None = None,
-                        gradient_steps: int | None = None) -> dict:
+                        gradient_steps: int | None = None,
+                        learning_starts: int | None = None) -> dict:
     """Hyper-parameters, with the reasoning for the non-default ones.
 
     The defaults are sized for a CPU box. On CPU the gradient update, not the
@@ -116,7 +125,7 @@ def default_hyperparams(algo: str, n_envs: int, net_arch=None,
                                             # critic variance
             train_freq=(1, "step"),
             gradient_steps=gradient_steps or max(1, n_envs),
-            learning_starts=5_000,          # random play fills the buffer first
+            learning_starts=(learning_starts if learning_starts is not None else 5_000),
             ent_coef="auto_0.1",            # start hot, let it anneal itself
             target_entropy="auto",
             use_sde=False,
@@ -144,7 +153,19 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--algo", choices=list(ALGOS), default="sac")
+    p.add_argument("--task", choices=["pick-place", "human-aware"],
+                   default="pick-place", help="environment task; default unchanged")
+    p.add_argument("--human-preset",
+                   choices=["fixed", "fixed-exact-h036-v1", "randomized", "curriculum"],
+                   default="randomized")
+    p.add_argument("--human-difficulty", type=float, default=1.0)
+    p.add_argument("--no-human-state", action="store_true",
+                   help="keep the original policy observation shape")
     p.add_argument("--timesteps", type=int, default=1_000_000)
+    p.add_argument("--curriculum-total-timesteps", type=int, default=None,
+                   help="global curriculum horizon; defaults to --timesteps. "
+                        "Set this when warm-starting so the curriculum stays "
+                        "on its original global schedule")
     p.add_argument("--n-envs", type=int, default=1,
                    help="parallel environments; SAC/TD3 like 1-4, PPO likes 8+")
     p.add_argument("--seed", type=int, default=0)
@@ -190,11 +211,17 @@ def main(argv=None):
     p.add_argument("--learning-rate", type=float, default=None)
     p.add_argument("--gradient-steps", type=int, default=None,
                    help="gradient updates per vec-env step (SAC/TD3)")
+    p.add_argument("--learning-starts", type=int, default=None,
+                   help="random environment steps before SAC/TD3 updates; "
+                        "default preserves the experiment setting (5000)")
     p.add_argument("--torch-threads", type=int, default=None,
                    help="threads for the gradient update. On a many-core box "
                         "leave ~n_envs cores free for the simulators; see "
                         "scripts/benchmark.py")
     args = p.parse_args(argv)
+
+    if args.curriculum_total_timesteps is not None and args.curriculum_total_timesteps <= 0:
+        p.error("--curriculum-total-timesteps must be positive")
 
     if args.torch_threads:
         torch.set_num_threads(args.torch_threads)
@@ -230,7 +257,12 @@ def main(argv=None):
     (out / "best").mkdir(parents=True, exist_ok=True)
 
     # ------------------------------------------------------------------ cfg
-    cfg = EnvConfig()
+    if args.task == "human-aware":
+        cfg = HumanAwareEnvConfig.from_preset(
+            args.human_preset, difficulty=args.human_difficulty)
+        cfg.include_human_state = not args.no_human_state
+    else:
+        cfg = EnvConfig()
     cfg.action_mode = args.action_mode
     cfg.curriculum = not args.no_curriculum
     cfg.domain_rand.enabled = not args.no_domain_rand
@@ -261,7 +293,8 @@ def main(argv=None):
     # ------------------------------------------------------------------ model
     Algo = ALGOS[args.algo]
     hp = default_hyperparams(args.algo, args.n_envs, args.net_arch,
-                             args.batch_size, args.gradient_steps)
+                             args.batch_size, args.gradient_steps,
+                             args.learning_starts)
     if args.algo == "td3":
         n_act = train_env.action_space.shape[0]
         hp["action_noise"] = NormalActionNoise(np.zeros(n_act),
@@ -301,7 +334,7 @@ def main(argv=None):
 
     # ------------------------------------------------------------- callbacks
     metrics_cb = TaskMetricsCallback(window=50)
-    cbs = CallbackList([
+    callback_items = [
         metrics_cb,
         PeriodicDumpCallback(every=2000, metrics=metrics_cb),
         CheckpointCallback(
@@ -315,7 +348,12 @@ def main(argv=None):
             eval_freq=max(1, args.eval_freq // args.n_envs),
             n_eval_episodes=args.n_eval_episodes,
             deterministic=True, render=False, verbose=1),
-    ])
+    ]
+    if args.task == "human-aware" and args.human_preset == "curriculum":
+        callback_items.append(HumanCurriculumCallback(
+            total_timesteps=(args.curriculum_total_timesteps or args.timesteps),
+            start=args.human_difficulty, end=1.0))
+    cbs = CallbackList(callback_items)
 
     print(f"\n{'='*70}\n{args.algo.upper()}  |  {args.timesteps:,} steps  |  "
           f"{args.n_envs} env(s)  |  obs {train_env.observation_space.shape}  |  "

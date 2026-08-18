@@ -142,7 +142,7 @@ class PiperPickPlaceEnv(gym.Env):
             raise ValueError(f"unknown action_mode {self.cfg.action_mode!r}")
         self.action_space = spaces.Box(-1.0, 1.0, (self.n_act,), dtype=np.float32)
 
-        state_dim = 46 + self.n_act
+        state_dim = 46 + self.n_act + self._extra_state_dim()
         self._state_dim = state_dim
         state_space = spaces.Box(-np.inf, np.inf, (state_dim,), dtype=np.float32)
         rgb_space = spaces.Box(
@@ -182,6 +182,7 @@ class PiperPickPlaceEnv(gym.Env):
         self._rew_terms = collections.defaultdict(float)
         self._obs_buf.clear()
         self._rgb_buf.clear()
+        self._reset_extension_state()
 
     # ---------------------------------------------------------------- reset
     def reset(self, *, seed: Optional[int] = None,
@@ -274,6 +275,8 @@ class PiperPickPlaceEnv(gym.Env):
         self.safety.reset(self._q_cmd, self._grip_cmd)
         mujoco.mj_forward(self.model, self.data)
 
+        extension_info = self._after_reset(rng, options or {}, info_dr)
+
         self._prev_d_reach = self._dist_reach()
         self._prev_d_place = self._dist_place()
         self._prev_lift = self._lift_height()
@@ -285,7 +288,7 @@ class PiperPickPlaceEnv(gym.Env):
 
         obs = self._get_obs()
         info = {"phase": phase, **{k: v for k, v in info_dr.items()
-                                   if np.isscalar(v)}}
+                                   if np.isscalar(v)}, **extension_info}
         return obs, info
 
     # ------------------------------------------------------------ stepping
@@ -330,8 +333,11 @@ class PiperPickPlaceEnv(gym.Env):
         # --- 5. physics ------------------------------------------------- #
         self.data.ctrl[:6] = q_safe
         self.data.ctrl[self.grip_act] = g_safe
-        for _ in range(self._n_substeps):
+        for substep in range(self._n_substeps):
+            self._before_physics_substep(substep)
             mujoco.mj_step(self.model, self.data)
+            if self._after_physics_substep(substep):
+                break
 
         self._step_count += 1
 
@@ -342,7 +348,14 @@ class PiperPickPlaceEnv(gym.Env):
             self._unsafe = True
 
         reward, rew_info = self._compute_reward(action, report)
-        terminated, truncated, term_reason = self._check_done(rew_info)
+        extra_reward, extra_rew_info = self._extra_reward(action, rew_info)
+        reward += extra_reward
+        rew_info.update(extra_rew_info)
+        extra_done = self._extra_termination(rew_info)
+        if extra_done is None:
+            terminated, truncated, term_reason = self._check_done(rew_info)
+        else:
+            terminated, truncated, term_reason = extra_done
 
         obs = self._get_obs()
         self._prev_action = action.astype(np.float32)
@@ -354,6 +367,7 @@ class PiperPickPlaceEnv(gym.Env):
             "safety_vetoed": int(report.vetoed),
             "termination": term_reason,
             "step": self._step_count,
+            **self._extra_info(rew_info),
         }
         if terminated or truncated:
             info["episode_summary"] = self._episode_summary(rew_info)
@@ -628,7 +642,7 @@ class PiperPickPlaceEnv(gym.Env):
         return False, False, ""
 
     def _episode_summary(self, rew_info) -> dict:
-        return dict(
+        summary = dict(
             success=bool(rew_info["success"]),
             grasp_success=bool(self._n_grasp_steps > 0),
             lift_success=bool(self._max_lift > self.cfg.reward.lift_height),
@@ -640,6 +654,8 @@ class PiperPickPlaceEnv(gym.Env):
             safety_vetoed=int(self.safety.n_vetoed),
             reward_terms={k: round(v, 2) for k, v in self._rew_terms.items()},
         )
+        summary.update(self._extra_episode_summary(rew_info))
+        return summary
 
     # ------------------------------------------------------- observations
     def _state_obs(self) -> np.ndarray:
@@ -697,6 +713,7 @@ class PiperPickPlaceEnv(gym.Env):
             [self._grip_cmd / GRIP_OPEN],               # 1  last gripper command
             [self.obj_half_w, self.obj_half_h],         # 2  object size
             self._prev_action,                          # n  previous action
+            self._extra_state_obs(),                   # optional subclass state
         ]).astype(np.float32)
         assert obs.shape[0] == self._state_dim, (obs.shape, self._state_dim)
         return obs
@@ -735,6 +752,40 @@ class PiperPickPlaceEnv(gym.Env):
         if self.cfg.obs_mode == "rgb":
             return rgb
         return {"state": state, "rgb": rgb}
+
+    # ------------------------------------------------------- extension hooks
+    # These no-op hooks keep the original environment's behavior unchanged
+    # while allowing small task variants to share its complete control loop.
+    def _extra_state_dim(self) -> int:
+        return 0
+
+    def _reset_extension_state(self) -> None:
+        pass
+
+    def _after_reset(self, rng: np.random.Generator, options: dict,
+                     randomization_info: dict) -> dict:
+        return {}
+
+    def _before_physics_substep(self, substep: int) -> None:
+        pass
+
+    def _after_physics_substep(self, substep: int) -> bool:
+        return False
+
+    def _extra_reward(self, action: np.ndarray, rew_info: dict) -> tuple[float, dict]:
+        return 0.0, {}
+
+    def _extra_termination(self, rew_info: dict):
+        return None
+
+    def _extra_info(self, rew_info: dict) -> dict:
+        return {}
+
+    def _extra_episode_summary(self, rew_info: dict) -> dict:
+        return {}
+
+    def _extra_state_obs(self) -> np.ndarray:
+        return np.zeros(0, dtype=np.float32)
 
     # ------------------------------------------------------------ render
     def render(self, camera: Optional[str] = None):

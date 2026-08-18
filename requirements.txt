@@ -9,6 +9,7 @@ numpy>=1.24
 imageio>=2.31
 imageio-ffmpeg>=0.4          # mp4 writing for eval videos
 tensorboard>=2.14            # training curves
+pytest>=7.4                  # automated environment and regression tests
 
 # --- optional -------------------------------------------------------------- #
 # piper_sdk                  # AgileX SDK, ONLY needed for real-hardware work

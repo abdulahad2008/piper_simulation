@@ -1,0 +1,1 @@
+.\.venv\Scripts\python.exe -B -m piper_rl.scripts.train --task human-aware --human-preset randomized --human-difficulty 1.0 --algo sac --timesteps 2000000 --n-envs 4 --seed 0 --run-name human_aware_random_full_s0 --out runs --eval-freq 20000 --n-eval-episodes 15 --checkpoint-freq 50000 --action-mode cartesian --device auto

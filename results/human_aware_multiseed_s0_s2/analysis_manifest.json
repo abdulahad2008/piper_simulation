@@ -1,0 +1,109 @@
+{
+  "schema": "piper_human_aware_multiseed_analysis_v1",
+  "created_at": "2026-08-08T05:45:46.334816+00:00",
+  "training_seeds": [
+    0,
+    1,
+    2
+  ],
+  "new_training_seeds": [
+    1,
+    2
+  ],
+  "evaluation_seed_protocol": {
+    "common_validation": {
+      "start": 21000,
+      "episodes": 50,
+      "distribution": "evaluation_id"
+    },
+    "heldout": [
+      {
+        "name": "no_human",
+        "experiment": "no-human",
+        "episodes": 200,
+        "start_seed": 30000
+      },
+      {
+        "name": "exact_h036",
+        "experiment": "fixed-exact-h036-v1",
+        "episodes": 200,
+        "start_seed": 31000
+      },
+      {
+        "name": "constrained_fixed_height_randomized",
+        "experiment": "fixed",
+        "episodes": 200,
+        "start_seed": 31000
+      },
+      {
+        "name": "shifted_exact_h036",
+        "experiment": "fixed-exact-shifted-h036-v1",
+        "episodes": 200,
+        "start_seed": 32000
+      },
+      {
+        "name": "randomized_id",
+        "experiment": "randomized-id",
+        "episodes": 500,
+        "start_seed": 40000
+      },
+      {
+        "name": "ood",
+        "experiment": "ood",
+        "episodes": 500,
+        "start_seed": 50000
+      }
+    ]
+  },
+  "primary_outcomes": [
+    "randomized_id.task_success_rate",
+    "randomized_id.human_collision_rate",
+    "randomized_id.collision_free_success_rate",
+    "ood.task_success_rate",
+    "ood.human_collision_rate",
+    "ood.collision_free_success_rate",
+    "normalized_success_auc",
+    "steps_to_50pct",
+    "steps_to_70pct",
+    "steps_to_80pct"
+  ],
+  "secondary_outcomes": [
+    "exact_h036 task success and collision",
+    "constrained-height crossing performance",
+    "shifted-exact crossing performance",
+    "no-human performance",
+    "near-miss rate",
+    "minimum human separation",
+    "human safety cost",
+    "completion time",
+    "waiting steps",
+    "placement error",
+    "grasp rate",
+    "lift rate",
+    "mean episode reward"
+  ],
+  "hypotheses": [
+    "Fixed training will specialize strongly to the exact or similar fixed crossing.",
+    "Fixed training will generalize poorly to randomized-ID and OOD motion.",
+    "Curriculum training may improve early sample efficiency.",
+    "Full-random training may provide stronger final ID/OOD robustness.",
+    "High task success does not necessarily imply low human-collision risk."
+  ],
+  "selection": {
+    "candidates": [
+      100000,
+      200000,
+      400000,
+      600000,
+      1000000,
+      1500000,
+      2000000,
+      "native_callback_best"
+    ],
+    "metric": "highest randomized-ID task_success_rate",
+    "ties": "earlier checkpoint wins; callback best uses its saved step only if available",
+    "heldout_test_results_used": false
+  },
+  "smoothing": "none; all learning curves use the seven saved checkpoint evaluations",
+  "replication_unit": "trained seed, not individual evaluation episode"
+}

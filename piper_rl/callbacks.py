@@ -26,7 +26,10 @@ class TaskMetricsCallback(BaseCallback):
 
     KEYS = ("success", "grasp_success", "lift_success", "placement_error",
             "max_lift", "collision_steps", "length", "safety_clamped",
-            "safety_vetoed")
+            "safety_vetoed", "collision_free_success", "human_collision",
+            "minimum_human_distance", "near_miss_events", "proximity_steps",
+            "human_safety_cost", "completion_time", "waiting_steps",
+            "human_difficulty")
 
     def __init__(self, window: int = 50, verbose: int = 0):
         super().__init__(verbose)
@@ -63,6 +66,20 @@ class TaskMetricsCallback(BaseCallback):
                  float(np.mean(self.buf["collision_steps"])))
         L.record("rollout/safety_clamped",
                  float(np.mean(self.buf["safety_clamped"])))
+        optional = {
+            "collision_free_success": "collision_free_success_rate",
+            "human_collision": "human_collision_rate",
+            "minimum_human_distance": "minimum_human_distance",
+            "near_miss_events": "near_misses",
+            "proximity_steps": "proximity_steps",
+            "human_safety_cost": "human_safety_cost",
+            "completion_time": "completion_time",
+            "waiting_steps": "waiting_steps",
+            "human_difficulty": "human_difficulty",
+        }
+        for key, label in optional.items():
+            if self.buf[key]:
+                L.record(f"rollout/{label}", float(np.mean(self.buf[key])))
         L.record("rollout/episodes", self.n_episodes)
 
     # off-policy algorithms do not emit rollout_end often enough
@@ -83,4 +100,26 @@ class PeriodicDumpCallback(BaseCallback):
             if self.metrics is not None:
                 self.metrics._dump()
             self.logger.dump(self.num_timesteps)
+        return True
+
+
+class HumanCurriculumCallback(BaseCallback):
+    """Linearly raise human difficulty through vector-env ``env_method`` calls."""
+
+    def __init__(self, total_timesteps: int, start: float = 0.0,
+                 end: float = 1.0, update_every: int = 5000, verbose: int = 0):
+        super().__init__(verbose)
+        self.total_timesteps = max(1, int(total_timesteps))
+        self.start = float(start)
+        self.end = float(end)
+        self.update_every = max(1, int(update_every))
+        self._last_update = -self.update_every
+
+    def _on_step(self) -> bool:
+        if self.num_timesteps - self._last_update >= self.update_every:
+            progress = min(1.0, self.num_timesteps / self.total_timesteps)
+            difficulty = self.start + progress * (self.end - self.start)
+            self.training_env.env_method("set_human_difficulty", difficulty)
+            self.logger.record("rollout/human_difficulty", difficulty)
+            self._last_update = self.num_timesteps
         return True

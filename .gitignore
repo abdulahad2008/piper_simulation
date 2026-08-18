@@ -1,4 +1,23 @@
 ﻿*.pkl
 runs/sac_full/replay_buffer.pkl
+__pycache__/
+*.py[cod]
+.pytest_cache/
 runs/corner_ft/replay_buffer.pkl
 runs/precision_ft/replay_buffer.pkl
+
+# Local training outputs
+/runs/
+/out/
+
+# Large ML artifacts
+*.pkl
+*.pt
+*.pth
+
+# Python-generated files
+__pycache__/
+*.py[cod]
+
+# System files
+.DS_Store

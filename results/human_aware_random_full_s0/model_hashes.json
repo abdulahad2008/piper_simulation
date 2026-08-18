@@ -1,0 +1,12 @@
+{
+  "best_model": {
+    "path": "runs\\human_aware_random_full_s0\\best\\best_model.zip",
+    "sha256": "4064b2a8ac9bc7571bb8dbbbb6f76fe39c26c9ff620fbc64ece9fa6efd0e9a5b",
+    "bytes": 3767795
+  },
+  "final_model": {
+    "path": "runs\\human_aware_random_full_s0\\final_model.zip",
+    "sha256": "5ed60cb286b07c88abd214942ee153d789ef9a70794cd8a18f6eb9319cba4133",
+    "bytes": 3767779
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "protocol": {
+    "episodes_per_checkpoint": 50,
+    "seed_range": [
+      21000,
+      21049
+    ],
+    "distribution": "randomized full-difficulty ID",
+    "deterministic_actions": true,
+    "exact_checkpoints_available": true
+  },
+  "families": {
+    "reference": {
+      "points": [
+        {
+          "requested_steps": 100000,
+          "actual_steps": 100000,
+          "task_success_rate": 0.0,
+          "collision_free_success_rate": 0.0,
+          "human_collision_rate": 0.42,
+          "mean_episode_reward": -89.65403726968898
+        },
+        {
+          "requested_steps": 200000,
+          "actual_steps": 200000,
+          "task_success_rate": 0.04,
+          "collision_free_success_rate": 0.04,
+          "human_collision_rate": 0.6,
+          "mean_episode_reward": -85.47049715856093
+        },
+        {
+          "requested_steps": 400000,
+          "actual_steps": 400000,
+          "task_success_rate": 0.0,
+          "collision_free_success_rate": 0.0,
+          "human_collision_rate": 0.4,
+          "mean_episode_reward": -75.69558991642485
+        },
+        {
+          "requested_steps": 600000,
+          "actual_steps": 600000,
+          "task_success_rate": 0.0,
+          "collision_free_success_rate": 0.0,
+          "human_collision_rate": 0.56,
+          "mean_episode_reward": -119.24481143697338
+        },
+        {
+          "requested_steps": 1000000,
+          "actual_steps": 1000000,
+          "task_success_rate": 0.42,
+          "collision_free_success_rate": 0.42,
+          "human_collision_rate": 0.22,
+          "mean_episode_reward": 66.03210900728718
+        },
+        {
+          "requested_steps": 1500000,
+          "actual_steps": 1500000,
+          "task_success_rate": 0.82,
+          "collision_free_success_rate": 0.82,
+          "human_collision_rate": 0.08,
+          "mean_episode_reward": 222.90552994145335
+        },
+        {
+          "requested_steps": 2000000,
+          "actual_steps": 2000000,
+          "task_success_rate": 0.82,
+          "collision_free_success_rate": 0.82,
+          "human_collision_rate": 0.04,
+          "mean_episode_reward": 213.90262773952102
+        }
+      ],
+      "threshold_steps": {
+        "first_nonzero": 200000,
+        "50_percent": 1500000,
+        "70_percent": 1500000,
+        "80_percent": 1500000
+      },
+      "success_auc_raw_step_fraction": 810000.0,
+      "success_auc_normalized_100k_to_2m": 0.4263157894736842,
+      "final_collision_free_success_rate": 0.82,
+      "final_human_collision_rate": 0.04
+    },
+    "full_random": {
+      "points": [
+        {
+          "requested_steps": 100000,
+          "actual_steps": 100000,
+          "task_success_rate": 0.0,
+          "collision_free_success_rate": 0.0,
+          "human_collision_rate": 0.3,
+          "mean_episode_reward": -102.74734589453847
+        },
+        {
+          "requested_steps": 200000,
+          "actual_steps": 200000,
+          "task_success_rate": 0.0,
+          "collision_free_success_rate": 0.0,
+          "human_collision_rate": 0.22,
+          "mean_episode_reward": -83.20702119269876
+        },
+        {
+          "requested_steps": 400000,
+          "actual_steps": 400000,
+          "task_success_rate": 0.02,
+          "collision_free_success_rate": 0.02,
+          "human_collision_rate": 0.16,
+          "mean_episode_reward": -67.01326310386925
+        },
+        {
+          "requested_steps": 600000,
+          "actual_steps": 600000,
+          "task_success_rate": 0.0,
+          "collision_free_success_rate": 0.0,
+          "human_collision_rate": 0.26,
+          "mean_episode_reward": -79.0023638816141
+        },
+        {
+          "requested_steps": 1000000,
+          "actual_steps": 1000000,
+          "task_success_rate": 0.06,
+          "collision_free_success_rate": 0.06,
+          "human_collision_rate": 0.26,
+          "mean_episode_reward": -53.541090012485576
+        },
+        {
+          "requested_steps": 1500000,
+          "actual_steps": 1500000,
+          "task_success_rate": 0.82,
+          "collision_free_success_rate": 0.82,
+          "human_collision_rate": 0.08,
+          "mean_episode_reward": 222.3036720585735
+        },
+        {
+          "requested_steps": 2000000,
+          "actual_steps": 2000000,
+          "task_success_rate": 0.94,
+          "collision_free_success_rate": 0.94,
+          "human_collision_rate": 0.06,
+          "mean_episode_reward": 257.94180663491807
+        }
+      ],
+      "threshold_steps": {
+        "first_nonzero": 400000,
+        "50_percent": 1500000,
+        "70_percent": 1500000,
+        "80_percent": 1500000
+      },
+      "success_auc_raw_step_fraction": 675999.9999999999,
+      "success_auc_normalized_100k_to_2m": 0.3557894736842105,
+      "final_collision_free_success_rate": 0.94,
+      "final_human_collision_rate": 0.06
+    }
+  }
+}

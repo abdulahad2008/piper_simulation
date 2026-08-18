@@ -1,0 +1,7 @@
+{
+  "reference_run": "human_aware_sac_v1",
+  "run_name": "human_aware_curriculum_s1",
+  "differences": [],
+  "invalid_differences": [],
+  "valid": true
+}

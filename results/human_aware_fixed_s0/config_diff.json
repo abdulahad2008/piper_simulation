@@ -1,0 +1,117 @@
+{
+  "reference": "runs/human_aware_random_full_s0/config.json",
+  "proposed": "human_aware_fixed_s0",
+  "differences": [
+    {
+      "path": "args.human_preset",
+      "before": "randomized",
+      "after": "fixed-exact-h036-v1",
+      "classification": "intended_human_distribution_change"
+    },
+    {
+      "path": "args.run_name",
+      "before": "human_aware_random_full_s0",
+      "after": "human_aware_fixed_s0",
+      "classification": "intended_human_distribution_change"
+    },
+    {
+      "path": "env.human_distribution",
+      "before": "training_id",
+      "after": "fixed_exact_h036_v1",
+      "classification": "intended_human_distribution_change"
+    },
+    {
+      "path": "env.human_motion.appearance_time_range",
+      "before": [
+        0.6,
+        2.2
+      ],
+      "after": [
+        1.0,
+        1.0
+      ],
+      "classification": "intended_human_distribution_change"
+    },
+    {
+      "path": "env.human_motion.closest_task_approach",
+      "before": [
+        0.04,
+        0.14
+      ],
+      "after": [
+        0.08,
+        0.08
+      ],
+      "classification": "intended_human_distribution_change"
+    },
+    {
+      "path": "env.human_motion.end_position_jitter",
+      "before": 0.05,
+      "after": 0.0,
+      "classification": "intended_human_distribution_change"
+    },
+    {
+      "path": "env.human_motion.hand_height",
+      "before": [
+        0.3,
+        0.42
+      ],
+      "after": [
+        0.36,
+        0.36
+      ],
+      "classification": "intended_human_distribution_change"
+    },
+    {
+      "path": "env.human_motion.pause_probability",
+      "before": 0.25,
+      "after": 0.0,
+      "classification": "intended_human_distribution_change"
+    },
+    {
+      "path": "env.human_motion.reverse_probability",
+      "before": 0.15,
+      "after": 0.0,
+      "classification": "intended_human_distribution_change"
+    },
+    {
+      "path": "env.human_motion.speed_range",
+      "before": [
+        0.16,
+        0.32
+      ],
+      "after": [
+        0.22,
+        0.22
+      ],
+      "classification": "intended_human_distribution_change"
+    },
+    {
+      "path": "env.human_motion.start_sides",
+      "before": [
+        -1,
+        1
+      ],
+      "after": [
+        1
+      ],
+      "classification": "intended_human_distribution_change"
+    },
+    {
+      "path": "env.human_motion.trajectory_types",
+      "before": [
+        "cross_workspace",
+        "reach_object",
+        "reach_target",
+        "pause_and_continue",
+        "reverse"
+      ],
+      "after": [
+        "cross_workspace"
+      ],
+      "classification": "intended_human_distribution_change"
+    }
+  ],
+  "invalid_count": 0,
+  "valid": true
+}
