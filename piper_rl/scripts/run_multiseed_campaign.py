@@ -14,6 +14,7 @@ import copy
 import csv
 import hashlib
 import json
+import math
 import os
 import random
 import re
@@ -337,6 +338,69 @@ def run_logged(command: list[str], log_path: Path) -> None:
         raise RuntimeError(f"command failed ({completed.returncode}); see {log_path}")
 
 
+def training_status(spec: RunSpec, started: float) -> dict[str, Any]:
+    """Read compact, non-mutating progress evidence from TensorBoard/checkpoints."""
+    run = run_dir(spec)
+    observed, values = 0, {}
+    try:
+        from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
+        for event in (run / "tb").glob("**/events.out.tfevents.*"):
+            accumulator = EventAccumulator(str(event))
+            accumulator.Reload()
+            for tag in accumulator.Tags().get("scalars", []):
+                events = accumulator.Scalars(tag)
+                if events:
+                    observed = max(observed, max(event.step for event in events))
+                    values[tag] = events[-1].value
+    except Exception as exc:
+        values["status_reader_error"] = str(exc)
+    durable = max((int(match.group(1)) for path in (run / "checkpoints").glob("piper_*_steps.zip")
+                   if (match := re.fullmatch(r"piper_(\d+)_steps\.zip", path.name))), default=0)
+    elapsed = time.monotonic() - started
+    rate = observed / elapsed if observed and elapsed else 0.0
+    eta = (2_000_000 - observed) / rate if rate > 0 else None
+    tracked = [value for key, value in values.items() if key != "status_reader_error"]
+    finite = bool(tracked) and all(math.isfinite(float(value)) for value in tracked)
+    return {
+        "at": now(), "active_run": spec.run_name,
+        "confirmed_timestep": durable, "observed_tensorboard_timestep": observed,
+        "percent_complete": durable / 20_000.0,
+        "fps": values.get("time/fps"), "elapsed_seconds": elapsed,
+        "estimated_remaining_seconds": eta,
+        "latest_success_rate": values.get("rollout/success_rate"),
+        "latest_collision_rate": values.get("rollout/human_collision_rate"),
+        "finite_values": finite,
+    }
+
+
+def run_training_logged(spec: RunSpec, current: dict, command: list[str], log_path: Path) -> None:
+    """Run one training job while recording an atomic, 30-minute health heartbeat."""
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    status_path = log_path.with_name("training_status.jsonl")
+    started = time.monotonic()
+    with log_path.open("w", encoding="utf-8") as log:
+        log.write("COMMAND: " + subprocess.list2cmdline(command) + "\n")
+        log.flush()
+        process = subprocess.Popen(command, stdout=log, stderr=subprocess.STDOUT, text=True)
+        while process.poll() is None:
+            snapshot = training_status(spec, started)
+            with status_path.open("a", encoding="utf-8") as status_log:
+                status_log.write(json.dumps(snapshot, sort_keys=True) + "\n")
+            set_status(current, spec, "training", last_training_status=snapshot)
+            if not snapshot["finite_values"] and snapshot["observed_tensorboard_timestep"]:
+                process.terminate()
+                process.wait(timeout=60)
+                raise RuntimeError("non-finite training values; training process terminated")
+            # The first snapshot is immediate; subsequent inspections are deliberately compact and infrequent.
+            for _ in range(30 * 60):
+                if process.poll() is not None:
+                    break
+                time.sleep(1)
+        returncode = process.returncode
+    if returncode:
+        raise RuntimeError(f"command failed ({returncode}); see {log_path}")
+
+
 def run_is_trained(spec: RunSpec) -> bool:
     run = run_dir(spec)
     required = [run / "best" / "best_model.zip", run / "final_model.zip",
@@ -501,7 +565,7 @@ def run_one(spec: RunSpec, current: dict) -> None:
     if not run_is_trained(spec):
         set_status(current, spec, "training", training_started_at=now(), command=training_command(spec))
         t0 = time.monotonic()
-        run_logged(training_command(spec), result_dir(spec) / "logs" / "training.log")
+        run_training_logged(spec, current, training_command(spec), result_dir(spec) / "logs" / "training.log")
         duration = time.monotonic() - t0
     else:
         duration = current["runs"][spec.run_name].get("duration_seconds", 0.0)
@@ -563,6 +627,17 @@ def curve_rows(method: str, seed: int) -> list[dict]:
     return rows
 
 
+def required_heldout_directory(run_name: str) -> Path:
+    """Use a separately labelled required suite when recovery preserved prior results."""
+    result = Path("results") / run_name
+    summary = result / "training_summary.json"
+    if summary.exists():
+        declared = load_json(summary).get("required_heldout_dir")
+        if declared:
+            return result / declared
+    return result / "heldout"
+
+
 def milestones(rows: list[dict]) -> dict:
     values = np.asarray([row["task_success_rate"] for row in rows], dtype=float)
     steps = np.asarray([row["step"] for row in rows], dtype=float)
@@ -588,8 +663,9 @@ def aggregate() -> None:
     for method in ("fixed", "curriculum", "full_random"):
         for seed in (0, 1, 2):
             paths = source0[method] if seed == 0 else {
-                name: Path("results") / f"human_aware_{'random_full' if method == 'full_random' else method}_s{seed}"
-                      / "heldout" / f"{name}.json" for name, *_ in EVALUATIONS}
+                name: required_heldout_directory(
+                    f"human_aware_{'random_full' if method == 'full_random' else method}_s{seed}") / f"{name}.json"
+                for name, *_ in EVALUATIONS}
             for name, path in paths.items():
                 summary = load_json(path)["summary"]
                 records.append({"method": method, "training_seed": seed, "distribution": name, **summary})
