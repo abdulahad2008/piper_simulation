@@ -1,0 +1,17 @@
+{
+  "callback_best": {
+    "path": "runs\\human_aware_fixed_s1\\best\\best_model.zip",
+    "sha256": "17a87587cc1bd065d7832cc46ff13f412ee1a5b88014f618d84728ed85e7fbcf",
+    "bytes": 3767789
+  },
+  "final": {
+    "path": "runs\\human_aware_fixed_s1\\final_model.zip",
+    "sha256": "a58158ef4ddfe91db948b9bdae59e88f01189c5ce95f800a2cca3626bec31d1b",
+    "bytes": 3767773
+  },
+  "selected_common_id": {
+    "path": "runs\\human_aware_fixed_s1\\selected_common_id_model.zip",
+    "sha256": "a58158ef4ddfe91db948b9bdae59e88f01189c5ce95f800a2cca3626bec31d1b",
+    "bytes": 3767773
+  }
+}

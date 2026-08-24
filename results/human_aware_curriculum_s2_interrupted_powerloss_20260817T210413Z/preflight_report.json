@@ -1,0 +1,37 @@
+{
+  "run_name": "human_aware_curriculum_s2",
+  "method": "curriculum",
+  "seed": 2,
+  "resets": 80,
+  "seed_propagation": {
+    "python_random": 2,
+    "numpy_global": 2,
+    "torch": 2,
+    "gymnasium_reset_seed_pattern": "2*100000+offset",
+    "training_entry_point": "SAC(seed=seed), build_vec_env(seed=seed), Monitor/action-space seeded per rank",
+    "evaluation_entry_point": "deterministic fixed seed protocol in evaluate_human_aware.py"
+  },
+  "sampled_trajectory_types": [
+    "cross_workspace",
+    "pause_and_continue",
+    "reach_object",
+    "reach_target",
+    "reverse"
+  ],
+  "unique_active_fingerprints": 20,
+  "unique_object_positions": 80,
+  "unique_target_positions": 80,
+  "checks": {
+    "finite_observations_actions_rewards": true,
+    "initial_robot_human_contact_free": true,
+    "human_state_included": true,
+    "manipulation_curriculum_enabled": true,
+    "object_randomization_varies": true,
+    "target_randomization_varies": true,
+    "no_ood_distribution": true,
+    "curriculum_starts_at_reference_difficulty": true,
+    "curriculum_distribution": true,
+    "training_types_match_reference": true
+  },
+  "valid": true
+}

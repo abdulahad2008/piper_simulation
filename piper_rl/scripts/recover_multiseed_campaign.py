@@ -139,6 +139,62 @@ def archive_curriculum_s2() -> None:
     print(json.dumps(history[-1], indent=2))
 
 
+def archive_inexact_random_full_s2() -> None:
+    """Preserve a completed but protocol-ineligible resumed seed-2 run.
+
+    The campaign requires clean runs because it cannot restore worker/callback
+    RNG state exactly.  A model completed through ``--resume`` is useful
+    supplemental evidence, but must not occupy the preregistered seed-2 slot.
+    """
+    spec = next(item for item in campaign.SPECS if item.run_name == "human_aware_random_full_s2")
+    source_run, source_result = campaign.run_dir(spec), campaign.result_dir(spec)
+    if not campaign.run_is_trained(spec):
+        raise RuntimeError("random_full_s2 is not an intact completed run")
+    actual = campaign.load_json(source_run / "config.json").get("args", {})
+    if not actual.get("resume"):
+        raise RuntimeError("refusing to archive random_full_s2: it is not a resumed run")
+    stamp = timestamp()
+    archived_run = source_run.with_name(f"{source_run.name}_inexact_resume_{stamp}")
+    archived_result = source_result.with_name(f"{source_result.name}_inexact_resume_{stamp}")
+    if archived_run.exists() or archived_result.exists():
+        raise RuntimeError("timestamp collision while preserving inexact resumed artifacts")
+    before = {
+        "run": inventory(source_run),
+        "result": inventory(source_result) if source_result.exists() else [],
+    }
+    shutil.move(str(source_run), str(archived_run))
+    if source_result.exists():
+        shutil.move(str(source_result), str(archived_result))
+    preserved = {
+        "schema": "piper_human_aware_inexact_resume_preservation_v1",
+        "reason": "completed via checkpoint/replay-buffer continuation; worker and callback state were not exactly restorable",
+        "archived_at": datetime.now(timezone.utc).isoformat(),
+        "classification": "supplemental evidence only; excluded from the preregistered multiseed campaign",
+        "saved_args": actual,
+        "original_inventory": before,
+    }
+    atomic_json(archived_result / "PRESERVATION_MANIFEST.json", preserved)
+    state = campaign.state()
+    record = state["runs"][spec.run_name]
+    history = record.setdefault("inexact_resume_history", [])
+    history.append({
+        "preserved_at": preserved["archived_at"],
+        "status": "inexact_resume_preserved",
+        "run_archive": str(archived_run),
+        "result_archive": str(archived_result),
+        "reason": preserved["reason"],
+        "classification": preserved["classification"],
+    })
+    record["status"] = "awaiting_clean_restart"
+    record["preserved_inexact_resume_artifacts"] = history[-1]
+    state.setdefault("recovery", {}).setdefault("audit_summary", {})["random_full_s2"] = {
+        "status": "awaiting_clean_restart",
+        "action": "archive inexact continuation and clean retrain",
+    }
+    save_state(state)
+    print(json.dumps(history[-1], indent=2))
+
+
 def reeval_random_full_s1_final() -> None:
     """Run locked held-out tests on the final 2M policy without touching callback-best outputs."""
     spec = next(item for item in campaign.SPECS if item.run_name == "human_aware_random_full_s1")
@@ -223,11 +279,14 @@ def main() -> int:
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--reevaluate-random-full-s1-final", action="store_true")
     group.add_argument("--archive-curriculum-s2", action="store_true")
+    group.add_argument("--archive-inexact-random-full-s2", action="store_true")
     args = parser.parse_args()
     if args.reevaluate_random_full_s1_final:
         reeval_random_full_s1_final()
-    else:
+    elif args.archive_curriculum_s2:
         archive_curriculum_s2()
+    else:
+        archive_inexact_random_full_s2()
     return 0
 
 

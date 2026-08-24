@@ -1,0 +1,35 @@
+{
+  "run_name": "human_aware_fixed_s2",
+  "method": "fixed",
+  "seed": 2,
+  "resets": 200,
+  "seed_propagation": {
+    "python_random": 2,
+    "numpy_global": 2,
+    "torch": 2,
+    "gymnasium_reset_seed_pattern": "2*100000+offset",
+    "training_entry_point": "SAC(seed=seed), build_vec_env(seed=seed), Monitor/action-space seeded per rank",
+    "evaluation_entry_point": "deterministic fixed seed protocol in evaluate_human_aware.py"
+  },
+  "sampled_trajectory_types": [
+    "cross_workspace"
+  ],
+  "unique_active_fingerprints": 1,
+  "unique_object_positions": 200,
+  "unique_target_positions": 200,
+  "checks": {
+    "finite_observations_actions_rewards": true,
+    "initial_robot_human_contact_free": true,
+    "human_state_included": true,
+    "manipulation_curriculum_enabled": true,
+    "object_randomization_varies": true,
+    "target_randomization_varies": true,
+    "no_ood_distribution": true,
+    "all_human_present": true,
+    "one_unique_trajectory_fingerprint": true,
+    "hand_height_exactly_036": true,
+    "human_difficulty_fixed_one": true,
+    "no_human_randomization": true
+  },
+  "valid": true
+}

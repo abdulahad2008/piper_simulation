@@ -29,8 +29,8 @@
     "batch_size": null,
     "learning_rate": null,
     "gradient_steps": null,
-    "torch_threads": null,
-    "learning_starts": null
+    "learning_starts": null,
+    "torch_threads": null
   },
   "env": {
     "model_path": "D:\\Games\\piper_sim\\agilex_piper\\piper_human_task.xml",

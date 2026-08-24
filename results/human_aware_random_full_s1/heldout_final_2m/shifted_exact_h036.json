@@ -1,0 +1,273 @@
+{
+  "summary": {
+    "experiment": "fixed-exact-shifted-h036-v1",
+    "distribution": "fixed_exact_shifted_h036_v1",
+    "episodes": 200,
+    "deterministic_prediction": true,
+    "task_success_rate": 0.67,
+    "task_success_95ci": [
+      0.602165564130804,
+      0.7314267938569671
+    ],
+    "collision_free_success_rate": 0.67,
+    "human_collision_rate": 0.325,
+    "human_collision_95ci": [
+      0.2639146705018621,
+      0.39268143156955027
+    ],
+    "near_miss_rate": 0.33,
+    "mean_minimum_separation": 0.11135330298018943,
+    "median_minimum_separation": 0.13555627838322457,
+    "p05_minimum_separation": -0.0002543957443032669,
+    "worst_minimum_separation": -0.026802656436527468,
+    "mean_completion_time_successes": 2.583955223880597,
+    "mean_episode_duration": 3.4277499999999996,
+    "mean_episode_length": 68.555,
+    "mean_placement_error": 0.09569948155143254,
+    "median_placement_error": 0.03324742342685421,
+    "p90_placement_error": 0.34764582350283596,
+    "grasp_rate": 0.965,
+    "lift_rate": 0.665,
+    "mean_safety_interventions": 59.745,
+    "mean_safety_clamped_steps": 59.745,
+    "mean_safety_clamp_rate": 0.8637500835622379,
+    "mean_proximity_steps": 11.035,
+    "mean_waiting_steps": 8.895,
+    "mean_waiting_time": 0.44475000000000003,
+    "mean_episode_reward": 156.26174302721193,
+    "mean_human_safety_cost": 40.89712478384655
+  },
+  "config": {
+    "model_path": "D:\\Games\\piper_sim\\agilex_piper\\piper_human_task.xml",
+    "control_hz": 20.0,
+    "action_mode": "cartesian",
+    "max_step_dist": 0.03,
+    "max_step_yaw": 0.2,
+    "max_step_joint": 0.06,
+    "action_smoothing": 0.45,
+    "max_episode_steps": 200,
+    "terminate_on_success": true,
+    "terminate_on_drop": false,
+    "terminate_on_object_lost": true,
+    "terminate_on_unsafe": true,
+    "obs_mode": "state",
+    "camera_name": "forehead",
+    "camera_width": 84,
+    "camera_height": 84,
+    "render_camera": "overview",
+    "render_width": 640,
+    "render_height": 480,
+    "curriculum": false,
+    "p_start_reaching": 1.0,
+    "p_start_near_object": 0.0,
+    "p_start_grasped": 0.0,
+    "p_start_over_target": 0.0,
+    "phase_step_fraction": {
+      "reach": 1.0,
+      "near": 0.6,
+      "grasped": 0.5,
+      "over_target": 0.35
+    },
+    "seed": null,
+    "domain_rand": {
+      "enabled": true,
+      "obj_radius": [
+        0.3,
+        0.39
+      ],
+      "obj_azimuth": [
+        -0.73,
+        -0.17
+      ],
+      "obj_yaw": [
+        -3.141592653589793,
+        3.141592653589793
+      ],
+      "hard_corner_frac": 0.0,
+      "hard_radius_lo": 0.7,
+      "hard_azimuth_hi": 0.5,
+      "obj_radius_scale": [
+        0.85,
+        1.15
+      ],
+      "obj_height_scale": [
+        0.85,
+        1.15
+      ],
+      "obj_mass": [
+        0.03,
+        0.12
+      ],
+      "obj_friction": [
+        0.8,
+        2.0
+      ],
+      "obj_rgba_jitter": 0.35,
+      "target_radius": [
+        0.3,
+        0.39
+      ],
+      "target_azimuth": [
+        0.17,
+        0.73
+      ],
+      "table_friction": [
+        0.6,
+        1.4
+      ],
+      "table_rgba_jitter": 0.15,
+      "light_pos_jitter": 0.45,
+      "light_diffuse": [
+        0.45,
+        1.05
+      ],
+      "actuator_kp_scale": [
+        0.8,
+        1.25
+      ],
+      "actuator_kv_scale": [
+        0.8,
+        1.25
+      ],
+      "joint_damping_scale": [
+        0.7,
+        1.4
+      ],
+      "joint_frictionloss_scale": [
+        0.5,
+        1.6
+      ],
+      "init_qpos_jitter": 0.06
+    },
+    "noise": {
+      "enabled": true,
+      "joint_pos_noise": 0.003,
+      "joint_vel_noise": 0.02,
+      "gripper_pos_noise": 0.0008,
+      "obj_pos_noise": 0.006,
+      "obj_rot_noise": 0.05,
+      "target_pos_noise": 0.004,
+      "obs_latency_steps": 1,
+      "action_noise": 0.004,
+      "command_dropout": 0.01,
+      "camera_gauss_noise": 0.02,
+      "camera_latency_steps": 1,
+      "camera_brightness_jitter": 0.15
+    },
+    "reward": {
+      "w_reach": 40.0,
+      "w_align": 0.4,
+      "reach_thresh": 0.035,
+      "bonus_touch": 3.0,
+      "bonus_grasp": 25.0,
+      "w_grip_shaping": 2.0,
+      "bonus_lift": 25.0,
+      "w_lift": 80.0,
+      "lift_height": 0.06,
+      "w_transport": 45.0,
+      "bonus_over_target": 12.0,
+      "bonus_success": 200.0,
+      "w_precision": 0.0,
+      "place_tol_xy": 0.045,
+      "place_tol_z": 0.02,
+      "settle_vel": 0.05,
+      "w_time": 0.02,
+      "w_action": 0.01,
+      "w_action_rate": 0.05,
+      "w_joint_vel": 0.01,
+      "w_collision": 0.75,
+      "pen_drop": 25.0,
+      "pen_object_lost": 180.0,
+      "pen_unsafe": 50.0,
+      "w_retreat": 10.0
+    },
+    "limits": {
+      "max_joint_vel": 1.0,
+      "max_joint_accel": 20.0,
+      "gripper_range": [
+        0.0,
+        0.035
+      ],
+      "max_gripper_vel": 0.15,
+      "max_tcp_speed": 0.6,
+      "ws_radius": [
+        0.1,
+        0.46
+      ],
+      "ws_azimuth": [
+        -1.05,
+        1.05
+      ],
+      "ws_height": [
+        0.215,
+        0.62
+      ],
+      "table_top": 0.2,
+      "tcp_table_clearance": 0.015,
+      "max_contact_force": 40.0,
+      "max_joint_torque": 60.0
+    },
+    "human_enabled": true,
+    "human_episode_probability": 1.0,
+    "include_human_state": true,
+    "human_position_noise": 0.0,
+    "human_velocity_noise": 0.0,
+    "human_observation_latency_steps": 0,
+    "human_difficulty": 1.0,
+    "human_distribution": "fixed_exact_shifted_h036_v1",
+    "human_motion": {
+      "trajectory_types": [
+        "cross_workspace"
+      ],
+      "appearance_time_range": [
+        0.8,
+        0.8
+      ],
+      "speed_range": [
+        0.24,
+        0.24
+      ],
+      "start_sides": [
+        1
+      ],
+      "end_position_jitter": 0.0,
+      "closest_task_approach": [
+        0.07,
+        0.07
+      ],
+      "pause_probability": 0.0,
+      "pause_duration_range": [
+        0.35,
+        1.1
+      ],
+      "reverse_probability": 0.0,
+      "max_hand_speed": 0.4,
+      "parked_y": 0.62,
+      "hand_height": [
+        0.36,
+        0.36
+      ]
+    },
+    "human_safety": {
+      "safe_separation_distance": 0.12,
+      "near_miss_distance": 0.06,
+      "proximity_penalty_weight": 2.0,
+      "human_collision_penalty": 100.0,
+      "terminate_on_human_collision": true,
+      "time_penalty": 0.0
+    }
+  },
+  "arguments": {
+    "model": "runs\\human_aware_random_full_s1\\final_model.zip",
+    "algo": "sac",
+    "experiment": "fixed-exact-shifted-h036-v1",
+    "episodes": 200,
+    "seed": 32000,
+    "out": "results\\human_aware_random_full_s1\\heldout_final_2m\\shifted_exact_h036",
+    "video": null,
+    "video_episodes": 1,
+    "camera": "overview",
+    "stochastic": false,
+    "no_human_state": false
+  }
+}

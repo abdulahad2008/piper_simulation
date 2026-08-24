@@ -1,0 +1,179 @@
+{
+  "schema": "piper_human_aware_interrupted_run_preservation_v1",
+  "reason": "power loss; no replay buffer or complete deterministic worker/callback state",
+  "archived_at": "2026-08-19T21:52:57.940985+00:00",
+  "classification": "archival evidence only; not a research result and not resumable",
+  "last_confirmed_tensorboard_timestep": 1174920,
+  "last_durable_checkpoint_timestep": 1150000,
+  "original_inventory": {
+    "run": [
+      {
+        "path": "best\\best_model.zip",
+        "bytes": 3767783,
+        "sha256": "3eef16e3ed8b27cebf246d48bb19c6015cc5f738eadb8e59d2c476af53137d5e"
+      },
+      {
+        "path": "checkpoints\\piper_1000000_steps.zip",
+        "bytes": 3767792,
+        "sha256": "5f20b5d5151adc813ebbfa849fe559768d06e8eab6049ae7766d55e09630911a"
+      },
+      {
+        "path": "checkpoints\\piper_100000_steps.zip",
+        "bytes": 3767778,
+        "sha256": "64a0e169a8a98c03f4a86057c13296fd641517ab323bdc882d35d26b4e50523b"
+      },
+      {
+        "path": "checkpoints\\piper_1050000_steps.zip",
+        "bytes": 3767794,
+        "sha256": "8135eaa7687262ffd34460625c53c4f1a8ace4b85f94435f4e2f8edf54b56454"
+      },
+      {
+        "path": "checkpoints\\piper_1100000_steps.zip",
+        "bytes": 3767783,
+        "sha256": "a0a7c24a285a055d5d9996d5fb398895dadfbcbbeecb06aeaa883fd7c290cb91"
+      },
+      {
+        "path": "checkpoints\\piper_1150000_steps.zip",
+        "bytes": 3767783,
+        "sha256": "001388823435149f914ad7d6c2ba17e6c0bb461463dcd70aa00005c57d8e5b81"
+      },
+      {
+        "path": "checkpoints\\piper_150000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "37523e1a7e84d59da463c59b874ba2c7316e8c95577bfa3b0fe3483d66952ec8"
+      },
+      {
+        "path": "checkpoints\\piper_200000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "7398218c7b128f173e39340cfad5bdf5ba15cdf1589e99b32c5a65d13c2eb2f0"
+      },
+      {
+        "path": "checkpoints\\piper_250000_steps.zip",
+        "bytes": 3767790,
+        "sha256": "17d270b134e73e91b20201d5f68ea43204d7eea9e87691daa760a97c515f989b"
+      },
+      {
+        "path": "checkpoints\\piper_300000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "9710f407351787e7ae6744b0776db466bf5af6246df6167880054a021c7b2184"
+      },
+      {
+        "path": "checkpoints\\piper_350000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "ddc169c5851a1e0ab6ec4f08f6b8cfb86f2541e8574803cb1e90bf15099589fb"
+      },
+      {
+        "path": "checkpoints\\piper_400000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "18ab105436ae8e1095e84e444dfa5ff8be192f7da0052e3909ad04980fab44a7"
+      },
+      {
+        "path": "checkpoints\\piper_450000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "f7466ef8ab671c0c96f99373d9429322e9267943167ddb8490fc07c0df6989ff"
+      },
+      {
+        "path": "checkpoints\\piper_500000_steps.zip",
+        "bytes": 3767790,
+        "sha256": "b694fc0e8e12c4b9422588b7bb4550b32d82e6b3176aa6ffcd9ec4ddb72f4347"
+      },
+      {
+        "path": "checkpoints\\piper_50000_steps.zip",
+        "bytes": 3767777,
+        "sha256": "faccf2ec7e4dae3b2838388dd115a36d16d30a40b7efbd3b704621c3b4b80724"
+      },
+      {
+        "path": "checkpoints\\piper_550000_steps.zip",
+        "bytes": 3767790,
+        "sha256": "450482f94c6c5e048f4b4ef2acb8b5d3f27e8f48625d8a91ceef1ad28028c43e"
+      },
+      {
+        "path": "checkpoints\\piper_600000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "58027d962fab9f48bbbc39754e63570fc45a7cf607f1c489e2fe0d9b5a168641"
+      },
+      {
+        "path": "checkpoints\\piper_650000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "612e4c2fa182abd2579ed04eabd8f3ad2bbd039c51d012d43e6108497c0bcdf4"
+      },
+      {
+        "path": "checkpoints\\piper_700000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "59b9599ed88801b60d18ff2dbb489431c96272e855a584c169fa7cd5478c00a1"
+      },
+      {
+        "path": "checkpoints\\piper_750000_steps.zip",
+        "bytes": 3767790,
+        "sha256": "bafa18996a0af0e0bb76d6d053bdbc18fa3f1701169bcca93dd2a7e441e65146"
+      },
+      {
+        "path": "checkpoints\\piper_800000_steps.zip",
+        "bytes": 3767790,
+        "sha256": "debf9a030c802e270302a6c3d67941bacc0a7f747c73e1cc372cea93a4a8b6e8"
+      },
+      {
+        "path": "checkpoints\\piper_850000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "ff4f5ff629f0e95c303da5d4e2f1e430db64c1df89066c4e69a0ea03db88a532"
+      },
+      {
+        "path": "checkpoints\\piper_900000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "feecd5d2cce48be1efe9c917a036eaa1a4efe34132badc1b60f122a35fef3464"
+      },
+      {
+        "path": "checkpoints\\piper_950000_steps.zip",
+        "bytes": 3767781,
+        "sha256": "e97b9e4a91736533afe68ae8fde732e6aeea6c89e0b72dca34896f051c49f5c0"
+      },
+      {
+        "path": "config.json",
+        "bytes": 6118,
+        "sha256": "cb7126466964353293f4c960a7f933c165f220f08979cfbe168e2f58c7c30d58"
+      },
+      {
+        "path": "eval\\evaluations.npz",
+        "bytes": 16274,
+        "sha256": "fc1f8432d06fee939b1ed89c65d0fef72842f9e8874b5607d749c2d8fc8a5991"
+      },
+      {
+        "path": "m0.monitor.csv",
+        "bytes": 157987,
+        "sha256": "931cf1f339b52dc9859d22e09d885c3d9952bbebe6e1950720c2466ce16fb2c2"
+      },
+      {
+        "path": "m1.monitor.csv",
+        "bytes": 165734,
+        "sha256": "f2623852cea25d37e2e01a0ccc73b755dd134f8d161057e05a9b58563ed8b296"
+      },
+      {
+        "path": "m2.monitor.csv",
+        "bytes": 160457,
+        "sha256": "59a897f332a3176debbc3e314864cf4ff0bf509b1c0421020a81a3ca23fdbec1"
+      },
+      {
+        "path": "m3.monitor.csv",
+        "bytes": 159865,
+        "sha256": "a96adf5ef61691f55cff23f5c001240fd3192a8e83de4734b7c86bfa42bee11b"
+      },
+      {
+        "path": "tb\\SAC_1\\events.out.tfevents.1787122112.WIN-E439EF4B96F.22840.0",
+        "bytes": 2982038,
+        "sha256": "f5e4c841cfcdb03e240f2b4c29fd73d064093b16f497da6b3e7a7249e9f9f35f"
+      }
+    ],
+    "result": [
+      {
+        "path": "logs\\training_clean_s2_20260819_114805.err.log",
+        "bytes": 442,
+        "sha256": "30982e3077916388d4917e6216f6a6f1b141afdcf6431a6b8db77e7626ad848e"
+      },
+      {
+        "path": "logs\\training_clean_s2_20260819_114805.log",
+        "bytes": 3081658,
+        "sha256": "f45ed697d64172b7f5651472c154e14c2bdf92a96c2211ddc5aef71d1194173c"
+      }
+    ]
+  }
+}

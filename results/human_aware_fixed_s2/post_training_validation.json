@@ -1,0 +1,9 @@
+{
+  "final_timestep": 2000000,
+  "eval_values_finite": true,
+  "model_hashes": {
+    "callback_best": "9e2a3515ff09799a5a86978939864a3ab71404f21134e39faa26256bed4aae4a",
+    "final": "b97b391147fcb118b084451131121ed18023eb4cd434167da54b8ff3582022ed"
+  },
+  "config_valid": true
+}

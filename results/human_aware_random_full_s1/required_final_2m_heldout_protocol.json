@@ -1,0 +1,45 @@
+{
+  "required_policy": "final_model.zip at exactly 2,000,000 steps",
+  "model_path": "runs\\human_aware_random_full_s1\\final_model.zip",
+  "model_sha256": "292e2e84e3746fd9ba2f182d82aadabbfb6ea13e43cf73f9750f397de6e98738",
+  "selected_checkpoint": "step_2000000_final_required_heldout",
+  "heldout_test_results_used_for_selection": false,
+  "locked_protocol": [
+    {
+      "name": "no_human",
+      "experiment": "no-human",
+      "episodes": 200,
+      "seed": 30000
+    },
+    {
+      "name": "exact_h036",
+      "experiment": "fixed-exact-h036-v1",
+      "episodes": 200,
+      "seed": 31000
+    },
+    {
+      "name": "constrained_fixed_height_randomized",
+      "experiment": "fixed",
+      "episodes": 200,
+      "seed": 31000
+    },
+    {
+      "name": "shifted_exact_h036",
+      "experiment": "fixed-exact-shifted-h036-v1",
+      "episodes": 200,
+      "seed": 32000
+    },
+    {
+      "name": "randomized_id",
+      "experiment": "randomized-id",
+      "episodes": 500,
+      "seed": 40000
+    },
+    {
+      "name": "ood",
+      "experiment": "ood",
+      "episodes": 500,
+      "seed": 50000
+    }
+  ]
+}
