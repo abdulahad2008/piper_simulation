@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\Games\piper_sim\piper_rl\scripts\run_recovered_multiseed_campaign.py", line 17, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "D:\Games\piper_sim\piper_rl\scripts\run_recovered_multiseed_campaign.py", line 10, in main
+    status = campaign.main(["--all"])
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Games\piper_sim\piper_rl\scripts\run_multiseed_campaign.py", line 761, in main
+    run_one(spec, current)
+  File "D:\Games\piper_sim\piper_rl\scripts\run_multiseed_campaign.py", line 568, in run_one
+    run_training_logged(spec, current, training_command(spec), result_dir(spec) / "logs" / "training.log")
+  File "D:\Games\piper_sim\piper_rl\scripts\run_multiseed_campaign.py", line 401, in run_training_logged
+    raise RuntimeError(f"command failed ({returncode}); see {log_path}")
+RuntimeError: command failed (1); see results\human_aware_curriculum_s2\logs\training.log

@@ -1,0 +1,124 @@
+{
+  "schema": "piper_human_aware_interrupted_run_preservation_v1",
+  "reason": "power loss; no replay buffer or complete deterministic worker/callback state",
+  "archived_at": "2026-08-14T22:02:16.450763+00:00",
+  "classification": "archival evidence only; not a research result and not resumable",
+  "last_confirmed_tensorboard_timestep": 464904,
+  "last_durable_checkpoint_timestep": 450000,
+  "original_inventory": {
+    "run": [
+      {
+        "path": "best\\best_model.zip",
+        "bytes": 3767780,
+        "sha256": "b855984f2b7a0ffeb8983414aa5ccadf48ab113f5594818c7e9b4c33e957a90b"
+      },
+      {
+        "path": "checkpoints\\piper_100000_steps.zip",
+        "bytes": 3767778,
+        "sha256": "9be9aa7cd79e79256ca394e353dda2c1071614e135e6c034756449627a97b274"
+      },
+      {
+        "path": "checkpoints\\piper_150000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "19cac9ec8e977f216b25e6ee0c8fd14d81a7351b4312fabc2346f8b3685e460e"
+      },
+      {
+        "path": "checkpoints\\piper_200000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "70b25991d2ca82ddf74e12ae63be8ac823b323002ec045030b2fb32ed116cf4e"
+      },
+      {
+        "path": "checkpoints\\piper_250000_steps.zip",
+        "bytes": 3767790,
+        "sha256": "ee0fd9db2564acf096a086e5e7e766648db6414e85d4f86ebd55addf92c9cd14"
+      },
+      {
+        "path": "checkpoints\\piper_300000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "8f3883ba3b21a96af91c6d19fafd5cba0c3cd18e158e07bc233990d3b4478d0e"
+      },
+      {
+        "path": "checkpoints\\piper_350000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "aeb357b61ef269da2700f333fc757c4696fc6c4fff538c0558096ed428fcb5ee"
+      },
+      {
+        "path": "checkpoints\\piper_400000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "b4919f59b26f4175e66cc36e84fce38684a699a73e971f831a888e9962891757"
+      },
+      {
+        "path": "checkpoints\\piper_450000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "e80e7144a92416ad7ff2c0e03bcfc5148c7e499e136ad8941c713c9d5b15189c"
+      },
+      {
+        "path": "checkpoints\\piper_50000_steps.zip",
+        "bytes": 3767777,
+        "sha256": "5b2b3dba89b0df00bf1100f62b15fbedb148c391b6e78e87f88368fb23957020"
+      },
+      {
+        "path": "config.json",
+        "bytes": 6074,
+        "sha256": "ef5339cdfe635101f103fb1ddd868a9353d5622f643f8d569089b56deb5bdd70"
+      },
+      {
+        "path": "eval\\evaluations.npz",
+        "bytes": 7069,
+        "sha256": "02c5bc03d39e387e1c33a00b470fb030fd0a21098b3a16943e1acdaf17cfddc4"
+      },
+      {
+        "path": "m0.monitor.csv",
+        "bytes": 39374,
+        "sha256": "1ec8326de8a44cda2d06d6fd69c10a55aaf1c3cd643ae6fc121cae4dcbba8ba0"
+      },
+      {
+        "path": "m1.monitor.csv",
+        "bytes": 41190,
+        "sha256": "b697afdb93d2c2837bf8d4e3247ffb725d7a27e1bfad8bbad42af659647bbe0e"
+      },
+      {
+        "path": "m2.monitor.csv",
+        "bytes": 39820,
+        "sha256": "edcd2d61d5766c2c76a59e02a52ddb853ae7aaf83c32f27ef6327ad10deb84e8"
+      },
+      {
+        "path": "m3.monitor.csv",
+        "bytes": 40077,
+        "sha256": "caec74b2f7a90565994674898724d5a44d641c77228a1ffb103e131d7f46bd38"
+      },
+      {
+        "path": "tb\\SAC_1\\events.out.tfevents.1786614679.WIN-E439EF4B96F.23300.0",
+        "bytes": 850973,
+        "sha256": "101b1d847c7b2acf18bcf864ccbb6ec34ed4f96a93e650609e58cd4c8e2fd4ce"
+      }
+    ],
+    "result": [
+      {
+        "path": "config.json",
+        "bytes": 6076,
+        "sha256": "4c81475af69f483a9091a62aa91127c164b254daa916224c56fbb2e83844897d"
+      },
+      {
+        "path": "config_diff.json",
+        "bytes": 161,
+        "sha256": "dcf562ea7998975f57fee73a03d7ac250404ad3d993a3f2950ff0207649ba41e"
+      },
+      {
+        "path": "logs\\training.log",
+        "bytes": 871986,
+        "sha256": "d94551da0caa14bb6750c3a24f34f8ccf045a7c90eba45bdc275a920796f966d"
+      },
+      {
+        "path": "logs\\training_status.jsonl",
+        "bytes": 3126,
+        "sha256": "b75e9a6b2cabea49d715e521be8db59c8e800531b7f83e4b48ac076eb2517646"
+      },
+      {
+        "path": "preflight_report.json",
+        "bytes": 1190,
+        "sha256": "272eb1985d71cbe91fca0cd33ef870868bdcd2475537845828876e4b21cfee76"
+      }
+    ]
+  }
+}

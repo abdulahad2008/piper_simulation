@@ -1,0 +1,124 @@
+{
+  "schema": "piper_human_aware_interrupted_run_preservation_v1",
+  "reason": "power loss; no replay buffer or complete deterministic worker/callback state",
+  "archived_at": "2026-08-13T09:50:18.978725+00:00",
+  "classification": "archival evidence only; not a research result and not resumable",
+  "last_confirmed_tensorboard_timestep": 420972,
+  "last_durable_checkpoint_timestep": 400000,
+  "original_inventory": {
+    "run": [
+      {
+        "path": "best\\best_model.zip",
+        "bytes": 3767780,
+        "sha256": "65fea9723a365978d6023e30a3e18b20cc9ee3a4a8fb5d04129049cba35627ba"
+      },
+      {
+        "path": "checkpoints\\piper_100000_steps.zip",
+        "bytes": 3767778,
+        "sha256": "8eb3e306a332e3353e9c61e56788091dd9d4e5dfa4a50d9da1ed30ef78ea7b06"
+      },
+      {
+        "path": "checkpoints\\piper_150000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "77d3694808891175e40b7a568116c02433939630e6549f10b2a8f16095760522"
+      },
+      {
+        "path": "checkpoints\\piper_200000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "39fc7a4cba065d87d29e11a1c1e6bd4428e721cfadc61c63cb3625663501f021"
+      },
+      {
+        "path": "checkpoints\\piper_250000_steps.zip",
+        "bytes": 3767790,
+        "sha256": "10191d83d0cc7265f52b8d030d07f6a74342b73a64462c965ec2dafc1566d26d"
+      },
+      {
+        "path": "checkpoints\\piper_300000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "e067e8a12a6d74083e020c0387f1ed35ac8c486bb7769b8f05584ba5ea6283a4"
+      },
+      {
+        "path": "checkpoints\\piper_350000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "f322f50e6abd6723198b04f8a70e2192669f4349b11efc8985881cbb30a958b7"
+      },
+      {
+        "path": "checkpoints\\piper_400000_steps.zip",
+        "bytes": 3767780,
+        "sha256": "1e23d80a33595a3aeb562fa044920d413f187b6c509a2a2b0b644ec8ecbcf48d"
+      },
+      {
+        "path": "checkpoints\\piper_50000_steps.zip",
+        "bytes": 3767777,
+        "sha256": "6f551ef1a697600f318ada057b884ed6dd591a570ebbd9d91b6e741319659654"
+      },
+      {
+        "path": "config.json",
+        "bytes": 6074,
+        "sha256": "ef5339cdfe635101f103fb1ddd868a9353d5622f643f8d569089b56deb5bdd70"
+      },
+      {
+        "path": "eval\\evaluations.npz",
+        "bytes": 6543,
+        "sha256": "9dd58850c7c4430ef692d83110a5eb0c3a769c888d71fb02975c080810834cff"
+      },
+      {
+        "path": "m0.monitor.csv",
+        "bytes": 35535,
+        "sha256": "ab41030020ac4507a5592197a97027b6bbfef4fc8be3972f656c59fb55a2101e"
+      },
+      {
+        "path": "m1.monitor.csv",
+        "bytes": 36435,
+        "sha256": "6f38063fbd2ee1b15458012dc5fd7de80aaf15f3e9e04f79956ed4e9d3225bc1"
+      },
+      {
+        "path": "m2.monitor.csv",
+        "bytes": 35698,
+        "sha256": "7bfeedbe3d00241775b99abc1022da0a8b71baefbaf858b5d660814870cb438c"
+      },
+      {
+        "path": "m3.monitor.csv",
+        "bytes": 36128,
+        "sha256": "d93f4a80c822f975aaa10bef74050407d4122d36cf33019c8b6c5051c64c079d"
+      },
+      {
+        "path": "tb\\SAC_1\\events.out.tfevents.1786538958.WIN-E439EF4B96F.21452.0",
+        "bytes": 766759,
+        "sha256": "dde65264911c8c376fa94a418b0d5ce7ce63c5b31ed57e1fa5f60da1dea16a7b"
+      }
+    ],
+    "result": [
+      {
+        "path": "config.json",
+        "bytes": 6076,
+        "sha256": "4c81475af69f483a9091a62aa91127c164b254daa916224c56fbb2e83844897d"
+      },
+      {
+        "path": "config_diff.json",
+        "bytes": 161,
+        "sha256": "dcf562ea7998975f57fee73a03d7ac250404ad3d993a3f2950ff0207649ba41e"
+      },
+      {
+        "path": "logs\\recovery_orchestrator.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "logs\\recovery_orchestrator.stderr.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "logs\\training.log",
+        "bytes": 785750,
+        "sha256": "466fd28dc0afe0792754a422d6f330ba251e1bbd09cb3251093c8fe0140fed64"
+      },
+      {
+        "path": "preflight_report.json",
+        "bytes": 1190,
+        "sha256": "272eb1985d71cbe91fca0cd33ef870868bdcd2475537845828876e4b21cfee76"
+      }
+    ]
+  }
+}

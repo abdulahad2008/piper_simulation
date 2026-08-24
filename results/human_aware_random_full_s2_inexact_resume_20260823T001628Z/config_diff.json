@@ -1,0 +1,39 @@
+{
+  "reference_run": "human_aware_random_full_s0",
+  "run_name": "human_aware_random_full_s2",
+  "differences": [
+    {
+      "path": "args.load",
+      "before": null,
+      "after": "runs\\human_aware_random_full_s2\\checkpoints\\piper_100000_steps.zip"
+    },
+    {
+      "path": "args.resume",
+      "before": null,
+      "after": "runs\\human_aware_random_full_s2"
+    },
+    {
+      "path": "args.timesteps",
+      "before": 2000000,
+      "after": 1900000
+    }
+  ],
+  "invalid_differences": [
+    {
+      "path": "args.load",
+      "before": null,
+      "after": "runs\\human_aware_random_full_s2\\checkpoints\\piper_100000_steps.zip"
+    },
+    {
+      "path": "args.resume",
+      "before": null,
+      "after": "runs\\human_aware_random_full_s2"
+    },
+    {
+      "path": "args.timesteps",
+      "before": 2000000,
+      "after": 1900000
+    }
+  ],
+  "valid": false
+}

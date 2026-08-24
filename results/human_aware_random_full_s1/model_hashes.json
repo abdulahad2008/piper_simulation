@@ -1,0 +1,23 @@
+{
+  "callback_best": {
+    "path": "runs\\human_aware_random_full_s1\\best\\best_model.zip",
+    "sha256": "e6938c7cf45c5ece721862015551744864e585d206fa896c55af544abc32acc8",
+    "bytes": 3767795
+  },
+  "final": {
+    "path": "runs\\human_aware_random_full_s1\\final_model.zip",
+    "sha256": "292e2e84e3746fd9ba2f182d82aadabbfb6ea13e43cf73f9750f397de6e98738",
+    "bytes": 3767779
+  },
+  "selected_common_id": {
+    "path": "runs\\human_aware_random_full_s1\\selected_common_id_model.zip",
+    "sha256": "e6938c7cf45c5ece721862015551744864e585d206fa896c55af544abc32acc8",
+    "bytes": 3767795
+  },
+  "required_heldout_final_2m": {
+    "path": "runs\\human_aware_random_full_s1\\final_model.zip",
+    "sha256": "292e2e84e3746fd9ba2f182d82aadabbfb6ea13e43cf73f9750f397de6e98738",
+    "bytes": 3767779,
+    "purpose": "locked held-out suite; not used for model selection"
+  }
+}

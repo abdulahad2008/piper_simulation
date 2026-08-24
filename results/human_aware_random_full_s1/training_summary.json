@@ -1,0 +1,352 @@
+{
+  "run_name": "human_aware_random_full_s1",
+  "method": "full_random",
+  "seed": 1,
+  "duration_seconds": 56953.984999999986,
+  "duration_hours": 15.820551388888886,
+  "final_timestep": 2000000,
+  "models": {
+    "callback_best": {
+      "path": "runs\\human_aware_random_full_s1\\best\\best_model.zip",
+      "sha256": "e6938c7cf45c5ece721862015551744864e585d206fa896c55af544abc32acc8",
+      "bytes": 3767795
+    },
+    "final": {
+      "path": "runs\\human_aware_random_full_s1\\final_model.zip",
+      "sha256": "292e2e84e3746fd9ba2f182d82aadabbfb6ea13e43cf73f9750f397de6e98738",
+      "bytes": 3767779
+    },
+    "selected_common_id": {
+      "path": "runs\\human_aware_random_full_s1\\selected_common_id_model.zip",
+      "sha256": "e6938c7cf45c5ece721862015551744864e585d206fa896c55af544abc32acc8",
+      "bytes": 3767795
+    }
+  },
+  "common_selection": {
+    "label": "callback_best",
+    "step": null,
+    "path": "runs\\human_aware_random_full_s1\\selected_common_id_model.zip",
+    "sha256": "e6938c7cf45c5ece721862015551744864e585d206fa896c55af544abc32acc8",
+    "summary": {
+      "experiment": "randomized-id",
+      "distribution": "evaluation_id",
+      "episodes": 50,
+      "deterministic_prediction": true,
+      "task_success_rate": 0.88,
+      "task_success_95ci": [
+        0.7619492111337642,
+        0.9438247628937535
+      ],
+      "collision_free_success_rate": 0.88,
+      "human_collision_rate": 0.08,
+      "human_collision_95ci": [
+        0.031549003255790686,
+        0.18838502545063704
+      ],
+      "near_miss_rate": 0.12,
+      "mean_minimum_separation": 0.26817371101403525,
+      "median_minimum_separation": 0.30653320715208654,
+      "p05_minimum_separation": -0.00013756486478981518,
+      "worst_minimum_separation": -0.0004109060662502301,
+      "mean_completion_time_successes": 2.9443181818181823,
+      "mean_episode_duration": 3.2439999999999998,
+      "mean_episode_length": 64.88,
+      "mean_placement_error": 0.04610462792221847,
+      "median_placement_error": 0.02212644050706066,
+      "p90_placement_error": 0.07675037687619249,
+      "grasp_rate": 1.0,
+      "lift_rate": 0.86,
+      "mean_safety_interventions": 53.16,
+      "mean_safety_clamped_steps": 53.16,
+      "mean_safety_clamp_rate": 0.8052789815150773,
+      "mean_proximity_steps": 3.44,
+      "mean_waiting_steps": 1.68,
+      "mean_waiting_time": 0.084,
+      "mean_episode_reward": 238.38412483285202,
+      "mean_human_safety_cost": 9.94992981689205
+    }
+  },
+  "heldout": {
+    "no_human": {
+      "experiment": "no-human",
+      "distribution": "no_human",
+      "episodes": 200,
+      "deterministic_prediction": true,
+      "task_success_rate": 0.905,
+      "task_success_95ci": [
+        0.8563973488560237,
+        0.9383373863501365
+      ],
+      "collision_free_success_rate": 0.905,
+      "human_collision_rate": 0.0,
+      "human_collision_95ci": [
+        0.0,
+        0.018846005918320894
+      ],
+      "near_miss_rate": 0.0,
+      "mean_minimum_separation": 0.3501356164194155,
+      "median_minimum_separation": 0.35195832570036184,
+      "p05_minimum_separation": 0.2504152779024416,
+      "worst_minimum_separation": 0.2040489832580512,
+      "mean_completion_time_successes": 2.8580110497237565,
+      "mean_episode_duration": 3.5364999999999998,
+      "mean_episode_length": 70.73,
+      "mean_placement_error": 0.03384591886664359,
+      "median_placement_error": 0.017420603813716577,
+      "p90_placement_error": 0.03770200544784721,
+      "grasp_rate": 0.99,
+      "lift_rate": 0.915,
+      "mean_safety_interventions": 57.345,
+      "mean_safety_clamped_steps": 57.345,
+      "mean_safety_clamp_rate": 0.7808966062124054,
+      "mean_proximity_steps": 0.0,
+      "mean_waiting_steps": 0.0,
+      "mean_waiting_time": 0.0,
+      "mean_episode_reward": 258.2900578609203,
+      "mean_human_safety_cost": 0.0
+    },
+    "exact_h036": {
+      "experiment": "fixed-exact-h036-v1",
+      "distribution": "fixed_exact_h036_v1",
+      "episodes": 200,
+      "deterministic_prediction": true,
+      "task_success_rate": 0.855,
+      "task_success_95ci": [
+        0.7995121871510563,
+        0.8971071486469359
+      ],
+      "collision_free_success_rate": 0.855,
+      "human_collision_rate": 0.145,
+      "human_collision_95ci": [
+        0.1028928513530641,
+        0.20048781284894374
+      ],
+      "near_miss_rate": 0.145,
+      "mean_minimum_separation": 0.16261460039188105,
+      "median_minimum_separation": 0.17846380134455253,
+      "p05_minimum_separation": -0.00014448539013519297,
+      "worst_minimum_separation": -0.00038628117620809893,
+      "mean_completion_time_successes": 2.719298245614035,
+      "mean_episode_duration": 3.17125,
+      "mean_episode_length": 63.425,
+      "mean_placement_error": 0.059864514064034376,
+      "median_placement_error": 0.02534789495707684,
+      "p90_placement_error": 0.12159967663701547,
+      "grasp_rate": 0.98,
+      "lift_rate": 0.84,
+      "mean_safety_interventions": 54.32,
+      "mean_safety_clamped_steps": 54.32,
+      "mean_safety_clamp_rate": 0.8450070509579555,
+      "mean_proximity_steps": 5.44,
+      "mean_waiting_steps": 4.715,
+      "mean_waiting_time": 0.23575000000000002,
+      "mean_episode_reward": 227.92797348187435,
+      "mean_human_safety_cost": 17.592109080438107
+    },
+    "constrained_fixed_height_randomized": {
+      "experiment": "fixed",
+      "distribution": "constrained_fixed_height_randomized",
+      "episodes": 200,
+      "deterministic_prediction": true,
+      "task_success_rate": 0.825,
+      "task_success_95ci": [
+        0.7663545078991807,
+        0.8713955882539106
+      ],
+      "collision_free_success_rate": 0.825,
+      "human_collision_rate": 0.16,
+      "human_collision_95ci": [
+        0.11567342208544587,
+        0.2171418619390124
+      ],
+      "near_miss_rate": 0.175,
+      "mean_minimum_separation": 0.15903935563641208,
+      "median_minimum_separation": 0.17685462411014025,
+      "p05_minimum_separation": -0.00015297371745067698,
+      "worst_minimum_separation": -0.0002677024021563307,
+      "mean_completion_time_successes": 2.7233333333333336,
+      "mean_episode_duration": 3.2222500000000003,
+      "mean_episode_length": 64.445,
+      "mean_placement_error": 0.06164639499168958,
+      "median_placement_error": 0.025456394728368723,
+      "p90_placement_error": 0.14924450283331392,
+      "grasp_rate": 0.985,
+      "lift_rate": 0.84,
+      "mean_safety_interventions": 55.415,
+      "mean_safety_clamped_steps": 55.415,
+      "mean_safety_clamp_rate": 0.8512074417022242,
+      "mean_proximity_steps": 6.11,
+      "mean_waiting_steps": 5.075,
+      "mean_waiting_time": 0.25375,
+      "mean_episode_reward": 216.90932622170604,
+      "mean_human_safety_cost": 19.7653406082046
+    },
+    "shifted_exact_h036": {
+      "experiment": "fixed-exact-shifted-h036-v1",
+      "distribution": "fixed_exact_shifted_h036_v1",
+      "episodes": 200,
+      "deterministic_prediction": true,
+      "task_success_rate": 0.67,
+      "task_success_95ci": [
+        0.602165564130804,
+        0.7314267938569671
+      ],
+      "collision_free_success_rate": 0.67,
+      "human_collision_rate": 0.325,
+      "human_collision_95ci": [
+        0.2639146705018621,
+        0.39268143156955027
+      ],
+      "near_miss_rate": 0.33,
+      "mean_minimum_separation": 0.11135330298018943,
+      "median_minimum_separation": 0.13555627838322457,
+      "p05_minimum_separation": -0.0002543957443032669,
+      "worst_minimum_separation": -0.026802656436527468,
+      "mean_completion_time_successes": 2.583955223880597,
+      "mean_episode_duration": 3.4277499999999996,
+      "mean_episode_length": 68.555,
+      "mean_placement_error": 0.09569948155143254,
+      "median_placement_error": 0.03324742342685421,
+      "p90_placement_error": 0.34764582350283596,
+      "grasp_rate": 0.965,
+      "lift_rate": 0.665,
+      "mean_safety_interventions": 59.745,
+      "mean_safety_clamped_steps": 59.745,
+      "mean_safety_clamp_rate": 0.8637500835622379,
+      "mean_proximity_steps": 11.035,
+      "mean_waiting_steps": 8.895,
+      "mean_waiting_time": 0.44475000000000003,
+      "mean_episode_reward": 156.26174302721193,
+      "mean_human_safety_cost": 40.89712478384655
+    },
+    "randomized_id": {
+      "experiment": "randomized-id",
+      "distribution": "evaluation_id",
+      "episodes": 500,
+      "deterministic_prediction": true,
+      "task_success_rate": 0.842,
+      "task_success_95ci": [
+        0.8074369672976796,
+        0.8713477936271825
+      ],
+      "collision_free_success_rate": 0.842,
+      "human_collision_rate": 0.07,
+      "human_collision_95ci": [
+        0.05075944317125315,
+        0.09579772876532376
+      ],
+      "near_miss_rate": 0.126,
+      "mean_minimum_separation": 0.2376140734866394,
+      "median_minimum_separation": 0.2679674123525383,
+      "p05_minimum_separation": -4.3848903865505145e-05,
+      "worst_minimum_separation": -0.07041954830007396,
+      "mean_completion_time_successes": 2.906769596199525,
+      "mean_episode_duration": 3.6525,
+      "mean_episode_length": 73.05,
+      "mean_placement_error": 0.05833795667534081,
+      "median_placement_error": 0.020379799411446256,
+      "p90_placement_error": 0.18980397277969058,
+      "grasp_rate": 0.976,
+      "lift_rate": 0.838,
+      "mean_safety_interventions": 60.974,
+      "mean_safety_clamped_steps": 60.974,
+      "mean_safety_clamp_rate": 0.8103220480223382,
+      "mean_proximity_steps": 6.682,
+      "mean_waiting_steps": 5.534,
+      "mean_waiting_time": 0.2767,
+      "mean_episode_reward": 225.03884971654796,
+      "mean_human_safety_cost": 11.769036636732682
+    },
+    "ood": {
+      "experiment": "ood",
+      "distribution": "evaluation_ood",
+      "episodes": 500,
+      "deterministic_prediction": true,
+      "task_success_rate": 0.902,
+      "task_success_95ci": [
+        0.8727933541017654,
+        0.9250764525993884
+      ],
+      "collision_free_success_rate": 0.9,
+      "human_collision_rate": 0.042,
+      "human_collision_95ci": [
+        0.027632099334746148,
+        0.06335205123956134
+      ],
+      "near_miss_rate": 0.096,
+      "mean_minimum_separation": 0.26843948432220727,
+      "median_minimum_separation": 0.3080263097013639,
+      "p05_minimum_separation": 0.01892002797559732,
+      "worst_minimum_separation": -0.07013909350428832,
+      "mean_completion_time_successes": 2.8627494456762745,
+      "mean_episode_duration": 3.2166,
+      "mean_episode_length": 64.332,
+      "mean_placement_error": 0.035375916881283394,
+      "median_placement_error": 0.017092123271450647,
+      "p90_placement_error": 0.04093967361404575,
+      "grasp_rate": 0.97,
+      "lift_rate": 0.904,
+      "mean_safety_interventions": 51.136,
+      "mean_safety_clamped_steps": 51.136,
+      "mean_safety_clamp_rate": 0.7755643486684156,
+      "mean_proximity_steps": 3.834,
+      "mean_waiting_steps": 2.182,
+      "mean_waiting_time": 0.10909999999999999,
+      "mean_episode_reward": 247.58663385441082,
+      "mean_human_safety_cost": 6.381967216995516
+    }
+  },
+  "required_heldout_dir": "heldout_final_2m",
+  "required_heldout_policy": {
+    "required_policy": "final_model.zip at exactly 2,000,000 steps",
+    "model_path": "runs\\human_aware_random_full_s1\\final_model.zip",
+    "model_sha256": "292e2e84e3746fd9ba2f182d82aadabbfb6ea13e43cf73f9750f397de6e98738",
+    "selected_checkpoint": "step_2000000_final_required_heldout",
+    "heldout_test_results_used_for_selection": false,
+    "locked_protocol": [
+      {
+        "name": "no_human",
+        "experiment": "no-human",
+        "episodes": 200,
+        "seed": 30000
+      },
+      {
+        "name": "exact_h036",
+        "experiment": "fixed-exact-h036-v1",
+        "episodes": 200,
+        "seed": 31000
+      },
+      {
+        "name": "constrained_fixed_height_randomized",
+        "experiment": "fixed",
+        "episodes": 200,
+        "seed": 31000
+      },
+      {
+        "name": "shifted_exact_h036",
+        "experiment": "fixed-exact-shifted-h036-v1",
+        "episodes": 200,
+        "seed": 32000
+      },
+      {
+        "name": "randomized_id",
+        "experiment": "randomized-id",
+        "episodes": 500,
+        "seed": 40000
+      },
+      {
+        "name": "ood",
+        "experiment": "ood",
+        "episodes": 500,
+        "seed": 50000
+      }
+    ]
+  },
+  "supplemental_callback_best_1760000": {
+    "model_path": "runs\\human_aware_random_full_s1\\best\\best_model.zip",
+    "model_sha256": "e6938c7cf45c5ece721862015551744864e585d206fa896c55af544abc32acc8",
+    "output_directory": "heldout",
+    "preserved_report": "training_summary_callback_best_1760000.json",
+    "not_campaign_acceptance_evaluation": true
+  }
+}
