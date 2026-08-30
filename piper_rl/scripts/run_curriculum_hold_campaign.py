@@ -1,4 +1,4 @@
-"""Run clean seed-3/4/5 curriculum ramp-and-hold SAC replications.
+"""Run clean curriculum ramp-and-hold SAC replications.
 
 Difficulty increases linearly from 0 to 1 over the first 1.2M environment
 steps, then remains at the full randomized-ID distribution for the final
@@ -24,15 +24,31 @@ from piper_rl.human_config import HumanAwareEnvConfig
 from piper_rl.scripts import run_multiseed_campaign as campaign
 
 
-ROOT = Path("results/human_aware_curriculum_hold_s3_s5")
-STATE_PATH = ROOT / "campaign_state.json"
 RAMP_TIMESTEPS = 1_200_000
 TOTAL_TIMESTEPS = 2_000_000
-SPECS = tuple(
-    campaign.RunSpec("curriculum_hold", seed, f"human_aware_curriculum_hold_s{seed}",
-                     "curriculum", 0.0, "human_aware_sac_v1")
-    for seed in (3, 4, 5)
-)
+DEFAULT_SEEDS = (3, 4, 5)
+ROOT: Path
+STATE_PATH: Path
+SPECS: tuple[campaign.RunSpec, ...]
+
+
+def configure_campaign(seeds: tuple[int, ...]) -> None:
+    """Set the campaign identity before reading or writing its state."""
+    global ROOT, STATE_PATH, SPECS
+    ordered = tuple(sorted(set(seeds)))
+    if not ordered:
+        raise ValueError("at least one seed is required")
+    label = f"s{ordered[0]}_s{ordered[-1]}" if len(ordered) > 1 else f"s{ordered[0]}"
+    ROOT = Path("results") / f"human_aware_curriculum_hold_{label}"
+    STATE_PATH = ROOT / "campaign_state.json"
+    SPECS = tuple(
+        campaign.RunSpec("curriculum_hold", seed, f"human_aware_curriculum_hold_s{seed}",
+                         "curriculum", 0.0, "human_aware_sac_v1")
+        for seed in ordered
+    )
+
+
+configure_campaign(DEFAULT_SEEDS)
 
 
 def now() -> str:
@@ -203,9 +219,15 @@ def run_one(spec: campaign.RunSpec, current: dict[str, Any]) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--run", choices=[spec.run_name for spec in SPECS])
+    parser.add_argument("--run", help="run name to execute; must match --seeds")
     parser.add_argument("--all", action="store_true", help="run every pending seed sequentially")
+    parser.add_argument("--seeds", type=int, nargs="+", default=list(DEFAULT_SEEDS),
+                        help="training seeds for this campaign (default: 3 4 5)")
     args = parser.parse_args(argv)
+    configure_campaign(tuple(args.seeds))
+    run_names = {spec.run_name for spec in SPECS}
+    if args.run and args.run not in run_names:
+        parser.error("--run must name a run implied by --seeds")
     if bool(args.run) == args.all:
         parser.error("choose exactly one of --run or --all")
     current = state()
