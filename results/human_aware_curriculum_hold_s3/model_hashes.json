@@ -1,0 +1,17 @@
+{
+  "callback_best": {
+    "path": "runs\\human_aware_curriculum_hold_s3\\best\\best_model.zip",
+    "sha256": "f98f00e9d56fa6e61f1dab87e6ed128a46f2ed9d765a78f198428997bc2c8b8c",
+    "bytes": 3767800
+  },
+  "final": {
+    "path": "runs\\human_aware_curriculum_hold_s3\\final_model.zip",
+    "sha256": "4f9f7eda942759da92a9bfbc36d1bdb08ed03b4ca150527bda4232d1e3a751dd",
+    "bytes": 3767783
+  },
+  "selected_common_id": {
+    "path": "runs\\human_aware_curriculum_hold_s3\\selected_common_id_model.zip",
+    "sha256": "f98f00e9d56fa6e61f1dab87e6ed128a46f2ed9d765a78f198428997bc2c8b8c",
+    "bytes": 3767800
+  }
+}

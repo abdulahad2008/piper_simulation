@@ -166,6 +166,9 @@ def main(argv=None):
                    help="global curriculum horizon; defaults to --timesteps. "
                         "Set this when warm-starting so the curriculum stays "
                         "on its original global schedule")
+    p.add_argument("--curriculum-ramp-timesteps", type=int, default=None,
+                   help="steps used to ramp human difficulty to its final value; "
+                        "defaults to the curriculum horizon, then holds that value")
     p.add_argument("--n-envs", type=int, default=1,
                    help="parallel environments; SAC/TD3 like 1-4, PPO likes 8+")
     p.add_argument("--seed", type=int, default=0)
@@ -222,6 +225,8 @@ def main(argv=None):
 
     if args.curriculum_total_timesteps is not None and args.curriculum_total_timesteps <= 0:
         p.error("--curriculum-total-timesteps must be positive")
+    if args.curriculum_ramp_timesteps is not None and args.curriculum_ramp_timesteps <= 0:
+        p.error("--curriculum-ramp-timesteps must be positive")
 
     if args.torch_threads:
         torch.set_num_threads(args.torch_threads)
@@ -352,7 +357,8 @@ def main(argv=None):
     if args.task == "human-aware" and args.human_preset == "curriculum":
         callback_items.append(HumanCurriculumCallback(
             total_timesteps=(args.curriculum_total_timesteps or args.timesteps),
-            start=args.human_difficulty, end=1.0))
+            start=args.human_difficulty, end=1.0,
+            ramp_timesteps=args.curriculum_ramp_timesteps))
     cbs = CallbackList(callback_items)
 
     print(f"\n{'='*70}\n{args.algo.upper()}  |  {args.timesteps:,} steps  |  "
