@@ -87,7 +87,8 @@ def set_status(current: dict[str, Any], spec: campaign.RunSpec, status: str,
     save(current)
 
 
-def expected_config(spec: campaign.RunSpec) -> dict[str, Any]:
+def expected_config(spec: campaign.RunSpec,
+                    actual_args: dict[str, Any] | None = None) -> dict[str, Any]:
     reference = campaign.load_json(Path("runs") / spec.reference_run / "config.json")
     args = campaign.normalize_args(copy.deepcopy(reference["args"]))
     args.setdefault("curriculum_total_timesteps", None)
@@ -103,6 +104,26 @@ def expected_config(spec: campaign.RunSpec) -> dict[str, Any]:
         "load": None,
         "resume": None,
     })
+    # A resumed run records the remaining work in its config.  Validate that
+    # form against the checkpoint named by the config instead of treating the
+    # intentional bookkeeping differences as a scientific configuration change.
+    if actual_args and actual_args.get("resume"):
+        resume_dir = str(campaign.run_dir(spec))
+        load = actual_args.get("load")
+        if actual_args.get("resume") != resume_dir or not load:
+            raise RuntimeError(f"invalid resume metadata for {spec.run_name}")
+        checkpoint = Path(load)
+        expected_parent = campaign.run_dir(spec) / "checkpoints"
+        if checkpoint.parent != expected_parent or not checkpoint.exists():
+            raise RuntimeError(f"resume checkpoint is outside this run: {checkpoint}")
+        completed = checkpoint_step(checkpoint)
+        args.update({
+            "timesteps": TOTAL_TIMESTEPS - completed,
+            "curriculum_total_timesteps": TOTAL_TIMESTEPS,
+            "curriculum_ramp_timesteps": RAMP_TIMESTEPS,
+            "load": str(checkpoint),
+            "resume": resume_dir,
+        })
     cfg = HumanAwareEnvConfig.from_preset("curriculum", difficulty=0.0)
     cfg.include_human_state = not args["no_human_state"]
     cfg.action_mode = args["action_mode"]
@@ -113,7 +134,7 @@ def expected_config(spec: campaign.RunSpec) -> dict[str, Any]:
 
 
 def audit_config(spec: campaign.RunSpec, actual: dict[str, Any] | None = None) -> dict[str, Any]:
-    expected = expected_config(spec)
+    expected = expected_config(spec, actual.get("args") if actual else None)
     value = actual or expected
     compared = {
         "args": campaign.normalize_args(value["args"]),
@@ -137,7 +158,7 @@ def audit_config(spec: campaign.RunSpec, actual: dict[str, Any] | None = None) -
 
 
 def training_command(spec: campaign.RunSpec) -> list[str]:
-    return [
+    command = [
         sys.executable, "-B", "-m", "piper_rl.scripts.train",
         "--task", "human-aware", "--human-preset", "curriculum", "--human-difficulty", "0.0",
         "--curriculum-ramp-timesteps", str(RAMP_TIMESTEPS),
@@ -146,6 +167,72 @@ def training_command(spec: campaign.RunSpec) -> list[str]:
         "--eval-freq", "20000", "--n-eval-episodes", "15", "--checkpoint-freq", "50000",
         "--action-mode", "cartesian", "--device", "auto",
     ]
+    checkpoint = resumable_checkpoint(spec)
+    if checkpoint is not None:
+        completed = checkpoint_step(checkpoint)
+        remaining = TOTAL_TIMESTEPS - completed
+        # SB3 interprets total_timesteps as *additional* work when loading a
+        # checkpoint with reset_num_timesteps=False.  Keep the curriculum on
+        # its original global 2M-step clock while doing only the remainder.
+        command[command.index("--timesteps") + 1] = str(remaining)
+        command.extend([
+            "--curriculum-total-timesteps", str(TOTAL_TIMESTEPS),
+            "--resume", str(campaign.run_dir(spec)),
+        ])
+    return command
+
+
+def checkpoint_step(path: Path) -> int:
+    """Return the durable global step encoded in a checkpoint filename."""
+    return int(path.stem.removeprefix("piper_").removesuffix("_steps"))
+
+
+def resumable_checkpoint(spec: campaign.RunSpec) -> Path | None:
+    """Use the newest durable checkpoint for a deliberately interrupted run."""
+    run = campaign.run_dir(spec)
+    if not run.exists() or run_is_trained(spec):
+        return None
+    checkpoints = sorted(run.glob("checkpoints/piper_*_steps.zip"),
+                         key=checkpoint_step)
+    if not checkpoints:
+        raise RuntimeError(f"partial run at {run} has no durable checkpoint")
+    checkpoint = checkpoints[-1]
+    if checkpoint_step(checkpoint) >= TOTAL_TIMESTEPS:
+        raise RuntimeError(f"partial run at {run} has an invalid checkpoint {checkpoint}")
+    return checkpoint
+
+
+def run_is_trained(spec: campaign.RunSpec) -> bool:
+    """Validate a completed hold run, including a resumed evaluation cadence.
+
+    When a run resumes at a checkpoint not aligned to EvalCallback's interval,
+    its last periodic evaluation can occur just before the final global step
+    (seed 6: 1.99M).  The exact 2M checkpoint and final model remain the
+    authoritative proof that training completed.
+    """
+    run = campaign.run_dir(spec)
+    required = [run / "best" / "best_model.zip", run / "final_model.zip",
+                run / "replay_buffer.pkl", run / "config.json",
+                run / "eval" / "evaluations.npz",
+                run / "checkpoints" / f"piper_{TOTAL_TIMESTEPS}_steps.zip"]
+    if not all(path.exists() for path in required):
+        return False
+    values = np.load(run / "eval" / "evaluations.npz")
+    return bool(values["timesteps"].size
+                and int(values["timesteps"][-1]) <= TOTAL_TIMESTEPS
+                and np.isfinite(values["results"]).all())
+
+
+def assert_safe_or_resumable_run(spec: campaign.RunSpec) -> Path | None:
+    """Reject unknown partial directories, but permit this campaign's checkpoint resume."""
+    checkpoint = resumable_checkpoint(spec)
+    if checkpoint is None:
+        if not run_is_trained(spec):
+            campaign.assert_safe_run_directory(spec)
+        return None
+    actual = campaign.load_json(campaign.run_dir(spec) / "config.json")
+    audit_config(spec, actual)
+    return checkpoint
 
 
 def run_training_logged(spec: campaign.RunSpec, current: dict[str, Any], command: list[str]) -> float:
@@ -176,7 +263,7 @@ def run_training_logged(spec: campaign.RunSpec, current: dict[str, Any], command
 
 
 def verify_trained(spec: campaign.RunSpec) -> dict[str, Any]:
-    if not campaign.run_is_trained(spec):
+    if not run_is_trained(spec):
         raise RuntimeError(f"{spec.run_name} did not reach an intact {TOTAL_TIMESTEPS:,}-step state")
     run = campaign.run_dir(spec)
     actual = campaign.load_json(run / "config.json")
@@ -187,7 +274,8 @@ def verify_trained(spec: campaign.RunSpec) -> dict[str, Any]:
         "final": run / "final_model.zip",
     }
     report = {
-        "final_timestep": int(values["timesteps"][-1]),
+        "final_timestep": TOTAL_TIMESTEPS,
+        "last_periodic_evaluation_timestep": int(values["timesteps"][-1]),
         "eval_values_finite": bool(np.isfinite(values["results"]).all()),
         "model_hashes": {name: campaign.sha256(path) for name, path in models.items()},
         "config_valid": audit["valid"],
@@ -197,17 +285,32 @@ def verify_trained(spec: campaign.RunSpec) -> dict[str, Any]:
 
 
 def run_one(spec: campaign.RunSpec, current: dict[str, Any]) -> None:
-    campaign.assert_safe_run_directory(spec)
-    if current["runs"][spec.run_name]["status"] == "completed" and campaign.run_is_trained(spec):
+    resumed_from = assert_safe_or_resumable_run(spec)
+    already_trained = run_is_trained(spec)
+    if current["runs"][spec.run_name]["status"] == "completed" and already_trained:
         return
-    set_status(current, spec, "preflight", started_at=now())
-    audit_config(spec)
-    campaign.preflight(spec)
-    set_status(current, spec, "training", training_started_at=now(), command=training_command(spec))
-    duration = run_training_logged(spec, current, training_command(spec))
-    validation = verify_trained(spec)
-    set_status(current, spec, "trained", training_finished_at=now(), duration_seconds=duration,
-               final_timestep=validation["final_timestep"], model_hashes=validation["model_hashes"])
+    if already_trained:
+        # Recover after post-training orchestration failed; do not retrain an
+        # intact final model merely because its periodic evaluation was offset.
+        duration = float(current["runs"][spec.run_name].get("duration_seconds", 0.0))
+        validation = verify_trained(spec)
+        set_status(current, spec, "trained", training_finished_at=now(), duration_seconds=duration,
+                   recovered_completed_training=True,
+                   final_timestep=validation["final_timestep"], model_hashes=validation["model_hashes"])
+    else:
+        set_status(current, spec, "preflight", started_at=now())
+        audit_config(spec)
+        campaign.preflight(spec)
+        command = training_command(spec)
+        details = {"training_started_at": now(), "command": command}
+        if resumed_from is not None:
+            details["resumed_from_checkpoint"] = str(resumed_from)
+            details["resumed_from_timestep"] = checkpoint_step(resumed_from)
+        set_status(current, spec, "training", **details)
+        duration = run_training_logged(spec, current, command)
+        validation = verify_trained(spec)
+        set_status(current, spec, "trained", training_finished_at=now(), duration_seconds=duration,
+                   final_timestep=validation["final_timestep"], model_hashes=validation["model_hashes"])
     set_status(current, spec, "evaluating", evaluation_started_at=now())
     selection = campaign.common_selection(spec)
     heldout = campaign.heldout_evaluations(spec, selection)
