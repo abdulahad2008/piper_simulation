@@ -104,12 +104,14 @@ class PeriodicDumpCallback(BaseCallback):
 
 
 class HumanCurriculumCallback(BaseCallback):
-    """Linearly raise human difficulty through vector-env ``env_method`` calls."""
+    """Linearly raise difficulty, optionally holding the final stage afterwards."""
 
     def __init__(self, total_timesteps: int, start: float = 0.0,
-                 end: float = 1.0, update_every: int = 5000, verbose: int = 0):
+                 end: float = 1.0, ramp_timesteps: int | None = None,
+                 update_every: int = 5000, verbose: int = 0):
         super().__init__(verbose)
         self.total_timesteps = max(1, int(total_timesteps))
+        self.ramp_timesteps = max(1, int(ramp_timesteps or total_timesteps))
         self.start = float(start)
         self.end = float(end)
         self.update_every = max(1, int(update_every))
@@ -117,7 +119,7 @@ class HumanCurriculumCallback(BaseCallback):
 
     def _on_step(self) -> bool:
         if self.num_timesteps - self._last_update >= self.update_every:
-            progress = min(1.0, self.num_timesteps / self.total_timesteps)
+            progress = min(1.0, self.num_timesteps / self.ramp_timesteps)
             difficulty = self.start + progress * (self.end - self.start)
             self.training_env.env_method("set_human_difficulty", difficulty)
             self.logger.record("rollout/human_difficulty", difficulty)

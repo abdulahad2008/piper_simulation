@@ -1,0 +1,11 @@
+{
+  "reference_run": "human_aware_sac_v1",
+  "run_name": "human_aware_curriculum_hold_s5",
+  "schedule": {
+    "ramp_timesteps": 1200000,
+    "total_timesteps": 2000000
+  },
+  "differences": [],
+  "invalid_differences": [],
+  "valid": true
+}
