@@ -668,12 +668,39 @@ Fourier arm; and $c_{50}$ at $\dmax{=}5$\,mm with default vs.\ tuned
 hyperparameters.}
 \todo{Run and fill; 17 training runs.}
 
-\subsection{Failure attribution}
-\planned{AUC, ICC and top permutation importances per cell. The per-episode
-randomisation vector needed for this is already logged in every archived CSV,
-so the analysis is available for the Phase~0 cells today and for each new cell
-as it lands.}
-\todo{Run and fill.}
+\subsection{Failure attribution, Phase 0 cells}
+\label{sec:attrib-results}
+
+The per-episode randomisation vector is logged for every episode, so this
+analysis is available today for the Phase~0 cells and will be available for each
+new cell as it lands. At $\tau = c_{50}$ --- where by construction half the
+episodes fail --- a five-fold cross-validated classifier of failure on the
+thirteen sampled randomisation and scene variables reaches an AUC of
+$0.65$ (logistic) and $0.61$ (gradient boosting) for $\pi_{v1}$, $0.56$ and
+$0.59$ for $\pi_{v2}$, and $0.58$ and $0.56$ for the softest solver cell. At
+$\tau{=}45$\,mm, where failure means an outright miss rather than an imprecise
+placement, the AUCs are $0.52$--$0.63$. Permutation importance puts the target's
+position in the workspace on top in every cell --- target radius and azimuth for
+$\pi_{v1}$, target azimuth and object width for $\pi_{v2}$ --- and the object's
+mass, friction and the actuator gain scales at or below zero.
+
+The reading is that the residual failures at the floor are \emph{almost}
+irreducible under this randomisation. What structure exists is geometric: where
+in the reachable workspace the object has to be put, not what it weighs or how
+slippery it is or how the actuators were detuned. That is consistent with a
+floor set by the terminal approach rather than by the dynamics, and it is a
+weaker conclusion than either extreme --- the classifier does beat chance, so
+the pre-specified rule ``AUC $<0.6$ and ICC $<0.1$ in every cell, therefore the
+failures are noise'' is not met outright at $\tau = c_{50}$ for $\pi_{v1}$.
+
+\planned{The intra-class correlation is estimated from a nested evaluation of
+$\pi_{v2}$ --- 200 randomisation draws replayed under 10 independent noise
+streams each --- which separates the variance the scene explains from the
+variance the noise explains. The environment supports the split
+(\texttt{options=\{"dr\_seed": k, "noise\_seed": m\}}) and the run is in
+progress.} \todo{Fill the ICC from
+\texttt{paper/generated/failure\_attribution.json}, and state the joint verdict
+against the pre-specified rule.}
 
 % ------------------------------------------------------------------------
 \section{Discussion}

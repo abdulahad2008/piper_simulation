@@ -113,7 +113,18 @@ def _worker(payload):
     rows = []
     for ep in range(lo, hi):
         seed = args.seed + ep
-        obs, _ = env.reset(seed=seed)
+        if args.nested_noise > 1:
+            # Nested design: `nested_noise` independent noise replays of each
+            # scene. The intra-class correlation of the outcome within a scene
+            # is what separates environment-determined failures from
+            # irreducible ones.
+            dr_seed = args.seed + ep // args.nested_noise
+            noise_seed = 900_000 + ep % args.nested_noise
+            obs, _ = env.reset(seed=seed, options={"dr_seed": dr_seed,
+                                                   "noise_seed": noise_seed})
+        else:
+            dr_seed, noise_seed = seed, seed
+            obs, _ = env.reset(seed=seed)
         total_r, steps, info, done = 0.0, 0, {}, False
         while not done and steps < cfg.max_episode_steps:
             if policy is not None:
@@ -130,7 +141,8 @@ def _worker(payload):
         dr = s.get("dr_vector", {})
         solver = s.get("solver", {})
         rows.append({
-            "episode": ep, "seed": seed, "git_hash": gh, "cell": args.tag,
+            "episode": ep, "seed": seed, "dr_seed": dr_seed,
+            "noise_seed": noise_seed, "git_hash": gh, "cell": args.tag,
             "success_at_default_tol": int(bool(s["success"])),
             "grasp": int(bool(s["grasp_success"])),
             "lift": int(bool(s["lift_success"])),
@@ -192,6 +204,9 @@ def main(argv=None):
     p.add_argument("--hard-corner-frac", type=float, default=None)
     p.add_argument("--no-domain-rand", action="store_true")
     p.add_argument("--no-noise", action="store_true")
+    p.add_argument("--nested-noise", type=int, default=1,
+                   help="if > 1, replay every scene this many times under "
+                        "independent noise; --episodes must be a multiple of it")
     args = p.parse_args(argv)
 
     out_dir = Path(args.out_dir)

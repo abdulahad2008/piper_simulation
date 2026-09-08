@@ -159,6 +159,51 @@ def figure_curves(summaries: list[dict], out: Path, title: str) -> None:
     plt.close(fig)
 
 
+def fit_scaling_law(rows: list[dict]) -> dict:
+    """Fit Xu et al.'s form with environment steps in place of demonstrations.
+
+    They report log N  ~  a/(P - c) + b, where N is the number of
+    demonstrations needed to reach precision P and c is the limit precision.
+    The RL analogue replaces N by environment steps and P by the precision
+    actually achieved at that budget, so the curve is read the other way round:
+    for each stored checkpoint we have (steps, achieved precision), and we fit
+
+        log(steps) = a / (P - c) + b,    P = 1 / c50   (mm^-1),
+
+    over the checkpoints that actually solve the task. `c` is then a limit
+    precision in the same units as c50. The fit is reported alongside the
+    model-free c50 and is explicitly the model-DEPENDENT estimator: it is only
+    meaningful if the curve has visibly flattened, which is stated with it.
+    """
+    from scipy.optimize import curve_fit
+
+    usable = [r for r in rows if np.isfinite(r["c50"]) and r["success_45"] > 0.5]
+    if len(usable) < 5:
+        return {"note": f"only {len(usable)} checkpoints solve the task; "
+                        "the scaling-law fit is not attempted"}
+    steps = np.array([r["steps"] for r in usable], float)
+    c50 = np.array([r["c50"] for r in usable], float)
+    P = 1.0 / c50                       # precision, mm^-1
+
+    def f(P_, a, c_inv, b):
+        return a / np.maximum(P_ - c_inv, 1e-6) + b
+
+    try:
+        popt, pcov = curve_fit(f, P, np.log(steps),
+                               p0=[1e-3, 0.9 * P.max(), 10.0], maxfev=20000)
+    except Exception as e:
+        return {"note": f"fit failed: {e}"}
+    a, c_inv, b = popt
+    resid = np.log(steps) - f(P, *popt)
+    ss = 1 - float(np.sum(resid ** 2) / np.sum((np.log(steps) - np.log(steps).mean()) ** 2))
+    c_hat = 1.0 / c_inv if c_inv > 0 else float("inf")
+    return {"c_hat_mm": float(c_hat), "a": float(a), "b": float(b),
+            "r2_log_steps": ss, "n_checkpoints_used": len(usable),
+            "c50_range_mm": [float(c50.min()), float(c50.max())],
+            "caveat": "model-dependent; compare against the model-free c50 and "
+                      "read only if the curve has flattened"}
+
+
 def figure_checkpoints(rows: list[dict], out: Path) -> None:
     import matplotlib
     matplotlib.use("Agg")
@@ -308,7 +353,15 @@ def main(argv=None):
                        "success_45": float(((e <= 45) & v).mean())})
     if ckrows:
         out["checkpoint_curve"] = ckrows
+        out["scaling_law_fit"] = fit_scaling_law(ckrows)
         figure_checkpoints(ckrows, O / "figures" / "checkpoints.pdf")
+        solved = [r for r in ckrows if r["success_45"] > 0.5]
+        if len(solved) >= 3:
+            last = sorted(solved, key=lambda r: r["steps"])[-max(3, len(solved)//3):]
+            out["budget_plateau"] = {
+                "steps_from": last[0]["steps"], "steps_to": last[-1]["steps"],
+                "c50_from": last[0]["c50"], "c50_to": last[-1]["c50"],
+                "delta_c50_mm": last[-1]["c50"] - last[0]["c50"]}
 
     (O / "summary.json").write_text(json.dumps(out, indent=2, default=float))
 

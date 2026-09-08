@@ -32,7 +32,7 @@ from piper_rl.precision.solver import SolverOverride, apply_solver_overrides
 #: tolerance curves and failure attribution read comes from these fields.
 EPISODE_FIELDS = [
     # identity
-    "episode", "seed", "git_hash", "cell",
+    "episode", "seed", "dr_seed", "noise_seed", "git_hash", "cell",
     # outcome
     "success_at_default_tol", "grasp", "lift", "termination", "steps",
     # the precision measurements
@@ -100,8 +100,33 @@ class InstrumentedPiperEnv(PiperPickPlaceEnv):
 
     # ------------------------------------------------------------------ #
     def reset(self, *, seed: Optional[int] = None, options=None):
-        obs, info = super().reset(seed=seed, options=options)
+        """Reset, optionally with the scene draw and the noise stream separated.
+
+        ``options={"dr_seed": k, "noise_seed": m}`` seeds everything drawn at
+        reset -- the randomisation vector, the object pose, the initial joint
+        jitter -- from ``k``, and every per-step observation, action and
+        dropout noise draw from ``m``. That makes the nested design of
+        Sec. "failure attribution" possible: the same physical scene can be
+        replayed under independent noise, which is what separates failures
+        that the environment determines from failures that are irreducible.
+
+        With no options the behaviour is exactly the released one: a single
+        stream seeded by ``seed``.
+        """
+        opts = options or {}
+        dr_seed = opts.get("dr_seed")
+        noise_seed = opts.get("noise_seed")
+        obs, info = super().reset(
+            seed=seed if dr_seed is None else int(dr_seed), options=options)
+        if noise_seed is not None:
+            self.np_random = np.random.default_rng(int(noise_seed))
+            # The observation was already built from the scene stream; rebuild
+            # it so the first observation's noise comes from the noise stream
+            # too, otherwise episode 0 of every replay shares one draw.
+            obs = self._get_obs()
         self._reset_release_trackers()
+        info["dr_seed"] = dr_seed
+        info["noise_seed"] = noise_seed
         return obs, info
 
     # ``PiperPickPlaceEnv.reset`` calls ``self.randomizer.randomize(rng)`` and
