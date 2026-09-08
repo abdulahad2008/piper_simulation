@@ -8,8 +8,22 @@ on the branch `precision-floor-instrumentation`.
 
 ## 1. Push the branch (5 minutes, needs your credentials)
 
-The work is one commit on a branch. It was made in a sandbox with no GitHub
-access, so it cannot be pushed for you. Two ways to land it:
+The work is four commits on the branch `precision-floor-instrumentation`.
+
+A push was attempted and refused, and the reason is specific rather than a
+missing token: this session runs behind a git proxy that only injects a
+credential for repositories in the session's authorized set, and
+`abdulahad2008/piper_simulation` is not in it:
+
+```
+remote: access denied by the git proxy: abdulahad2008/piper_simulation is not
+in this session's authorized repository set, so the proxy will not inject a
+credential for it. To fix, add the repository to the session's sources.
+```
+
+So there are two ways to land it. Either **add the repository to this session's
+sources** and ask me to push — that is one click on your side and nothing else
+changes — or apply the bundle yourself:
 
 **From the bundle** (`piper-precision-floor.bundle`, delivered in the chat):
 
