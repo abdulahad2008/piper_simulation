@@ -204,24 +204,60 @@ def fit_scaling_law(rows: list[dict]) -> dict:
                       "read only if the curve has flattened"}
 
 
-def figure_checkpoints(rows: list[dict], out: Path) -> None:
+def figure_checkpoints(runs: dict, out: Path) -> None:
+    """Two panels, because c50 is undefined for most of a training run.
+
+    Left: success at the released 45 mm tolerance, defined at every checkpoint.
+    Right: c50, defined only once the policy succeeds on more than half of
+    episodes -- which is the honest way to show that the floor is a property of
+    the *converged* policy and not something that decays smoothly from the
+    first checkpoint. Plotting an imputed c50 for a policy that solves 4 % of
+    episodes would be an invention.
+    """
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    steps = np.array([r["steps"] for r in rows], float)
-    c50 = np.array([r["c50"] for r in rows], float)
-    lo = np.array([r["c50_lo"] for r in rows], float)
-    hi = np.array([r["c50_hi"] for r in rows], float)
-    order = np.argsort(steps)
-    fig, ax = plt.subplots(figsize=(5.2, 3.4))
-    ax.plot(steps[order] / 1e6, c50[order], marker="o", ms=3.5, lw=1.4)
-    ax.fill_between(steps[order] / 1e6, lo[order], hi[order], alpha=0.18, lw=0)
-    ax.set_xlabel("environment steps (M)")
-    ax.set_ylabel(r"$c_{50}$ (mm)")
-    ax.set_title("Precision vs. training budget (all stored checkpoints)", fontsize=9)
-    ax.spines[["top", "right"]].set_visible(False)
-    fig.tight_layout(); fig.savefig(out, dpi=200); plt.close(fig)
+    colors = {"sac_full": "#2b6cb0", "corner_ft": "#b7791f"}
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(8.6, 3.2))
+    for name, rows in runs.items():
+        col = colors.get(name, None)
+        rows = sorted(rows, key=lambda r: r["steps"])
+        steps = np.array([r["steps"] for r in rows], float) / 1e6
+        s45 = np.array([100 * r["success_45"] for r in rows], float)
+        c50 = np.array([r["c50"] for r in rows], float)
+        lo = np.array([r["c50_lo"] for r in rows], float)
+        hi = np.array([r["c50_hi"] for r in rows], float)
+        ok = np.isfinite(c50)
+        line, = a1.plot(steps, s45, marker="o", ms=3.2, lw=1.3, color=col,
+                        label=name.replace("_", r"\_"))
+        col = line.get_color()
+        if ok.any():
+            a2.plot(steps[ok], c50[ok], marker="o", ms=3.2, lw=1.3, color=col,
+                    label=name.replace("_", r"\_"))
+            a2.fill_between(steps[ok], lo[ok], hi[ok], alpha=0.18, lw=0,
+                            color=col)
+        if (~ok).any():
+            a2.scatter(steps[~ok], np.zeros((~ok).sum()), marker="x", s=14,
+                       color="0.55")
+    a1.axhline(50, color="0.5", lw=0.8, ls=":")
+    a1.set_ylim(0, 100)
+    a1.set_ylabel(r"$S(45\,\mathrm{mm})$ (%)")
+    a1.set_xlabel("environment steps (M)")
+    a1.set_title("Success at the released tolerance", fontsize=9)
+    a1.legend(fontsize=7, frameon=False)
+    a2.text(0.03, 0.06, r"$\times$: $S(\tau)$ never reaches 50 %,"
+                        "\n$c_{50}$ undefined",
+            transform=a2.transAxes, fontsize=7, color="0.35")
+    a2.legend(fontsize=7, frameon=False)
+    a2.set_xlabel("environment steps (M)")
+    a2.set_ylabel(r"$c_{50}$ (mm)")
+    a2.set_title("Precision floor vs. training budget", fontsize=9)
+    for ax in (a1, a2):
+        ax.spines[["top", "right"]].set_visible(False)
+    fig.tight_layout()
+    fig.savefig(out, dpi=200)
+    plt.close(fig)
 
 
 # --------------------------------------------------------------------- #
@@ -341,27 +377,41 @@ def main(argv=None):
         (O / "tables" / "release.tex").write_text("\n".join(rows))
 
     # ---- checkpoint curve (H0b) -------------------------------------- #
-    ck = sorted(R.glob("ckpt_*.csv"))
-    ckrows = []
-    for f in ck:
-        d = load(R, f.stem)
-        steps = int(f.stem.split("_")[-1])
+    # Checkpoint curves, grouped BY RUN. sac_full and corner_ft share a step
+    # axis (the fine-tune continues the baseline's counter) but they are two
+    # different training histories; pooling them would draw one curve through
+    # two runs and invent a discontinuity.
+    by_run: dict[str, list[dict]] = {}
+    for f in sorted(R.glob("ckpt_*.csv")):
+        stem = f.stem                      # ckpt_<run>_<steps>
+        run_name = stem[len("ckpt_"):stem.rindex("_")]
+        steps = int(stem.rsplit("_", 1)[-1])
+        d = load(R, stem)
         e, v = d["place_err_mm"].to_numpy(float), d["valid"].to_numpy(bool)
         iv = bootstrap_c(e, v, 0.5, draws=500)
-        ckrows.append({"steps": steps, "c50": iv.point, "c50_lo": iv.lo,
-                       "c50_hi": iv.hi, "n": len(d),
-                       "success_45": float(((e <= 45) & v).mean())})
-    if ckrows:
-        out["checkpoint_curve"] = ckrows
-        out["scaling_law_fit"] = fit_scaling_law(ckrows)
-        figure_checkpoints(ckrows, O / "figures" / "checkpoints.pdf")
-        solved = [r for r in ckrows if r["success_45"] > 0.5]
-        if len(solved) >= 3:
-            last = sorted(solved, key=lambda r: r["steps"])[-max(3, len(solved)//3):]
-            out["budget_plateau"] = {
-                "steps_from": last[0]["steps"], "steps_to": last[-1]["steps"],
-                "c50_from": last[0]["c50"], "c50_to": last[-1]["c50"],
-                "delta_c50_mm": last[-1]["c50"] - last[0]["c50"]}
+        by_run.setdefault(run_name, []).append(
+            {"run": run_name, "steps": steps, "c50": iv.point, "c50_lo": iv.lo,
+             "c50_hi": iv.hi, "n": len(d),
+             "success_45": float(((e <= 45) & v).mean())})
+    if by_run:
+        out["checkpoint_curve"] = {k: sorted(v, key=lambda r: r["steps"])
+                                   for k, v in by_run.items()}
+        out["scaling_law_fit"] = {k: fit_scaling_law(v)
+                                  for k, v in by_run.items()}
+        figure_checkpoints(out["checkpoint_curve"],
+                           O / "figures" / "checkpoints.pdf")
+        out["budget_plateau"] = {}
+        for k, v in out["checkpoint_curve"].items():
+            solved = [r for r in v if np.isfinite(r["c50"])]
+            if len(solved) >= 3:
+                out["budget_plateau"][k] = {
+                    "steps_from": solved[0]["steps"],
+                    "steps_to": solved[-1]["steps"],
+                    "c50_min": min(r["c50"] for r in solved),
+                    "c50_max": max(r["c50"] for r in solved),
+                    "c50_first": solved[0]["c50"], "c50_last": solved[-1]["c50"],
+                    "n_defined": len(solved),
+                    "argmin_steps": min(solved, key=lambda r: r["c50"])["steps"]}
 
     (O / "summary.json").write_text(json.dumps(out, indent=2, default=float))
 

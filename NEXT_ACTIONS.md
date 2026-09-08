@@ -116,3 +116,13 @@ scene rather than a post-hoc ruler) is the single strongest answer to the
 softest objection in the paper. It is about a week. Do it only if Phases 1--2
 come in on schedule. The two-servo encoder rig is not on the critical path and
 should not start before week 10.
+
+---
+
+## Known non-issue
+
+`tests/test_human_aware_env.py::test_state_plus_rgb_extends_only_state_and_renders_headless`
+fails in this sandbox with `GLFWError: The GLFW library is not initialized`. It
+needs an OpenGL context to render the forehead camera and the container has
+none; it is unrelated to anything in this branch and will pass on your machine.
+The other 58 tests pass, including all 38 new ones.

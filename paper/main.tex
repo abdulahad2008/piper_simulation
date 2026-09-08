@@ -34,9 +34,11 @@
 \fbox{\parbox{0.95\linewidth}{\small\textbf{Draft status (8 Sep 2026).}
 Every number printed in black is regenerated from a per-episode CSV committed
 in the public repository by \texttt{python reproduce.py}; none is transcribed
-from a console log. Phase~0 (Sec.~\ref{sec:phase0}) is \emph{complete}: it
-required no training, only the released checkpoints. Phase~1 and Phase~2
-require 43 training runs that have not been run; everything describing them is
+from a console log. The eval-only part of Phase~0
+(Sec.~\ref{sec:phase0}) is \emph{complete} --- 51 archived cells, 63\,000
+evaluation episodes, no training --- and it is what the released checkpoints
+alone can say. Phase~1, Phase~2 and the retrained solver extremes require 49
+training runs that have not been run; everything describing them is
 marked \planned{blue}. \todo{red} marks a decision that is still open. The
 August 2026 figures that appeared in earlier versions of this draft are
 superseded; \texttt{CHANGELOG.md} in the repository lists every correction.}}
@@ -68,9 +70,16 @@ so the floor is set at release rather than by post-release settling. The
 contact-solver kill gate --- the released policy re-evaluated under integration
 timestep, contact time constant, solver iteration count and impedance ratio
 changes spanning the range used by published MuJoCo manipulation work --- moves
-$c_{50}$ by \input{generated/tables/inline_gate_span}\unskip. \planned{The interface
-sweep, the estimated $c(\iface)$ and the training-based control arms are
-pending; see Sec.~\ref{sec:results}.} We release the environment, the trained
+$c_{50}$ by \input{generated/tables/inline_gate_span}\unskip, while changing how
+often the policy fails outright a good deal more. Evaluating all 38 stored
+checkpoints shows the floor is undefined until the task is solved, drops once,
+and then oscillates without improving over the last third of training; Xu et
+al.'s scaling form does not fit an RL checkpoint curve ($r^2 = 0.17$) and we
+report the failure rather than a fitted constant. A nested design of 200 scenes
+replayed under 10 noise streams each puts the intra-class correlation of the
+outcome at the floor at $0.175$: five parts noise to one part scene.
+\planned{The interface sweep, the estimated $c(\iface)$ and the training-based
+control arms are pending; see Sec.~\ref{sec:results}.} We release the environment, the trained
 checkpoints, per-episode evaluation logs with the sampled randomisation
 parameters, and a one-command reproduction script.
 \end{abstract}
@@ -142,8 +151,9 @@ two released policies at $n{=}2000$: success-versus-tolerance curves with
 Wilson intervals over $\tau \in [5, 45]$\,mm, $c_{50}$ and $c_{90}$ with
 bootstrap intervals, a decomposition of the terminal error into
 tool-centre-point error at release and post-release scatter, and a
-precision-versus-training-steps curve over every stored checkpoint of the
-baseline run.
+precision-versus-training-steps curve over all 38 stored checkpoints of both
+runs, and an intra-class correlation of the outcome from a nested
+scene-by-noise design.
 \item \textbf{(Measured.)} A pre-registered contact-solver kill gate: the
 released policy re-evaluated under integration timestep, contact time constant,
 solver iteration and impedance-ratio changes, testing whether the floor is a
@@ -446,8 +456,9 @@ assume 6\,h per training run. Phase~0 is complete; Phases~1--2 are pending.}
 Phase & Arm & Cells & Purpose & Runs & Status \\
 \midrule
 0 & Solver (kill gate), eval-only & timestep $\{1,2,4\}$\,ms; \texttt{solref} scale $\{0.5,1,2\}$; iterations $\{20,100\}$; \texttt{impratio} $\{1,10\}$; two joint extremes & does the existing floor move? & 0 & done \\
-0 & Checkpoint curve, eval-only & every stored checkpoint of both runs & $\hat c$ vs.\ training steps; H0b & 0 & done \\
+0 & Checkpoint curve, eval-only & all 38 stored checkpoints of both runs & $\hat c$ vs.\ training steps; H0b & 0 & done \\
 0 & Release decomposition, eval-only & $\pi_{v1},\pi_{v2}$ & H0e & 0 & done \\
+0 & Nested noise replay, eval-only & 200 scenes $\times$ 10 noise streams, $\pi_{v2}$ & ICC; failure attribution & 0 & done \\
 0 & Solver (kill gate), retrain & two extreme settings & H0d & 6 & pending \\
 \midrule
 1 & $\dmax$ & $\{5, 10, 20, 30\}$\,mm, with $\qdmax$ scaled so the clamp binds equally & H1 & 12 & pending \\
@@ -640,19 +651,60 @@ axis turns out to move $c_{50}$ by, say, 2\,mm, the paper has no result
 regardless of what the retrained extremes do. \todo{Run the six retraining runs
 and fill this decision. Do not run Phase~1 before it.}
 
-\subsubsection{H0b, partially: precision versus training budget}
+\subsubsection{H0b, without training anything: precision versus training budget}
 \label{sec:ckpt}
 
-\planned{Every stored checkpoint of both runs (32 of \texttt{sac\_full} spanning
-50\,k--1.62\,M steps, 6 of \texttt{corner\_ft}) is being evaluated at $n{=}1000$
-to give $c_{50}$ as a function of environment steps: the RL analogue of Xu et
-al.'s data-scaling curve, and the cheapest available test of H0b. The figure and
-the fit of $\log N \propto 1/(P-\hat c)$ with environment steps in place of
-demonstrations go here.}
-\todo{Fill from \texttt{paper/generated/figures/checkpoints.pdf} and
-\texttt{summary.json:checkpoint\_curve} once the sweep finishes. Note that this
-is a within-run budget test on one seed and does not replace the $3\times$
-budget arm, which is trained from scratch.}
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{generated/figures/checkpoints}
+\caption{Every stored checkpoint of both runs, $n{=}1000$ episodes each (38
+checkpoints, 38\,000 episodes, no training). Left: success at the released
+45\,mm tolerance. Right: $c_{50}$, which is undefined ($\times$) until the
+policy succeeds on more than half of episodes; shaded bands are bootstrap 95\%
+intervals. The floor is a property of the converged policy: it is undefined for
+the first 0.82\,M steps, drops sharply once the task is solved, and then does
+not improve.}
+\label{fig:ckpt}
+\end{figure}
+
+Figure~\ref{fig:ckpt} evaluates all 38 stored checkpoints --- 32 of the baseline
+run spanning 50\,k to 1.62\,M environment steps and 6 of the fine-tune --- at
+$n{=}1000$ each. It is the RL analogue of Xu et al.'s data-scaling curve with
+environment steps in place of demonstrations, and it costs no training at all.
+
+\textbf{$c_{50}$ does not improve with budget once the task is solved.} For the
+baseline run it is undefined below 0.82\,M steps (success never reaches 50\%),
+first measurable at 31.4\,mm at 0.87\,M, falls to $16.8$\,mm at 1.22\,M, and
+then \emph{oscillates between 16.8 and 24.3\,mm} for the remaining 0.4\,M steps,
+finishing at $24.3$ [23.7, 25.2]\,mm at 1.62\,M with success at 45\,mm falling
+from 96.5\% to 74.3\%. Over the last third of the run the floor moves by more
+than its own bootstrap interval in both directions and ends \emph{worse} than
+its best. This is a within-run, single-seed observation and it does not replace
+the pre-registered $3\times$-budget arm, which is trained from scratch --- but
+it is the first evidence on H0b and it points the same way: past the point where
+the task is solved, more environment steps buy noise, not precision.
+
+\textbf{Two consequences for how the released policies should be read.} First,
+$\pi_{v2}$ ($c_{50}{=}16.1$\,mm) is not the best checkpoint of its own
+fine-tune: the checkpoint at 1.06\,M steps reaches $14.6$ [14.0, 15.3]\,mm.
+Second, the first fine-tune checkpoint, immediately after the baseline weights
+are loaded and the replay buffer is empty, sits at $35.9$\,mm --- a large
+transient dip that recovers within 50\,k steps. A campaign that selected
+checkpoints by a 15--50-episode evaluation callback, as the released runs did,
+is selecting from this much noise, which is why the sweep in
+Sec.~\ref{sec:design} fixes the final checkpoint as the reported one.
+
+\textbf{Xu et al.'s functional form does not fit.} Fitting
+$\log(\text{steps}) = a/(P - c) + b$ with $P = 1/c_{50}$ over the checkpoints
+that solve the task gives $\hat c = 18.4$\,mm with $r^2 = 0.17$ for the baseline
+run and an uninterpretable fit ($r^2 \approx 0$, six points) for the fine-tune.
+We report the failure rather than the number. A behaviour-cloning data-scaling
+curve is monotone by construction --- more demonstrations never hurt --- whereas
+an RL checkpoint curve is a stochastic process that can and does go backwards,
+so the model-dependent estimator $\hat c$ is not usable in this setting and the
+model-free $c_{50}$ is the estimator we report throughout. That is itself a
+finding about transporting their result to RL, and it is one we would have
+missed by reporting a fitted constant without its $r^2$.
 
 \subsection{Phase 1: interface sweep}
 \planned{Figure 1 (the paper's main figure): $S(\tau)$ curves per cell with
@@ -668,39 +720,42 @@ Fourier arm; and $c_{50}$ at $\dmax{=}5$\,mm with default vs.\ tuned
 hyperparameters.}
 \todo{Run and fill; 17 training runs.}
 
-\subsection{Failure attribution, Phase 0 cells}
+\subsection{Failure attribution: how much of the residual failure is the scene?}
 \label{sec:attrib-results}
 
-The per-episode randomisation vector is logged for every episode, so this
-analysis is available today for the Phase~0 cells and will be available for each
-new cell as it lands. At $\tau = c_{50}$ --- where by construction half the
-episodes fail --- a five-fold cross-validated classifier of failure on the
-thirteen sampled randomisation and scene variables reaches an AUC of
-$0.65$ (logistic) and $0.61$ (gradient boosting) for $\pi_{v1}$, $0.56$ and
-$0.59$ for $\pi_{v2}$, and $0.58$ and $0.56$ for the softest solver cell. At
-$\tau{=}45$\,mm, where failure means an outright miss rather than an imprecise
-placement, the AUCs are $0.52$--$0.63$. Permutation importance puts the target's
-position in the workspace on top in every cell --- target radius and azimuth for
-$\pi_{v1}$, target azimuth and object width for $\pi_{v2}$ --- and the object's
-mass, friction and the actuator gain scales at or below zero.
+At $\tau = c_{50}$, by construction, half the episodes fail. Two questions
+follow: can the failures be predicted from the sampled randomisation vector, and
+would the same physical scene fail again?
 
-The reading is that the residual failures at the floor are \emph{almost}
-irreducible under this randomisation. What structure exists is geometric: where
-in the reachable workspace the object has to be put, not what it weighs or how
-slippery it is or how the actuators were detuned. That is consistent with a
-floor set by the terminal approach rather than by the dynamics, and it is a
-weaker conclusion than either extreme --- the classifier does beat chance, so
-the pre-specified rule ``AUC $<0.6$ and ICC $<0.1$ in every cell, therefore the
-failures are noise'' is not met outright at $\tau = c_{50}$ for $\pi_{v1}$.
+\textbf{Prediction.} A five-fold cross-validated classifier of failure on the
+thirteen sampled randomisation and scene variables reaches AUC $0.56$--$0.65$
+across the Phase~0 cells at $\tau = c_{50}$ and $0.53$--$0.65$ at 45\,mm ---
+better than chance, but only just. Permutation importance puts the target's
+azimuth and radius first in almost every cell, with the object's sampled width
+next; the object's mass, its friction, the table friction and the actuator gain
+scales sit at or below zero. Where the object has to be \emph{put} in the
+workspace carries the signal; what it is made of does not.
 
-\planned{The intra-class correlation is estimated from a nested evaluation of
-$\pi_{v2}$ --- 200 randomisation draws replayed under 10 independent noise
-streams each --- which separates the variance the scene explains from the
-variance the noise explains. The environment supports the split
-(\texttt{options=\{"dr\_seed": k, "noise\_seed": m\}}) and the run is in
-progress.} \todo{Fill the ICC from
-\texttt{paper/generated/failure\_attribution.json}, and state the joint verdict
-against the pre-specified rule.}
+\textbf{Replay.} A nested evaluation of $\pi_{v2}$ --- 200 randomisation draws,
+each replayed under 10 independent noise streams, 2000 episodes --- separates
+the two sources of variance directly. The environment supports the split
+(\texttt{options=\{"dr\_seed": k, "noise\_seed": m\}}), and the classifier for
+this cell is cross-validated with folds grouped by scene, without which replays
+of one scene appear on both sides of the split and the AUC is inflated by about
+0.08. The one-way random-effects intra-class correlation of the binary outcome
+is $\mathrm{ICC} = 0.175$ at $\tau = c_{50}$ and $0.113$ at 45\,mm.
+
+\textbf{Verdict against the pre-specified rule.} The rule was that if
+AUC $<0.6$ and ICC $<0.1$ in every cell, the residual failures are noise and
+this section collapses to a paragraph. Neither threshold is quite met: about a
+sixth of the outcome variance at the floor is attributable to the scene, and a
+classifier can see a little of it. The honest statement is therefore the
+intermediate one --- \emph{at the floor, roughly 82\% of whether a given episode
+succeeds is decided by observation and actuation noise rather than by the scene
+it was given}, and the minority that the scene decides is geometric rather than
+dynamical. For H1 this is supporting context rather than evidence: a floor that
+is five parts noise to one part scene is not a floor that better coverage of the
+randomisation space would remove.
 
 % ------------------------------------------------------------------------
 \section{Discussion}

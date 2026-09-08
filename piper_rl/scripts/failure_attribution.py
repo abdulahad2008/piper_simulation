@@ -32,7 +32,8 @@ def attribute(df: pd.DataFrame, tau_mm: float, seed: int = 0) -> dict:
     from sklearn.ensemble import HistGradientBoostingClassifier
     from sklearn.linear_model import LogisticRegression
     from sklearn.inspection import permutation_importance
-    from sklearn.model_selection import cross_val_score, StratifiedKFold
+    from sklearn.model_selection import (cross_val_score, StratifiedKFold,
+                                         StratifiedGroupKFold)
     from sklearn.pipeline import make_pipeline
     from sklearn.preprocessing import StandardScaler
 
@@ -48,14 +49,24 @@ def attribute(df: pd.DataFrame, tau_mm: float, seed: int = 0) -> dict:
         out["note"] = "too few of one class for a meaningful classifier"
         return out
 
-    cv = StratifiedKFold(5, shuffle=True, random_state=seed)
+    # In a nested evaluation the same scene appears many times. Splitting
+    # episodes at random would put replays of one scene in both the training
+    # and the test fold, and the classifier would score its own memory of that
+    # scene rather than a generalisation to new ones. Group the folds by scene.
+    groups = None
+    if "dr_seed" in df.columns and df["dr_seed"].nunique() < len(df):
+        groups = df["dr_seed"].to_numpy()[ok]
+        cv = StratifiedGroupKFold(5, shuffle=True, random_state=seed)
+    else:
+        cv = StratifiedKFold(5, shuffle=True, random_state=seed)
     logit = make_pipeline(StandardScaler(),
                           LogisticRegression(max_iter=2000, random_state=seed))
     gb = HistGradientBoostingClassifier(random_state=seed, max_iter=200)
+    out["grouped_cv_by_scene"] = groups is not None
     out["auc_logistic"] = float(np.mean(
-        cross_val_score(logit, X, y, cv=cv, scoring="roc_auc")))
+        cross_val_score(logit, X, y, cv=cv, groups=groups, scoring="roc_auc")))
     out["auc_gbm"] = float(np.mean(
-        cross_val_score(gb, X, y, cv=cv, scoring="roc_auc")))
+        cross_val_score(gb, X, y, cv=cv, groups=groups, scoring="roc_auc")))
 
     gb.fit(X, y)
     imp = permutation_importance(gb, X, y, n_repeats=20, random_state=seed,

@@ -48,3 +48,23 @@ archived numbers, and why.
   against a floating MuJoCo version.
 - Every run config and every results CSV records the git hash and the resolved
   package versions.
+
+### Phase 0 measurements now archived (63,000 evaluation episodes, no training)
+
+| Cell group | Files | What it settles |
+|---|---|---|
+| Baselines, n=2000 each | `v1_n2000`, `v2_n2000` | Tables 2-3 of the paper. c50 = 18.7 [18.1, 19.4] and 16.1 [15.7, 16.6] mm. |
+| Contact-solver kill gate, n=1000 x 9 | `v2_solver_*` | H0d. c50 moves by at most 1.9 mm; two cells move beyond their interval, so the gate escalates to retraining. |
+| Checkpoint curve, n=1000 x 38 | `ckpt_sac_full_*`, `ckpt_corner_ft_*` | H0b, within-run. The floor stops improving after ~1.2 M steps and then oscillates 16.8-24.3 mm. Xu et al.'s scaling form does not fit (r^2 = 0.17). |
+| Nested scene x noise, 200 x 10 | `v2_nested_200x10` | ICC = 0.175 at the floor: five parts noise to one part scene. |
+| Release decomposition | from the baseline CSVs | H0e rejected. Terminal error is the TCP error at release (r = 0.35-0.53), not post-release scatter (r^2 ~ 0.004). |
+
+Two further facts that emerged and are recorded so they are not rediscovered:
+
+- `model.opt.iterations` anywhere in [20, 100] is bit-identical for this task:
+  the Newton solver converges in under 20. Below 5 the simulation stops solving
+  the contacts and the arm fails outright. See
+  `results/precision/solver_iterations_probe.md`.
+- `release/piper_sac_v2_96pct.zip` is not the best checkpoint of its own run:
+  `runs/corner_ft/checkpoints/*_1059408_steps.zip` reaches c50 = 14.6 mm against
+  the release's 16.1 mm.
