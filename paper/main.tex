@@ -1,0 +1,788 @@
+\documentclass{article}
+\usepackage[preprint]{tmlr}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{microtype}
+\usepackage{enumitem}
+
+% ---- draft macros -------------------------------------------------------
+\newcommand{\todo}[1]{{\color{red}\textbf{[TODO: #1]}}}
+\newcommand{\planned}[1]{{\color{blue!70!black}\textit{#1}}}
+\newcommand{\dmax}{\Delta_{\max}}
+\newcommand{\qdmax}{\dot q_{\max}}
+\newcommand{\iface}{\boldsymbol{\theta}}
+
+\title{What Sets the Precision Floor of a Reinforcement-Learned Manipulation Policy?\\
+\large Attributing the Limit Precision to the Action Interface}
+
+\author{\name \todo{Author name} \email \todo{email}\\
+\addr Independent Researcher, Tashkent, Uzbekistan}
+
+\def\month{MM}
+\def\year{YYYY}
+\def\openreview{\url{https://openreview.net/forum?id=XXXX}}
+
+\begin{document}
+\maketitle
+
+% ------------------------------------------------------------------------
+\begin{center}
+\fbox{\parbox{0.95\linewidth}{\small\textbf{Draft status (8 Sep 2026).}
+Every number printed in black is regenerated from a per-episode CSV committed
+in the public repository by \texttt{python reproduce.py}; none is transcribed
+from a console log. Phase~0 (Sec.~\ref{sec:phase0}) is \emph{complete}: it
+required no training, only the released checkpoints. Phase~1 and Phase~2
+require 43 training runs that have not been run; everything describing them is
+marked \planned{blue}. \todo{red} marks a decision that is still open. The
+August 2026 figures that appeared in earlier versions of this draft are
+superseded; \texttt{CHANGELOG.md} in the repository lists every correction.}}
+\end{center}
+
+\begin{abstract}
+Learned manipulation policies saturate at a task-specific precision floor:
+pushing the success tolerance below a few millimetres collapses success
+regardless of how much longer one trains. \citet{xu2026curse} formalise this
+floor as a limit precision $c$ in a data-scaling law for behaviour cloning and
+describe $c$ as ``an emergent property of the entire agent system,'' leaving
+open both what determines it and whether it survives online reinforcement
+learning. We study $c$ for a reinforcement-learned pick-and-place policy on a
+6-DoF arm in MuJoCo and test a single hypothesis: \emph{the floor is set by the
+action interface} --- the maximum per-step displacement, the joint-target
+smoothing constant, the control rate, and the joint-velocity limit imposed by
+the safety layer --- rather than by the reward, the training budget, the
+observation encoder, or the contact-solver parameters of the simulator. We
+retrain policies at each interface setting instead of relabelling one policy's
+errors, evaluate every cell with $n{=}2000$ episodes under fixed domain
+randomisation, and run four control arms designed to falsify the interface
+hypothesis. This version reports the complete eval-only phase. Two released
+policies with different training histories place the object with median
+terminal errors of 17.9 and 15.7\,mm, roughly $0.5$--$0.6$ times the 30\,mm
+maximum step; the terminal error is almost entirely the tool-centre-point
+error at the instant the object leaves the fingers ($r^2$ up to $0.28$) and
+essentially unrelated to how far the object then rolls ($r^2 \approx 0.004$),
+so the floor is set at release rather than by post-release settling. The
+contact-solver kill gate --- the released policy re-evaluated under integration
+timestep, contact time constant, solver iteration count and impedance ratio
+changes spanning the range used by published MuJoCo manipulation work --- moves
+$c_{50}$ by \input{generated/tables/inline_gate_span}\unskip. \planned{The interface
+sweep, the estimated $c(\iface)$ and the training-based control arms are
+pending; see Sec.~\ref{sec:results}.} We release the environment, the trained
+checkpoints, per-episode evaluation logs with the sampled randomisation
+parameters, and a one-command reproduction script.
+\end{abstract}
+
+% ------------------------------------------------------------------------
+\section{Introduction}
+\label{sec:intro}
+
+A learned manipulation policy that succeeds on 94.9\% of pick-and-place
+episodes when ``success'' means landing within 45\,mm of the target succeeds on
+20.8\% of them when the tolerance is 10\,mm and on 5.3\% when it is 5\,mm
+($n{=}2000$; Table~\ref{tab:baselines}). Nothing about the policy changed; only
+the ruler did. Every practitioner who has tightened a tolerance has seen this
+cliff, and yet the community's benchmarks report a single success rate at a
+single, usually generous, tolerance \citep{jiang2026benchmarking}, which hides
+the cliff entirely.
+
+\citet{xu2026curse} were the first to characterise the cliff quantitatively.
+Training behaviour-cloning policies on three simulated tasks, they show that
+the number of demonstrations $N$ needed to reach a precision $P$ diverges as
+$\log N \propto 1/(P - c)$: there is a limit precision $c$ that no amount of
+data crosses. They measure $c \approx 2.35$\,mm for peg insertion and
+$2.75$\,mm for cuboid stacking, show that $c$ moves when the wrist camera is
+removed ($\to 3.85$\,mm), when the demonstrator is cleaner ($\to 1.27$\,mm) or
+when randomisation is reduced ($\to 1.00$\,mm), and conclude that $c$ ``is not
+a static physical constant of the task but an emergent property of the entire
+agent system.'' They fix the action space to a 7-DoF end-effector delta pose
+throughout, study behaviour cloning only, and name reinforcement learning as
+the open next step. They release neither code nor data, so the RL case cannot
+be answered by re-analysing theirs; it has to be measured.
+
+This paper asks the question their result leaves open, for reinforcement
+learning: \textbf{what component of the agent system sets $c$?} We advance one
+falsifiable answer. In a delta-action interface the policy never commands a
+position; it commands a bounded displacement $a \in [-1,1]^d$ that is scaled by
+a maximum step $\dmax$, filtered by a smoothing constant $\alpha$, rate-limited
+by a joint-velocity bound $\qdmax$ and applied at $f$\,Hz. These four numbers
+--- the \emph{action interface} $\iface = (\dmax, \alpha, f, \qdmax)$ --- define
+the finest correction the arm can make in the final steps before release. Our
+hypothesis is that $c$ is a function of $\iface$ and, to first order, of nothing
+else: not of the reward, not of the training budget, not of the observation
+encoder and not of the simulator's contact parameters.
+
+The hypothesis is worth stating because the obvious alternatives are all live.
+\citet{gyenes2026fourier} attribute the precision floor of imitation policies to
+the spectral bias of MLP encoders and remove it with Fourier features --- a
+representation explanation. \citet{bronars2026tune} show that reinforcement
+learning is agnostic to controller gains once hyperparameters are re-tuned ---
+suggesting the learner can absorb interface changes, which would predict a flat
+$c(\iface)$. A precision term in the reward, or a longer training run, is what
+most practitioners try first. And any sim-only claim invites the objection that
+the floor is an artefact of contact stiffness in the MJCF. Each of these is a
+control arm in our design (Sec.~\ref{sec:design}), and the last of them ---
+the one that would end the study --- is reported here in full.
+
+Two features of our setup make the question answerable on one workstation.
+First, the policy is trained by soft actor-critic \citep{haarnoja2018sac} on a
+state observation, so a full retraining costs hours rather than days and we can
+afford to \emph{retrain} at every interface cell rather than relabel one
+policy's errors post hoc --- the latter cannot support any claim about training
+budget. Second, the environment records the sampled domain-randomisation vector
+of every episode, so each success curve is accompanied by a failure
+decomposition over the randomisation space (Sec.~\ref{sec:attrib}).
+
+\paragraph{Contributions.}
+\begin{enumerate}[nosep,leftmargin=*]
+\item \textbf{(Measured.)} A complete eval-only characterisation of the floor of
+two released policies at $n{=}2000$: success-versus-tolerance curves with
+Wilson intervals over $\tau \in [5, 45]$\,mm, $c_{50}$ and $c_{90}$ with
+bootstrap intervals, a decomposition of the terminal error into
+tool-centre-point error at release and post-release scatter, and a
+precision-versus-training-steps curve over every stored checkpoint of the
+baseline run.
+\item \textbf{(Measured.)} A pre-registered contact-solver kill gate: the
+released policy re-evaluated under integration timestep, contact time constant,
+solver iteration and impedance-ratio changes, testing whether the floor is a
+simulator artefact before any training budget is spent on the main sweep.
+\item \planned{(Pending, 43 training runs.)} A retraining-based measurement of
+$c$ across a one-factor-at-a-time sweep of the action interface, with the three
+remaining control arms --- reward shaping, training budget and Fourier-feature
+encoding --- and a hyperparameter-optimisation arm at the smallest step size.
+\item An open environment, checkpoints, per-episode logs, an interface-flag
+test suite, and a reproduction script that regenerates every table and figure
+in this paper from the committed CSVs without a simulator run.
+\end{enumerate}
+
+% ------------------------------------------------------------------------
+\section{Related work}
+\label{sec:related}
+
+\paragraph{Precision limits of learned policies.}
+\citet{xu2026curse} introduce the limit precision $c$ and the scaling law
+$\log N \propto 1/(P-c)$ for behaviour cloning with diffusion policies; the
+action interface is fixed and RL is left to future work.
+\citet{gyenes2026fourier} show that MLP-based imitation policies fail to learn
+high-frequency components of the state-to-action map and that Fourier feature
+encodings \citep{tancik2020fourier} restore precision; we adopt their encoding
+as a control arm so that a representation explanation of our floor can be
+tested rather than assumed away. High-precision RL results exist ---
+\citet{brown2026match} reach sub-millimetre-clearance insertion with a hybrid
+position/force interface at 15\,Hz --- but there the interface is a design
+contribution, not a swept variable.
+
+\paragraph{Action-space design.}
+The most closely related work is \citet{aljalbout2024role}, who train over 250
+RL agents across 13 action spaces (joint/Cartesian $\times$
+position/velocity/torque $\times$ one- and multi-step delta integrators) on
+reaching and pushing, at a fixed 60\,Hz, and find that ``an action space which
+yields or naturally limits the tracking error transfers better.'' They vary the
+\emph{type} of the interface; we hold the type fixed (Cartesian delta position
+through differential IK) and vary its \emph{magnitude, filtering and rate}.
+\citet{feng2026demystifying} sweep delta/absolute, joint/task, chunk length and
+execution horizon for imitation learning and recommend delta actions;
+\citet{azimi2026benchmarking} compare pose- and joint-space increments and
+velocities for vision-based RL and find joint velocity transfers best. Neither
+reports a precision floor or varies step size, smoothing or frequency.
+\citet{bronars2026tune} re-tune hyperparameters for each PD-gain regime and find
+RL indifferent to gains ``as long as the remaining hyperparameters are tuned to
+be compatible''; their frequency ablation (10--100\,Hz) targets jitter in
+sim-to-real reaching. Their result is the strongest prior reason to expect
+$c(\iface)$ to be flat, and our hyperparameter-optimisation arm
+(Sec.~\ref{sec:design}) is designed to test exactly that. Action chunking in RL
+\citep{li2025chunking,chen2026acsac} changes the effective control rate and
+temporal smoothness of the interface for long-horizon credit assignment; our
+frequency and smoothing axes isolate the same two quantities for precision.
+
+\paragraph{Simulator fidelity as a confound.}
+\citet{aljalbout2025reality} warn that policies may succeed ``simply by abusing
+modeling inaccuracies and simulator-specific corner cases'';
+\citet{kaup2024review} find that agents trained in some engines do not transfer
+to others and call the same-task-across-engines study missing.
+\citet{hu2025static} show a single unmodelled parameter (static friction) can
+dominate transfer. Domain randomisation is the standard mitigation
+\citep{muratore2022review}, though which parameters matter is usually settled by
+prior knowledge \citep{kaidanov2024role}. We do not attempt cross-engine
+transfer; we sweep the solver parameters most likely to shape terminal contact
+(timestep, constraint \texttt{solref}, impedance ratio, iteration count) and ask
+whether $c$ moves. Sec.~\ref{sec:killgate} reports the answer.
+
+\paragraph{Evaluation statistics.}
+\citet{jiang2026benchmarking} find that only 19.8\% and 19.7\% of
+state-of-the-art claims on LIBERO and SimplerEnv are provably significant,
+because aggregate success rates at small $n$ cannot separate methods;
+\citet{kressgazit2024empirical} and \citet{snyder2025step} argue for interval
+estimates and sequential tests, and \citet{patterson2024empirical} show that
+five seeds are almost never enough for strong claims. This is not an abstract
+concern for us: an earlier version of this draft reported, from $n{=}200$, that
+our two released policies were indistinguishable below a 15\,mm tolerance
+($15.0\%$ vs.\ $15.5\%$ at 10\,mm, $p{=}0.89$) and used that as the motivating
+observation. At $n{=}2000$ the same comparison gives $17.5\%$ vs.\ $20.8\%$
+($z{=}2.65$, $p{=}0.008$): the null was an artefact of the sample size, and the
+motivating sentence has been rewritten (Sec.~\ref{sec:baselines}). We therefore
+evaluate $n{=}2000$ episodes per cell with Wilson intervals
+\citep{wilson1927probable} and three training seeds, and report interquartile
+means over seeds \citep{agarwal2021deep}.
+
+\paragraph{What could not be reused.}
+We searched for public data that would answer any part of this question without
+new rollouts and found none. Manipulation evaluation harnesses discard the
+continuous quantity at the moment they threshold it: ManiSkill3's evaluation
+returns booleans (the goal distance is computed against a fixed threshold and
+dropped), \texttt{robomimic} returns aggregate success rates with no per-episode
+dump, and LIBERO exposes only a sparse reward. Demonstration datasets store
+object poses and therefore contain terminal errors, but for demonstrations, not
+for policy rollouts. \citet{xu2026curse} release nothing;
+\citet{feng2026demystifying} promise code on publication and have not yet
+released it. Consequently every success-versus-tolerance curve in this paper had
+to be generated by re-running policies, and we release ours per-episode so that
+the next study does not.
+
+% ------------------------------------------------------------------------
+\section{Problem statement}
+\label{sec:problem}
+
+\paragraph{Task and interface.}
+An episode of the pick-and-place task samples an object pose and a target
+position, both drawn from randomised annuli in front of the arm
+(Sec.~\ref{sec:setup}). The policy $\pi_\phi$ observes a 51-dimensional state
+and outputs $a_t \in [-1,1]^5$: a Cartesian displacement of the tool centre
+point, a wrist-yaw increment and a gripper command. The environment maps $a_t$
+to a joint target through the interface
+\begin{equation}
+  \Delta x_t = \dmax\, a_t^{xyz},\qquad
+  q^{\mathrm{raw}}_t = \mathrm{IK}(x_{t-1} + \Delta x_t),\qquad
+  q^{\mathrm{cmd}}_t = (1-\alpha)\, q^{\mathrm{cmd}}_{t-1} + \alpha\, q^{\mathrm{raw}}_t,\qquad
+  \|q^{\mathrm{cmd}}_t - q^{\mathrm{cmd}}_{t-1}\|_\infty \le \qdmax / f,
+  \label{eq:interface}
+\end{equation}
+executed by position actuators at $f$\,Hz. We call $\iface = (\dmax,\alpha,f,\qdmax)$
+the action interface. In the released environment
+$\iface_0 = (30\,\mathrm{mm},\ 0.45,\ 20\,\mathrm{Hz},\ 1.0\,\mathrm{rad\,s^{-1}})$.
+Two properties of Eq.~\ref{eq:interface} are easy to misread and matter for the
+design. First, the smoothing acts on \emph{joint targets after IK} --- it is a
+first-order low-pass filter on the commanded trajectory, not on the action.
+Second, the joint-velocity clamp is part of a safety layer shared with the
+hardware interface, and it is not slack: over the $n{=}2000$ baseline
+evaluations it is active on 78\% (\(\pi_{v2}\)) and 83\% (\(\pi_{v1}\)) of
+control steps. It is therefore a binding constraint at $\iface_0$ and must be
+swept jointly with $\dmax$ rather than held fixed (Sec.~\ref{sec:design}).
+
+\paragraph{Precision and the floor.}
+The terminal placement error is $e = \|p^{\mathrm{obj}}_{xy} - p^{\mathrm{tgt}}_{xy}\|_2$
+once the object has settled after release. For a tolerance $\tau$ the success
+rate is $S(\tau) = \Pr[e \le \tau \wedge \text{lifted} \wedge \text{settled}]$;
+an episode that never lifted or never settled counts as a failure at every
+tolerance, so that a dropped object lying 0.1\,mm from the target is not scored
+as a 0.1\,mm success. Because $e$ is logged per episode, a single evaluation
+yields $S(\tau)$ for every $\tau$ at once, and
+\texttt{tests/test\_tolerance\_semantics.py} asserts that reading the curve post
+hoc agrees exactly with thresholding at that $\tau$. We use two estimators of
+the floor. The \emph{plateau estimator} $c_{50}$ is the tolerance at which
+$S(\tau)$ crosses 50\%; it is model-free, and equals the median terminal error
+whenever the valid fraction exceeds one half. The \emph{scaling-law estimator}
+$\hat c$ fits Xu et al.'s form to precision-versus-training-steps curves
+obtained by evaluating every stored checkpoint of a training run, replacing
+demonstrations $N$ by environment steps; it is comparable to their $c$ but
+model-dependent. We also report $c_{90}$, the 90th-percentile tolerance, which
+is more sensitive to the tail and correspondingly noisier.
+
+\paragraph{Hypotheses.}
+\begin{description}[nosep,leftmargin=1.5em]
+\item[H1 (interface).] $c$ is a monotone function of the effective per-step
+resolution of $\iface$. Under a one-factor-at-a-time sweep, $c_{50}$ moves with
+$\dmax$, $\alpha$ and $f$ by more than its 95\% interval.
+\item[H0a (reward).] Adding a precision term to the terminal reward moves $c$.
+\item[H0b (budget).] Training three times longer at fixed $\iface_0$ moves $c$.
+\item[H0c (representation).] Fourier-feature encoding of the observation moves
+$c$ at fixed $\iface_0$.
+\item[H0d (simulator).] Changing timestep, \texttt{solref}, impedance ratio or
+solver iterations within ranges used by published MuJoCo manipulation work
+moves $c$ at fixed $\iface_0$.
+\item[H0e (release physics).] The floor is dominated by object scatter between
+release and settling rather than by the TCP error at the moment of release.
+\end{description}
+H1 is supported if it holds and H0a--H0e fail. If H0d holds, the paper's claim
+collapses to ``the floor is a simulator artefact'' and we say so; this is the
+pre-registered kill gate. If H0c holds, the representation explanation of
+\citet{gyenes2026fourier} extends to RL and H1 must be restated as a joint
+interface--representation account. H0d and H0e are settled in
+Sec.~\ref{sec:phase0}; H0a--H0c and H1 require the training campaign.
+
+% ------------------------------------------------------------------------
+\section{Experimental setup}
+\label{sec:setup}
+
+\paragraph{Environment.}
+The arm is an AgileX Piper (6 revolute joints plus a parallel gripper) modelled
+in MuJoCo \citep{todorov2012mujoco} from the Menagerie-derived MJCF, with
+\texttt{implicitfast} integration, elliptic friction cones, \texttt{impratio}=10
+and otherwise default solver settings (timestep 2\,ms, Newton solver, 100
+iterations, 25 physics sub-steps per control step at 20\,Hz). Gravity
+compensation is enabled on all links. Position actuators use $k_p{=}80,\ k_v{=}5$
+on joints 1--3, $k_p{=}40$ on joint 4, $k_p{=}10,\ k_v{=}1.5$ on joints 5--6 and
+$k_p{=}200$ on the gripper. The object is a cylinder of radius 24\,mm and height
+70\,mm, mass 60\,g, with contact parameters \texttt{solref}=(0.010,\,1.2),
+\texttt{solimp}=(0.92,\,0.97,\,0.001) and friction (1.5,\,0.05,\,0.005); finger
+pads use \texttt{solref}=(0.012,\,1.4). The target is a site on the table;
+success requires the object within $\tau_{xy}$ of the target and 20\,mm in
+height, at rest (speed $<0.05$\,m/s), for three consecutive control steps with
+the gripper open. The default tolerance is $\tau_{xy}{=}45$\,mm; all curves below
+are evaluated post hoc at every $\tau$.
+
+\paragraph{Observation and action.}
+The 51-dimensional state contains normalised joint positions and velocities,
+gripper state, TCP position and approach vector, object and target positions,
+object velocity, relative vectors, grasp flags, the previous action and the
+sampled object size. The 5-dimensional action is described in
+Eq.~\ref{eq:interface}; differential IK uses damped least squares (damping 0.06,
+step 0.6, two iterations) with a position-first null-space projection.
+
+\paragraph{Domain randomisation and noise.}
+Per episode: object radial distance 0.30--0.39\,m and azimuth $[-0.73,-0.17]$\,rad,
+target on the mirrored annulus; object radius and height scale $[0.85,1.15]$,
+mass 30--120\,g, friction 0.8--2.0; table friction 0.6--1.4; actuator $k_p$ and
+$k_v$ scales $[0.8,1.25]$ per actuator; joint friction-loss scale $[0.5,1.6]$;
+initial joint jitter 0.06\,rad; lighting. Observation noise is additive Gaussian
+(joint position 3\,mrad, object position 6\,mm, target 4\,mm, object rotation
+0.05\,rad) with one step (50\,ms) of observation latency, 4\,mrad action noise
+and 1\% command dropout. A ``hard corner'' fraction oversamples the far-radius
+region during fine-tuning. \textbf{Correction:} the environment also draws a
+$\pm40\%$ joint-damping scale, and earlier descriptions of this work listed it
+among the randomised dynamics. The released MJCF sets no joint damping, so that
+scale multiplies zero and is a no-op. The randomiser now reports the drawn
+scales together with a \texttt{joint\_damping\_is\_noop} flag, and the flag is
+true for the released model; the parameter is excluded from the randomisation
+count and from the failure attribution. Adding nominal damping to the MJCF
+would change the dynamics of every result in this paper and was therefore not
+done after the evaluations began.
+
+\paragraph{Learning algorithm.}
+Soft actor-critic \citep{haarnoja2018sac} from Stable-Baselines3
+\citep{raffin2021sb3}: two 256-unit hidden layers, learning rate
+$3{\times}10^{-4}$ (fine-tuning $10^{-4}$), batch 256, replay buffer
+$4{\times}10^5$, $\gamma{=}0.98$, $\tau{=}0.01$, automatic entropy tuning
+initialised at 0.1, 12 parallel environments, 12 gradient steps per environment
+step, 5\,000 warm-up steps. A reverse curriculum samples episode starts from
+later task phases with decreasing probability during training and is disabled at
+evaluation. The reward combines dense reaching, lifting and transport shaping
+with stage bonuses (touch 3, grasp 25, lift 25, over-target 12, success 200) and
+per-step penalties on time, action magnitude, action change, joint speed,
+collision and unsafe commands. A terminal precision term
+$w_{\mathrm{prec}}(1 - e/\tau_{xy})$ exists and is \emph{disabled}
+($w_{\mathrm{prec}}{=}0$) in both released checkpoints. Measured throughput on
+the development machine (CPU-only training) is 26--62 environment steps per
+second; a 1.2\,M-step run takes 5--6\,h. \todo{Re-measure throughput with SAC
+updates on the GPU before the sweep; the sweep budget below assumes $\le 6$\,h
+per run.}
+
+\paragraph{The two released policies, and what separates them.}
+$\pi_{v1}$ is the \emph{best}-checkpoint selection of a 1.0\,M-step run
+(\texttt{runs/sac\_full}); $\pi_{v2}$ is the \emph{final} model of a 0.3\,M-step
+fine-tune of it (\texttt{runs/corner\_ft}) with 35\% hard-corner oversampling
+and learning rate $10^{-4}$. The reward is identical in both
+($w_{\mathrm{prec}}{=}0$); an earlier description of this work stated that they
+differed by reward, and that was wrong. Any $\pi_{v1}$-vs-$\pi_{v2}$ difference
+therefore confounds three things --- the shifted sampling distribution, the
+extra 0.3\,M steps, and the checkpoint-selection rule --- and none of them is
+the reward. This is exactly why the sweep in Sec.~\ref{sec:design} retrains
+every cell, including the $\iface_0$ cell, under one protocol with final-checkpoint
+selection, rather than reusing either released policy as a baseline.
+
+\paragraph{Evaluation protocol.}
+Deterministic policy, randomisation and noise on, curriculum off, episode $i$
+seeded with $s_0+i$. Every episode writes one CSV row: seed, git hash, success,
+grasp, lift, termination reason, terminal error $e$, TCP--target error at the
+release step, post-release scatter, episode length, collision steps, safety
+clamp count and rate, the resolved interface and solver settings, and the full
+sampled randomisation vector. The release step is detected physically, as the
+last control step on which both finger pads are in contact with a lifted object,
+rather than from the gripper command --- a command-based detector fires on
+transient open commands during transport and inflates both terms of the
+decomposition. Success curves $S(\tau)$ are reported with 95\% Wilson intervals
+\citep{wilson1927probable}; differences between cells are tested with a
+two-proportion $z$-test at the tolerance of interest and reported with effect
+size in percentage points and a 95\% interval; $c_{50}$ and $c_{90}$ carry a
+2000-draw percentile bootstrap over episodes. Each training cell will be run
+with three seeds; we report the per-seed curves and the interquartile mean.
+
+\paragraph{Instrumentation as a first-class artefact.}
+Two test files guard the sweep. \texttt{tests/test\_interface\_flags.py}
+asserts, for every swept quantity, that the flag reaches the simulator: that
+$\dmax$ bounds the one-step displacement and is monotone in reachable
+displacement, that the control rate changes the number of physics sub-steps
+($10/20/50$\,Hz $\to 50/25/10$) \emph{and} the safety clamp $\qdmax/f$, that
+$\qdmax$ sets that clamp, that the solver overrides land on
+\texttt{model.opt} and on the object and finger-pad \texttt{solref} but not on
+the table, and that scaling \texttt{solref} preserves the damping ratio. Without
+these, a mis-wired flag would make several cells of Figure~\ref{fig:sweep} the
+same experiment run repeatedly, and nothing in the printed output would say so.
+One test documents a real defect rather than asserting correctness: at 20\,Hz a
+4\,ms timestep is 12.5 sub-steps and silently rounds to 12, a 4\% shortfall in
+simulated time per control step. The eval-only gate reports the 4\,ms cell as
+measured; the retrained solver extreme uses 2.5\,ms, which divides exactly.
+
+% ------------------------------------------------------------------------
+\section{Experimental design}
+\label{sec:design}
+
+The design is one-factor-at-a-time around $\iface_0$, with retraining in every
+cell. Table~\ref{tab:design} lists the cells. Phases are ordered so that the
+experiment most likely to kill the hypothesis runs first, and so that
+everything obtainable without training is obtained first.
+
+\begin{table}[t]
+\centering\small
+\caption{Cells. Every training cell is run with three seeds and evaluated with
+$n{=}2000$ episodes. ``Eval-only'' cells re-evaluate an existing checkpoint
+under a changed simulator or tolerance and cost no training. Run-time estimates
+assume 6\,h per training run. Phase~0 is complete; Phases~1--2 are pending.}
+\label{tab:design}
+\resizebox{\linewidth}{!}{\begin{tabular}{@{}llllrr@{}}
+\toprule
+Phase & Arm & Cells & Purpose & Runs & Status \\
+\midrule
+0 & Solver (kill gate), eval-only & timestep $\{1,2,4\}$\,ms; \texttt{solref} scale $\{0.5,1,2\}$; iterations $\{20,100\}$; \texttt{impratio} $\{1,10\}$; two joint extremes & does the existing floor move? & 0 & done \\
+0 & Checkpoint curve, eval-only & every stored checkpoint of both runs & $\hat c$ vs.\ training steps; H0b & 0 & done \\
+0 & Release decomposition, eval-only & $\pi_{v1},\pi_{v2}$ & H0e & 0 & done \\
+0 & Solver (kill gate), retrain & two extreme settings & H0d & 6 & pending \\
+\midrule
+1 & $\dmax$ & $\{5, 10, 20, 30\}$\,mm, with $\qdmax$ scaled so the clamp binds equally & H1 & 12 & pending \\
+1 & $\alpha$ & $\{0.2, 0.45, 1.0\}$ (1.0 = no smoothing) & H1 & 6 & pending \\
+1 & $f$ & $\{10, 50\}$\,Hz & H1 & 6 & pending \\
+1 & $\qdmax$ alone & $\{0.5, 2.0\}$\,rad/s at $\dmax{=}30$\,mm & disentangle clamp from step & 6 & pending \\
+\midrule
+2 & Reward & $w_{\mathrm{prec}}{=}60$ from scratch & H0a & 3 & pending \\
+2 & Budget & $3{\times}$ steps at $\iface_0$ & H0b & 1 & pending \\
+2 & Fourier features & $\iface_0$ with Fourier-encoded state & H0c & 3 & pending \\
+2 & HPO & 10 Optuna trials at $\dmax{=}5$\,mm & \citet{bronars2026tune} objection & 10 & pending \\
+\midrule
+ & & & Total training runs & 53 & \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\paragraph{Phase 0: kill gate and free measurements.}
+Before any training, the released policy $\pi_{v2}$ is re-evaluated with each
+solver setting changed in the loaded model (timestep and iterations through
+\texttt{model.opt}, contact parameters by scaling \texttt{geom\_solref} on the
+object and the four finger-pad geoms, preserving the damping ratio). If the
+released policy's $c_{50}$ moves by more than its interval under a solver
+change, we retrain at the two extreme settings; if the retrained floor moves as
+far as it does under a $30\to10$\,mm step change, the study stops here and the
+write-up becomes a negative result about simulator dependence. The same phase
+evaluates every stored checkpoint of both runs to obtain precision as a function
+of training steps, and decomposes each terminal error into TCP-at-release error
+and post-release scatter. Sec.~\ref{sec:phase0} reports all three.
+
+\paragraph{Phase 1: interface sweep.}
+Cells in $\dmax$ are run with $\qdmax$ scaled proportionally
+($30\,\mathrm{mm}\to1.0$, $20\to0.67$, $10\to0.33$, $5\to0.17$\,rad/s), because
+at $\iface_0$ the joint-velocity clamp binds on about four steps in five
+(Sec.~\ref{sec:baselines}) and a step-size sweep with a fixed clamp would
+measure the clamp. A separate two-cell sweep of $\qdmax$ at fixed $\dmax$
+separates the two, and the clamp rate is reported per cell. When $f$ changes,
+the number of physics sub-steps, the observation latency in milliseconds and the
+episode budget in steps all change; we hold latency and budget fixed in seconds,
+so only the sub-step count and the clamp --- both parts of the interface --- move
+with $f$. At 50\,Hz a 30\,mm step is $1.5\,\mathrm{m\,s^{-1}}$, above the
+safety layer's Cartesian rate limit of $0.6\,\mathrm{m\,s^{-1}}$; that cell
+raises the limit to $1.6\,\mathrm{m\,s^{-1}}$ so that a second, unswept limiter
+does not silently bind, and the change is reported. Domain randomisation ranges
+are held fixed at their released values in all cells, since
+\citet{xu2026curse} show $c$ moves with randomisation range.
+
+\paragraph{Phase 2: controls.}
+The reward arm trains from scratch with the precision term enabled, rather than
+fine-tuning, so that budget and reward are not confounded. The budget arm
+continues the baseline to $3.6$\,M steps. The Fourier arm replaces the state
+input by $[s, \sin(2\pi B s), \cos(2\pi B s)]$ with a fixed Gaussian $B$
+following \citet{gyenes2026fourier}, using the same $B$ in every parallel
+environment and at evaluation. The HPO arm re-tunes learning rate, entropy
+coefficient and batch size at the smallest step size using Optuna
+\citep{akiba2019optuna}; if tuned hyperparameters recover the $\iface_0$ floor at
+$\dmax{=}5$\,mm, the Bronars-style objection stands and we report it, and the
+claim weakens to ``the interface sets the floor for a fixed optimiser
+configuration.''
+
+\paragraph{Failure attribution.}
+\label{sec:attrib}
+For every cell we fit a cross-validated logistic model and a gradient-boosted
+classifier of failure at $\tau{=}c_{50}$ on the sampled randomisation vector and
+initial state, and report AUC and permutation importances. A nested design (1000
+fixed randomisation draws $\times$ 10 noise re-seeds) estimates the intra-class
+correlation of outcomes within a draw, separating environment-determined from
+irreducible failures. \planned{If AUC $<0.6$ and ICC $<0.1$ in every cell, the
+failures are noise and this section reduces to a paragraph.}
+
+% ------------------------------------------------------------------------
+\section{Results}
+\label{sec:results}
+
+\subsection{Phase 0, measured: what the released checkpoints already say}
+\label{sec:phase0}
+
+Everything in this subsection was obtained without training a single policy. It
+uses only the checkpoints committed in the repository, and it is reproduced end
+to end by \texttt{python reproduce.py} from the archived per-episode CSVs.
+
+\subsubsection{The floor of the two released policies}
+\label{sec:baselines}
+
+\input{generated/tables/baselines}
+
+Table~\ref{tab:baselines} gives the full success-versus-tolerance curve for both
+released policies at $n{=}2000$ episodes on a common seed block, with 95\%
+Wilson intervals, and $c_{50}$ with a 2000-draw bootstrap. Four things follow.
+
+\textbf{The cliff is steep and it is not near zero.} $\pi_{v2}$ succeeds on
+94.9\% of episodes at $\tau{=}45$\,mm and on 5.3\% at $\tau{=}5$\,mm; its
+$c_{50}$ is $16.1$ [15.7, 16.6]\,mm and its $c_{90}$ is $28.9$\,mm. The floor
+sits at roughly half the 30\,mm maximum step and at 1.4 times the effective
+per-step reach of the joint-velocity clamp, both of which are consistent with
+H1 and neither of which is evidence for it: they are the quantities the sweep
+must separate.
+
+\textbf{The joint-velocity clamp is the binding interface term at $\iface_0$.}
+It fires on 78\% of the control steps of an average $\pi_{v2}$ episode and 83\%
+of a $\pi_{v1}$ episode. A step-size sweep that held $\qdmax$ fixed would
+therefore be measuring the clamp for most of its range, which is why the
+$\dmax$ cells scale $\qdmax$ with them and a separate axis varies $\qdmax$
+alone.
+
+\textbf{The motivating null of the earlier draft does not survive $n{=}2000$.}
+An earlier version of this work reported that the two policies were
+indistinguishable below 15\,mm ($15.0\%$ vs.\ $15.5\%$ at $\tau{=}10$\,mm,
+$n{=}200$, $p{=}0.89$) and used that as the observation motivating the whole
+study. At $n{=}2000$ the difference at 10\,mm is $+3.3$ percentage points
+[$+0.9$, $+5.7$], $z{=}2.65$, $p{=}0.008$, and it is still significant at
+7.5\,mm ($+2.6$\,pp, $p{=}0.007$); it disappears only at 5\,mm ($+0.9$\,pp,
+$p{=}0.21$). The two $c_{50}$ intervals, $[18.1, 19.4]$ and $[15.7, 16.6]$\,mm,
+do not overlap. Training history \emph{does} move this floor. What survives is
+the weaker and more interesting statement that the \emph{effect} of training
+history decays monotonically as the tolerance tightens --- $+13.5$\,pp at
+20\,mm, $+8.5$ at 15, $+3.3$ at 10, $+2.6$ at 7.5, $+0.9$ at 5 --- so the two
+histories converge as the ruler approaches the floor without ever having been
+equal. We report this because it is the clearest illustration in the paper of
+the point \citet{jiang2026benchmarking} and \citet{snyder2025step} make: at
+$n{=}200$ we would have published a null that is not there.
+
+\textbf{The comparison is confounded anyway.} $\pi_{v1}$ and $\pi_{v2}$ differ
+by a shifted sampling distribution, 0.3\,M extra steps \emph{and} the
+checkpoint-selection rule (best vs.\ final). No causal reading of the difference
+is available, which is precisely why every cell of Phase~1 is retrained under a
+single protocol.
+
+\subsubsection{H0e: the floor is set at release, not by post-release settling}
+
+\input{generated/tables/release}
+
+If the terminal error were dominated by how far the object rolls after the
+fingers open, no change to the action interface could move it and H1 would be
+irrelevant. Table~\ref{tab:release} decomposes the error. For $\pi_{v2}$ the
+median tool-centre-point error at the instant the object leaves the pads is
+17.7\,mm (p90 27.9), the median distance the object subsequently travels before
+settling is 7.6\,mm (p90 17.0), and the median terminal error is 15.7\,mm. The
+terminal error correlates with the TCP error at release ($r{=}0.35$ for
+$\pi_{v2}$, $0.53$ for $\pi_{v1}$) and is uncorrelated with the post-release
+scatter ($r{=}0.07$ and $-0.06$; $r^2 \approx 0.004$). \textbf{H0e is rejected:}
+the object does move after release, but where it ends up is set by where the
+gripper let go, not by the rolling. Terminal precision in this task is a
+placement problem at the last held step, which is the step the action interface
+governs.
+
+\subsubsection{H0d: the contact-solver kill gate}
+\label{sec:killgate}
+
+\input{generated/tables/killgate}
+
+Table~\ref{tab:killgate} re-evaluates $\pi_{v2}$ under nine contact-solver
+settings spanning the range used by published MuJoCo manipulation work:
+integration timestep 1, 2 and 4\,ms; contact time constant of the object and
+finger pads scaled by $0.5$, $1$ and $2$ with the damping ratio held; Newton
+iterations 20 and 100; impedance ratio 1 and 10; and the two joint extremes
+(1\,ms with \texttt{solref}$\times0.5$, 4\,ms with \texttt{solref}$\times2$).
+Each cell is $n{=}1000$ on a common seed block.
+
+$c_{50}$ moves by at most 1.9\,mm, a total span of 2.7\,mm across the nine
+cells against a nominal 16.4 [15.7, 17.0]\,mm --- about 17\% of the floor. The
+movement is not uniformly negligible: two cells, \texttt{solref}$\times0.5$
+($18.3$ [17.5, 19.1]\,mm) and the stiff/fine extreme ($17.1$ [16.5, 18.0]\,mm),
+have intervals that exclude the nominal point estimate. Softening the contact
+time constant makes the floor worse and, more sharply, degrades the tail:
+$S(45)$ falls from 95.8\% to 88.6\% and $c_{90}$ rises correspondingly, while
+$c_{50}$ moves by under 2\,mm. In other words the solver mostly changes how
+often the policy fails outright, not how precisely it places when it succeeds.
+
+Two negative details are worth stating because they would otherwise look like
+bugs. The 20-iteration cell is \emph{bit-identical} to the 100-iteration cell in
+all 1000 episodes; a direct probe (\texttt{results/precision/solver\_iterations\_probe.md})
+shows the knob is live --- 5 iterations changes the trajectory, 2 or 1 breaks
+the simulation entirely, with median errors above 450\,mm --- and that the
+Newton solver simply converges in fewer than 20 iterations for this contact
+configuration. Iteration count in $[20, 100]$ is an identity here, not a
+measured null. Separately, at 20\,Hz a 4\,ms timestep is 12.5 sub-steps and
+rounds to 12; that cell is reported as measured and the retrained extreme uses
+2.5\,ms instead.
+
+\paragraph{Gate decision.} The pre-registered rule was: if $c_{50}$ moves by
+more than its interval under any eval-only solver cell, retrain at the two
+extreme settings before proceeding, and abandon the interface claim if the
+retrained floor moves as far as a $30\to10$\,mm step change does. Two cells
+moved by more than their interval, so \textbf{the gate escalates to the
+retraining stage}: six runs (two extremes $\times$ three seeds) that have not
+been performed. The eval-only bound is nonetheless informative --- a 1.9\,mm
+solver effect is the number the interface effect must beat, and if the $\dmax$
+axis turns out to move $c_{50}$ by, say, 2\,mm, the paper has no result
+regardless of what the retrained extremes do. \todo{Run the six retraining runs
+and fill this decision. Do not run Phase~1 before it.}
+
+\subsubsection{H0b, partially: precision versus training budget}
+\label{sec:ckpt}
+
+\planned{Every stored checkpoint of both runs (32 of \texttt{sac\_full} spanning
+50\,k--1.62\,M steps, 6 of \texttt{corner\_ft}) is being evaluated at $n{=}1000$
+to give $c_{50}$ as a function of environment steps: the RL analogue of Xu et
+al.'s data-scaling curve, and the cheapest available test of H0b. The figure and
+the fit of $\log N \propto 1/(P-\hat c)$ with environment steps in place of
+demonstrations go here.}
+\todo{Fill from \texttt{paper/generated/figures/checkpoints.pdf} and
+\texttt{summary.json:checkpoint\_curve} once the sweep finishes. Note that this
+is a within-run budget test on one seed and does not replace the $3\times$
+budget arm, which is trained from scratch.}
+
+\subsection{Phase 1: interface sweep}
+\planned{Figure 1 (the paper's main figure): $S(\tau)$ curves per cell with
+intervals, one panel per axis. Table: $c_{50}$ and $c_{90}$ per cell, IQM over
+seeds. Regression of $c_{50}$ on the effective per-step resolution
+$\min(\dmax, \qdmax\,J/f)\cdot g(\alpha)$.}
+\todo{Run and fill; 30 training runs. Blocked on the gate decision above.}
+\label{fig:sweep}
+
+\subsection{Phase 2: controls}
+\planned{One table: $c_{50}$ at $\iface_0$ for baseline, reward arm, budget arm,
+Fourier arm; and $c_{50}$ at $\dmax{=}5$\,mm with default vs.\ tuned
+hyperparameters.}
+\todo{Run and fill; 17 training runs.}
+
+\subsection{Failure attribution}
+\planned{AUC, ICC and top permutation importances per cell. The per-episode
+randomisation vector needed for this is already logged in every archived CSV,
+so the analysis is available for the Phase~0 cells today and for each new cell
+as it lands.}
+\todo{Run and fill.}
+
+% ------------------------------------------------------------------------
+\section{Discussion}
+\label{sec:discussion}
+
+\todo{Write in full after Phases 1--2. The following is what the completed
+Phase 0 already licenses.}
+
+\paragraph{Where the floor is located in the episode.} The decomposition in
+Table~\ref{tab:release} narrows the question considerably. The terminal error is
+essentially the tool-centre-point error at the last held step; post-release
+physics contributes real displacement (a 7.6\,mm median) but almost no
+explanatory variance ($r^2 \approx 0.004$). Any account of the floor that
+appeals to settling, rolling or contact release is therefore the wrong account
+for this task. That is a necessary condition for H1, not a sufficient one: it
+localises the floor to the terminal approach, which is where $\dmax$, $\alpha$,
+$f$ and $\qdmax$ act --- but also where the observation noise, the IK residual
+and the policy's own value estimate act.
+
+\paragraph{How much room the interface hypothesis has.} The kill gate bounds the
+simulator's contribution at 1.9\,mm of $c_{50}$ across settings that a
+practitioner would consider reasonable. For H1 to be interesting, the interface
+sweep must move $c_{50}$ by substantially more than that. It is worth saying now
+that the design has no guaranteed win: $\dmax$ could move the floor by 2\,mm and
+the paper would then be a null result about interfaces with an awkward
+simulator-sensitivity caveat attached. The honest framing in that case is a
+short negative note, and it is the framing this draft is prepared to adopt.
+
+\paragraph{Relation to \citet{xu2026curse}.} Their $c$ for peg insertion and
+cuboid stacking is 2--3\,mm; ours is 16\,mm on a task with a post-hoc tolerance,
+a 30\,mm action step and a low-cost 6-DoF arm. The numbers are not comparable
+and we do not compare them. What is comparable is the shape of the claim ---
+that $c$ is a property of the agent system rather than the task --- and the
+mechanism we propose is a concrete instance of it that they could not observe,
+because they held the action interface fixed throughout.
+
+\paragraph{Relation to \citet{bronars2026tune} and \citet{gyenes2026fourier}.}
+Both remain open until Phase 2. If hyperparameter re-tuning recovers precision
+at small $\dmax$, the interface sets the floor only for a fixed optimiser
+configuration, which is weaker but still the practically relevant statement for
+anyone who is not going to re-tune. If Fourier features move the floor at fixed
+$\iface$, the representation explanation extends to RL with state observations
+and H1 must be restated jointly.
+
+\paragraph{Practical reading.} \planned{What a practitioner should change first
+when a policy plateaus above the required tolerance --- the interface, the
+reward, or the budget --- is the paper's intended takeaway and cannot be written
+before Phase 1.} What Phase 0 alone supports is narrower and still useful:
+before blaming the simulator, check where in the episode the error is created,
+and do not diagnose a floor from a 200-episode evaluation.
+
+% ------------------------------------------------------------------------
+\section{Limitations}
+\label{sec:limitations}
+
+All experiments are in simulation on one arm, one task and one algorithm. The
+solver arm bounds the dependence of $c$ on the contact parameters we sweep, not
+on the contact model as such; it also found a non-zero dependence, which we
+report rather than round to nothing. A real-arm measurement remains the only
+complete answer, and we do not have one. \todo{If the two-servo encoder rig is
+built, report it here as a partial hardware check on the step-size axis only,
+with the fixture-compliance calibration; otherwise state plainly that no
+hardware validation was performed.} The observation is a ground-truth state;
+policies with visual observations may have an additional,
+representation-dominated floor. The interface family is Cartesian delta position
+through differential IK; joint-space and velocity interfaces
+\citep{aljalbout2024role,azimi2026benchmarking} may behave differently. The
+task's tolerance is a post-hoc ruler rather than a physical constraint;
+\planned{a stacking or insertion variant with a physical tolerance --- a
+pedestal of radius $r_{\mathrm{ped}}$ slightly larger than the object, so that
+$\tau = r_{\mathrm{ped}} - r_{\mathrm{obj}}$ is a property of the scene ---
+would remove this objection and is the natural second task.} Finally, the
+released MJCF has no joint damping, so the damping randomisation documented in
+earlier versions of this work was inert; the results here are for a model with
+zero joint damping, which is itself a modelling choice we did not make
+deliberately.
+
+% ------------------------------------------------------------------------
+\section*{Reproducibility statement}
+The environment, MJCF, training and evaluation scripts, all checkpoints and
+every per-episode evaluation log are released at
+\url{https://github.com/abdulahad2008/piper_simulation}. \todo{Add a persistent
+DOI (Zenodo) and an anonymised mirror before submission.} Every number in
+Sec.~\ref{sec:phase0} is regenerated from the committed CSVs by
+\begin{quote}\small\texttt{python reproduce.py --results results/precision --out paper/generated}\end{quote}
+which reads no simulator and needs no GPU. Package versions are pinned in
+\texttt{requirements.txt} and additionally recorded, together with the git hash,
+in the \texttt{*.meta.json} beside every results CSV and in every run's
+\texttt{config.json}. \texttt{tests/test\_interface\_flags.py} and
+\texttt{tests/test\_tolerance\_semantics.py} assert that every swept flag
+reaches the simulator and that the tolerance means what this paper says it
+means. \texttt{CHANGELOG.md} documents every claim that changed between the
+August 2026 status documents and the archived numbers, including two that were
+simply wrong.
+
+\bibliography{refs}
+\bibliographystyle{tmlr}
+
+\appendix
+\section{Reward specification}
+\todo{Table of every reward term, weight and trigger condition, generated from
+\texttt{piper\_rl/config.py} at the commit used.}
+
+\section{Domain randomisation specification}
+\todo{Table of every randomised parameter and range, generated from
+\texttt{config.py}, including the joint-damping no-op correction and the
+\texttt{joint\_damping\_is\_noop} flag now emitted by the randomiser.}
+
+\section{Per-cell training curves}
+\todo{Learning curves for every cell and seed.}
+
+\end{document}

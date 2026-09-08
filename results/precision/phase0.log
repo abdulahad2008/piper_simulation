@@ -1,0 +1,36 @@
+=== 15:42:07 --model release/piper_sac_v1_95pct.zip --episodes 2000 --workers 2 --seed 10000 --tag v1_n2000 ===
+[v1_n2000] 2000 episodes in 5.4 min (0.16 s/ep)  ->  results/precision/v1_n2000.csv
+  success@default 94.5%   median err 18.5 mm   p90 33.8 mm
+=== 15:47:36 --model release/piper_sac_v2_96pct.zip --episodes 2000 --workers 2 --seed 10000 --tag v2_n2000 ===
+[v2_n2000] 2000 episodes in 4.6 min (0.14 s/ep)  ->  results/precision/v2_n2000.csv
+  success@default 95.4%   median err 16.1 mm   p90 28.6 mm
+=== 15:52:19 --model release/piper_sac_v2_96pct.zip --episodes 1000 --workers 2 --seed 20000 --tag v2_solver_nominal ===
+[v2_solver_nominal] 1000 episodes in 2.3 min (0.14 s/ep)  ->  results/precision/v2_solver_nominal.csv
+  success@default 96.0%   median err 16.4 mm   p90 28.9 mm
+=== 15:54:40 --model release/piper_sac_v2_96pct.zip --episodes 1000 --workers 2 --seed 20000 --timestep 0.001 --tag v2_solver_dt1ms ===
+[v2_solver_dt1ms] 1000 episodes in 3.3 min (0.20 s/ep)  ->  results/precision/v2_solver_dt1ms.csv
+  success@default 95.3%   median err 15.9 mm   p90 29.2 mm
+=== 15:58:02 --model release/piper_sac_v2_96pct.zip --episodes 1000 --workers 2 --seed 20000 --timestep 0.004 --tag v2_solver_dt4ms ===
+[v2_solver_dt4ms] 1000 episodes in 1.8 min (0.11 s/ep)  ->  results/precision/v2_solver_dt4ms.csv
+  success@default 92.0%   median err 16.7 mm   p90 34.2 mm
+=== 15:59:55 --model release/piper_sac_v2_96pct.zip --episodes 1000 --workers 2 --seed 20000 --solref-scale 0.5 --tag v2_solver_solref0.5 ===
+[v2_solver_solref0.5] 1000 episodes in 2.3 min (0.14 s/ep)  ->  results/precision/v2_solver_solref0.5.csv
+  success@default 89.9%   median err 18.1 mm   p90 40.9 mm
+=== 16:02:18 --model release/piper_sac_v2_96pct.zip --episodes 1000 --workers 2 --seed 20000 --solref-scale 2.0 --tag v2_solver_solref2 ===
+[v2_solver_solref2] 1000 episodes in 2.2 min (0.13 s/ep)  ->  results/precision/v2_solver_solref2.csv
+  success@default 95.7%   median err 16.2 mm   p90 27.8 mm
+=== 16:04:38 --model release/piper_sac_v2_96pct.zip --episodes 1000 --workers 2 --seed 20000 --solver-iters 20 --tag v2_solver_iter20 ===
+[v2_solver_iter20] 1000 episodes in 2.1 min (0.13 s/ep)  ->  results/precision/v2_solver_iter20.csv
+  success@default 96.0%   median err 16.4 mm   p90 28.9 mm
+=== 16:06:50 --model release/piper_sac_v2_96pct.zip --episodes 1000 --workers 2 --seed 20000 --impratio 1.0 --tag v2_solver_imp1 ===
+[v2_solver_imp1] 1000 episodes in 2.5 min (0.15 s/ep)  ->  results/precision/v2_solver_imp1.csv
+  success@default 91.9%   median err 16.5 mm   p90 34.4 mm
+=== 16:09:22 --model release/piper_sac_v2_96pct.zip --episodes 1000 --workers 2 --seed 20000 --timestep 0.001 --solref-scale 0.5 --tag v2_solver_extremeA ===
+[v2_solver_extremeA] 1000 episodes in 3.1 min (0.19 s/ep)  ->  results/precision/v2_solver_extremeA.csv
+  success@default 91.2%   median err 16.8 mm   p90 36.3 mm
+=== 16:12:36 --model release/piper_sac_v2_96pct.zip --episodes 1000 --workers 2 --seed 20000 --timestep 0.004 --solref-scale 2.0 --tag v2_solver_extremeB ===
+[v2_solver_extremeB] 1000 episodes in 1.8 min (0.11 s/ep)  ->  results/precision/v2_solver_extremeB.csv
+  success@default 94.4%   median err 15.6 mm   p90 28.7 mm
+=== 16:14:27 PHASE0-AB-DONE ===
+=== 16:14:34 checkpoint curve ===
+32 checkpoints from runs/sac_full
