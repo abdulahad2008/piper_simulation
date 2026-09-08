@@ -230,11 +230,11 @@ def figure_checkpoints(runs: dict, out: Path) -> None:
         hi = np.array([r["c50_hi"] for r in rows], float)
         ok = np.isfinite(c50)
         line, = a1.plot(steps, s45, marker="o", ms=3.2, lw=1.3, color=col,
-                        label=name.replace("_", r"\_"))
+                        label=name.replace("_", " "))
         col = line.get_color()
         if ok.any():
             a2.plot(steps[ok], c50[ok], marker="o", ms=3.2, lw=1.3, color=col,
-                    label=name.replace("_", r"\_"))
+                    label=name.replace("_", " "))
             a2.fill_between(steps[ok], lo[ok], hi[ok], alpha=0.18, lw=0,
                             color=col)
         if (~ok).any():
