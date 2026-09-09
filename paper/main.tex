@@ -16,8 +16,9 @@
 \newcommand{\qdmax}{\dot q_{\max}}
 \newcommand{\iface}{\boldsymbol{\theta}}
 
-\title{What Sets the Precision Floor of a Reinforcement-Learned Manipulation Policy?\\
-\large Attributing the Limit Precision to the Action Interface}
+\title{Where Does Manipulation Precision Come From?\\
+\large Attributing the Precision Floor of Reinforcement-Learned Policies
+to the Action Interface}
 
 \author{\name \todo{Author name} \email \todo{email}\\
 \addr Independent Researcher, Tashkent, Uzbekistan}
@@ -37,21 +38,24 @@ in the public repository by \texttt{python reproduce.py}; none is transcribed
 from a console log. The eval-only part of Phase~0
 (Sec.~\ref{sec:phase0}) is \emph{complete} --- 51 archived cells, 63\,000
 evaluation episodes, no training --- and it is what the released checkpoints
-alone can say. Phase~1, Phase~2 and the retrained solver extremes require 49
-training runs that have not been run; everything describing them is
+alone can say. Phase~1, Phase~2, the second environment and the retrained solver
+extremes require 73 training runs that have not been run; everything describing them is
 marked \planned{blue}. \todo{red} marks a decision that is still open. The
 August 2026 figures that appeared in earlier versions of this draft are
 superseded; \texttt{CHANGELOG.md} in the repository lists every correction.}}
 \end{center}
 
 \begin{abstract}
-Learned manipulation policies saturate at a task-specific precision floor:
-pushing the success tolerance below a few millimetres collapses success
-regardless of how much longer one trains. \citet{xu2026curse} formalise this
-floor as a limit precision $c$ in a data-scaling law for behaviour cloning and
-describe $c$ as ``an emergent property of the entire agent system,'' leaving
-open both what determines it and whether it survives online reinforcement
-learning. We study $c$ for a reinforcement-learned pick-and-place policy on a
+Reinforcement learning can now be pushed to millimetre precision on real
+robots: \citet{luo2025hilserl} reach near-perfect success on connector
+insertion, timing-belt assembly and dual-arm coordination within one to two
+and a half hours of on-robot training, by putting a human in the loop and
+choosing the controller interface carefully. What is not known is which of
+those ingredients buys the precision. \citet{xu2026curse} give the question a
+name, formalising the saturation point as a limit precision $c$ in a
+data-scaling law for behaviour cloning and describing $c$ as ``an emergent
+property of the entire agent system,'' but leaving open both what determines
+it and whether it survives online reinforcement learning. We study $c$ for a reinforcement-learned pick-and-place policy on a
 6-DoF arm in MuJoCo and test a single hypothesis: \emph{the floor is set by the
 action interface} --- the maximum per-step displacement, the joint-target
 smoothing constant, the control rate, and the joint-velocity limit imposed by
@@ -59,8 +63,12 @@ the safety layer --- rather than by the reward, the training budget, the
 observation encoder, or the contact-solver parameters of the simulator. We
 retrain policies at each interface setting instead of relabelling one policy's
 errors, evaluate every cell with $n{=}2000$ episodes under fixed domain
-randomisation, and run four control arms designed to falsify the interface
-hypothesis. This version reports the complete eval-only phase. Two released
+randomisation, run four control arms designed to falsify the interface
+hypothesis, and repeat the step-size axis in a second, independently authored
+environment --- \texttt{gym-hil}, the open simulation companion to the
+human-in-the-loop line of work, with a different arm, a different controller
+and different interface constants --- so that a result about interfaces is not
+a result about one robot. This version reports the complete eval-only phase. Two released
 policies with different training histories place the object with median
 terminal errors of 17.9 and 15.7\,mm, roughly $0.5$--$0.6$ times the 30\,mm
 maximum step; the terminal error is almost entirely the tool-centre-point
@@ -88,14 +96,24 @@ parameters, and a one-command reproduction script.
 \section{Introduction}
 \label{sec:intro}
 
-A learned manipulation policy that succeeds on 94.9\% of pick-and-place
-episodes when ``success'' means landing within 45\,mm of the target succeeds on
-20.8\% of them when the tolerance is 10\,mm and on 5.3\% when it is 5\,mm
-($n{=}2000$; Table~\ref{tab:baselines}). Nothing about the policy changed; only
-the ruler did. Every practitioner who has tightened a tolerance has seen this
-cliff, and yet the community's benchmarks report a single success rate at a
-single, usually generous, tolerance \citep{jiang2026benchmarking}, which hides
-the cliff entirely.
+\citet{luo2025hilserl} showed that reinforcement learning can be driven to
+millimetre precision on real hardware --- connector insertion, timing-belt
+assembly, dual-arm handovers --- in one to two and a half hours of on-robot
+training. Their system changes several things at once: a human intervenes
+during learning, a reward classifier is trained from teleoperated samples, and
+the policy commands the arm through a carefully chosen impedance interface.
+Which of those is doing the work for \emph{precision} specifically is not
+separable from that result, and it is not obvious. This paper isolates one
+candidate and measures it.
+
+Start with the phenomenon. A learned manipulation policy that succeeds on
+94.9\% of pick-and-place episodes when ``success'' means landing within 45\,mm
+of the target succeeds on 20.8\% of them when the tolerance is 10\,mm and on
+5.3\% when it is 5\,mm ($n{=}2000$; Table~\ref{tab:baselines}). Nothing about
+the policy changed; only the ruler did. Every practitioner who has tightened a
+tolerance has seen this cliff, and yet the community's benchmarks report a
+single success rate at a single, usually generous, tolerance
+\citep{jiang2026benchmarking}, which hides the cliff entirely.
 
 \citet{xu2026curse} were the first to characterise the cliff quantitatively.
 Training behaviour-cloning policies on three simulated tasks, they show that
@@ -135,14 +153,31 @@ the floor is an artefact of contact stiffness in the MJCF. Each of these is a
 control arm in our design (Sec.~\ref{sec:design}), and the last of them ---
 the one that would end the study --- is reported here in full.
 
-Two features of our setup make the question answerable on one workstation.
+Three features of our setup make the question answerable on one workstation.
 First, the policy is trained by soft actor-critic \citep{haarnoja2018sac} on a
 state observation, so a full retraining costs hours rather than days and we can
 afford to \emph{retrain} at every interface cell rather than relabel one
 policy's errors post hoc --- the latter cannot support any claim about training
 budget. Second, the environment records the sampled domain-randomisation vector
 of every episode, so each success curve is accompanied by a failure
-decomposition over the randomisation space (Sec.~\ref{sec:attrib}).
+decomposition over the randomisation space (Sec.~\ref{sec:attrib}). Third, the
+step-size axis is repeated in a second environment we did not write:
+\texttt{gym-hil} \citep{gymhil2025}, the open MuJoCo suite that accompanies the
+human-in-the-loop line of work, whose Franka Panda runs under operational-space
+control with a mocap target rather than a Piper under differential IK. Its
+interface constants were chosen independently of ours, and
+Sec.~\ref{sec:twoenvs} reports what they are.
+
+That comparison is worth stating before any result. The Piper environment of
+this paper commands at most 30\,mm per step at 20\,Hz with a smoothing constant
+of 0.45, and calls a placement successful within 45\,mm. \texttt{gym-hil}
+commands at most 25\,mm per step at 10\,Hz with no smoothing at all, and calls
+a grasp successful within 50\,mm and an arrangement within 30\,mm. Two
+environments, two authors, two arms, two controllers --- and every success
+tolerance in both lands between one and two commanded step sizes. If the
+precision floor were set by the reward, the budget or the simulator, there
+would be no reason for the people who wrote these environments to have
+converged on that ratio.
 
 \paragraph{Contributions.}
 \begin{enumerate}[nosep,leftmargin=*]
@@ -179,10 +214,18 @@ action interface is fixed and RL is left to future work.
 high-frequency components of the state-to-action map and that Fourier feature
 encodings \citep{tancik2020fourier} restore precision; we adopt their encoding
 as a control arm so that a representation explanation of our floor can be
-tested rather than assumed away. High-precision RL results exist ---
-\citet{brown2026match} reach sub-millimetre-clearance insertion with a hybrid
-position/force interface at 15\,Hz --- but there the interface is a design
-contribution, not a swept variable.
+tested rather than assumed away. High-precision RL results exist. \citet{luo2025hilserl} are the strongest:
+their human-in-the-loop system trains directly on a Franka and reaches
+near-perfect success on tasks with sub-millimetre clearances, with an average
+2$\times$ improvement over imitation baselines, in one to two and a half hours
+per task. \citet{brown2026match} reach sub-millimetre-clearance insertion with a
+hybrid position/force interface at 15\,Hz. In both cases the interface is a
+design contribution rather than a swept variable, and in the first it is
+entangled with human intervention and a learned reward classifier. Our question
+is complementary and deliberately narrower: holding the human, the reward and
+the data collection fixed --- indeed absent --- how much of the terminal
+precision does the interface alone account for? A demonstration that a
+combination works cannot answer that; only a sweep can.
 
 \paragraph{Action-space design.}
 The most closely related work is \citet{aljalbout2024role}, who train over 250
@@ -236,6 +279,17 @@ motivating sentence has been rewritten (Sec.~\ref{sec:baselines}). We therefore
 evaluate $n{=}2000$ episodes per cell with Wilson intervals
 \citep{wilson1927probable} and three training seeds, and report interquartile
 means over seeds \citep{agarwal2021deep}.
+
+\paragraph{Human-in-the-loop RL and its open simulation companion.}
+The practical route to \citet{luo2025hilserl}'s result for most groups is
+\texttt{gym-hil} \citep{gymhil2025} and the LeRobot port of the method, which
+provide MuJoCo Franka tasks with the same capped delta-action interface and the
+same human-intervention hooks. We use \texttt{gym-hil} not as a baseline to
+beat but as a second measuring instrument: it is the closest public analogue of
+our setup written by other people, and repeating one axis of the sweep in it is
+the cheapest available guard against a result that is really about the Piper.
+Sec.~\ref{sec:twoenvs} reports its released interface constants, which are not
+stated in its documentation and which we read out of the code.
 
 \paragraph{What could not be reused.}
 We searched for public data that would answer any part of this question without
@@ -449,7 +503,8 @@ everything obtainable without training is obtained first.
 \caption{Cells. Every training cell is run with three seeds and evaluated with
 $n{=}2000$ episodes. ``Eval-only'' cells re-evaluate an existing checkpoint
 under a changed simulator or tolerance and cost no training. Run-time estimates
-assume 6\,h per training run. Phase~0 is complete; Phases~1--2 are pending.}
+assume 6\,h per Piper training run; the \texttt{gym-hil} cells are roughly an
+hour each. Phase~0 is complete; Phases~1--2 are pending.}
 \label{tab:design}
 \resizebox{\linewidth}{!}{\begin{tabular}{@{}llllrr@{}}
 \toprule
@@ -465,13 +520,14 @@ Phase & Arm & Cells & Purpose & Runs & Status \\
 1 & $\alpha$ & $\{0.2, 0.45, 1.0\}$ (1.0 = no smoothing) & H1 & 6 & pending \\
 1 & $f$ & $\{10, 50\}$\,Hz & H1 & 6 & pending \\
 1 & $\qdmax$ alone & $\{0.5, 2.0\}$\,rad/s at $\dmax{=}30$\,mm & disentangle clamp from step & 6 & pending \\
+1 & \textbf{2nd env.} \texttt{gym-hil} & $\dmax \in \{5,10,25,50\}$\,mm, $\alpha \in \{0.2,0.45\}$, $f \in \{5,25\}$\,Hz & is H1 about interfaces or about the Piper? & 24 & pending \\
 \midrule
 2 & Reward & $w_{\mathrm{prec}}{=}60$ from scratch & H0a & 3 & pending \\
 2 & Budget & $3{\times}$ steps at $\iface_0$ & H0b & 1 & pending \\
 2 & Fourier features & $\iface_0$ with Fourier-encoded state & H0c & 3 & pending \\
 2 & HPO & 10 Optuna trials at $\dmax{=}5$\,mm & \citet{bronars2026tune} objection & 10 & pending \\
 \midrule
- & & & Total training runs & 53 & \\
+ & & & Total training runs & 77 & \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -706,6 +762,81 @@ model-free $c_{50}$ is the estimator we report throughout. That is itself a
 finding about transporting their result to RL, and it is one we would have
 missed by reporting a fitted constant without its $r^2$.
 
+\subsection{The second environment, and what its released interface is}
+\label{sec:twoenvs}
+
+The step-size axis is repeated in \texttt{gym-hil} \citep{gymhil2025}, the
+MuJoCo suite that accompanies the human-in-the-loop line of work. Its Franka
+Panda is driven by operational-space control towards a mocap target, not by
+differential IK with a joint-velocity safety clamp; it was written by different
+people for a different robot; and it is Apache-2.0, so the comparison is
+reproducible by anyone.
+
+\begin{table}[t]
+\centering\small
+\caption{The two environments' released action interfaces, read out of the code
+rather than from documentation. Neither project states these numbers in its
+README, and in \texttt{gym-hil} the base class's signature (50\,Hz) disagrees
+with the task environment's default (10\,Hz). The last row is the observation
+that motivates H1: three tasks written by two groups for two arms all set their
+success tolerance between one and two commanded step sizes.}
+\label{tab:twoenvs}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+ & this paper (Piper) & \texttt{gym-hil} (Franka) \\
+\midrule
+controller & differential IK + safety layer & operational-space, mocap target \\
+$\dmax$ (commanded) & 30\,mm & 25\,mm \\
+$\dmax$ (realised in one step) & --- & $\approx$10\,mm ($0.40\times$) \\
+$f$ & 20\,Hz & 10\,Hz \\
+physics sub-steps & 25 $\times$ 2\,ms & 50 $\times$ 2\,ms \\
+$\alpha$ & 0.45 & 1.0 (none) \\
+$\qdmax$ & 1.0\,rad/s, binds on 78--83\% of steps & none \\
+episode budget & 200 steps = 10\,s & 100 steps = 10\,s \\
+success tolerance & 45\,mm (placement) & 50\,mm (grasp), 30\,mm (arrangement) \\
+\midrule
+tolerance $/\ \dmax$ & 1.5 & 2.0, 1.2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:twoenvs} reports the constants. Two of them are worth
+calling out because they are not documented anywhere and a user of the package
+would not know them. First, the 25\,mm cap lives in \texttt{EEActionWrapper}
+and applies only to the wrapped environment ids; the \texttt{Base} ids apply no
+scaling at all, so an action of $1.0$ commands a one-metre mocap displacement,
+clipped to the workspace box. Second, the \emph{realised} displacement of a
+saturated step is about 40\% of the commanded cap --- roughly 10\,mm for the
+released 25\,mm setting --- because operational-space control does not reach the
+mocap target within one 100\,ms control step. Any comparison of the two
+environments' step sizes has to use the realised number; the ratio is linear in
+$\dmax$ and is pinned by a test
+(\texttt{tests/test\_gymhil\_interface.py}) so that a future release of the
+package cannot change it silently.
+
+\paragraph{Which task, and an honest reason.}
+The natural analogue of our placement task is \texttt{PandaArrangeBoxes},
+which has a real 30\,mm placement tolerance. As released it is not learnable
+from state: success is a conjunction over five blocks, while the state
+observation is three numbers --- the position of block~1. The other four blocks
+and all five targets are unobservable. We therefore sweep
+\texttt{PandaPickCube} and take the terminal gripper-to-block distance as the
+precision measure, which is exactly the quantity \texttt{gym-hil}'s own success
+condition thresholds at 50\,mm. That is a reach-and-grasp precision rather than
+a placement precision, and the difference is a limitation of the comparison
+rather than a feature of it. A test records the defect so that the task choice
+is revisited if a future release fixes it.
+
+\planned{Results: $S(\tau)$ and $c_{50}$ for $\dmax \in \{5, 10, 25, 50\}$\,mm
+on \texttt{PandaPickCube}, three seeds, $n{=}2000$ each, with the $\alpha$ and
+$f$ axes as secondary cells. If $c_{50}$ tracks $\dmax$ in both environments,
+H1 is a statement about delta-action interfaces; if it tracks it in one, H1 is
+a statement about the Piper and the paper says so.} These cells are cheap ---
+throughput is 63 environment steps per second on two CPU cores against 26--62
+for the Piper with 12 gradient steps, and the budget is 300\,k steps rather
+than 1.2\,M, so a three-seed step axis is under a day of wall clock.
+\todo{Run and fill; 24 runs via \texttt{run\_sweep.py --env gymhil}.}
+
 \subsection{Phase 1: interface sweep}
 \planned{Figure 1 (the paper's main figure): $S(\tau)$ curves per cell with
 intervals, one panel per axis. Table: $c_{50}$ and $c_{90}$ per cell, IQM over
@@ -811,11 +942,23 @@ and do not diagnose a floor from a 200-episode evaluation.
 \section{Limitations}
 \label{sec:limitations}
 
-All experiments are in simulation on one arm, one task and one algorithm. The
-solver arm bounds the dependence of $c$ on the contact parameters we sweep, not
-on the contact model as such; it also found a non-zero dependence, which we
-report rather than round to nothing. A real-arm measurement remains the only
-complete answer, and we do not have one. \todo{If the two-servo encoder rig is
+All experiments are in simulation. The step-size axis is measured on two arms,
+two controllers and two tasks --- an AgileX Piper under differential IK with a
+joint-velocity safety layer, and a Franka Panda under operational-space control
+with none --- which bounds but does not remove the objection that the result is
+a property of one robot; the remaining axes and every control arm are measured
+on one arm, one task and one algorithm. The second environment's task is a
+reach-and-grasp rather than a placement, for the reason given in
+Sec.~\ref{sec:twoenvs}, so the two floors are not the same physical quantity
+and are compared only in how they move with $\dmax$. The solver arm bounds the
+dependence of $c$ on the contact parameters we sweep, not on the contact model
+as such; it also found a non-zero dependence, which we report rather than round
+to nothing. A real-arm measurement remains the only complete answer, and we do
+not have one: \citet{luo2025hilserl} obtain their precision on hardware, and
+whether the interface accounts for it there is a question only a lab with that
+hardware can settle. What this paper offers is the controlled version --- two
+simulators, with the human, the reward classifier and the demonstration data
+removed, so the interface can be varied on its own. \todo{If the two-servo encoder rig is
 built, report it here as a partial hardware check on the step-size axis only,
 with the fixture-compliance calibration; otherwise state plainly that no
 hardware validation was performed.} The observation is a ground-truth state;
@@ -844,10 +987,12 @@ Sec.~\ref{sec:phase0} is regenerated from the committed CSVs by
 which reads no simulator and needs no GPU. Package versions are pinned in
 \texttt{requirements.txt} and additionally recorded, together with the git hash,
 in the \texttt{*.meta.json} beside every results CSV and in every run's
-\texttt{config.json}. \texttt{tests/test\_interface\_flags.py} and
-\texttt{tests/test\_tolerance\_semantics.py} assert that every swept flag
-reaches the simulator and that the tolerance means what this paper says it
-means. \texttt{CHANGELOG.md} documents every claim that changed between the
+\texttt{config.json}. \texttt{tests/test\_interface\_flags.py},
+\texttt{tests/test\_tolerance\_semantics.py} and
+\texttt{tests/test\_gymhil\_interface.py} assert that every swept flag reaches
+both simulators, that the tolerance means what this paper says it means, and
+that \texttt{gym-hil}'s released interface constants are the ones
+Table~\ref{tab:twoenvs} reports (75 tests in total). \texttt{CHANGELOG.md} documents every claim that changed between the
 August 2026 status documents and the archived numbers, including two that were
 simply wrong.
 

@@ -94,6 +94,33 @@ def cells(phase: int | None) -> list[dict]:
     return [c for c in out if phase is None or c["phase"] == phase]
 
 
+#: The second environment. Same axes, same seeds, same selection rule; a much
+#: cheaper cell (~63 fps on two CPU cores against the Piper's 26-62 fps with
+#: 12 gradient steps, and a 300 k-step budget rather than 1.2 M), so the
+#: cross-environment check costs a fraction of the main sweep.
+GYMHIL_THETA0 = {"max_step_dist": 0.025, "action_smoothing": 1.0,
+                 "control_hz": 10.0}
+
+
+def gymhil_cells() -> list[dict]:
+    out = []
+
+    def add(name, flags, purpose):
+        out.append({"name": name, "phase": 1, "flags": flags,
+                    "purpose": purpose, "env": "gymhil"})
+
+    add("gh_theta0", dict(GYMHIL_THETA0), "gym-hil baseline at its released interface")
+    for dmax in (0.005, 0.010, 0.050):
+        add(f"gh_dmax{int(dmax*1000)}mm", {**GYMHIL_THETA0, "max_step_dist": dmax},
+            "step axis in the second environment")
+    for a in (0.2, 0.45):
+        add(f"gh_alpha{a}", {**GYMHIL_THETA0, "action_smoothing": a},
+            "smoothing axis; gym-hil ships none, so this axis is added by us")
+    for hz in (5.0, 25.0):
+        add(f"gh_f{int(hz)}hz", {**GYMHIL_THETA0, "control_hz": hz}, "rate axis")
+    return out
+
+
 def build_cmd(cell: dict, seed: int, out_root: str) -> list[str]:
     flags = list(COMMON)
     for k, v in cell["flags"].items():
@@ -107,6 +134,39 @@ def build_cmd(cell: dict, seed: int, out_root: str) -> list[str]:
             + flags), tag
 
 
+def _report(todo, args):
+    print(f"{len(todo)} training runs")
+    for t in todo:
+        root = "runs/gymhil" if t.get("env") == "gymhil" else args.out
+        done = (Path(root) / t["tag"] / "final_model.zip").exists()
+        print(f"  [{'done' if done else '    '}] {t['tag']:24s} {t['purpose']}")
+
+
+def _run(todo, args):
+    import json as _json
+    manifest = Path("runs/gymhil") / "manifest.json"
+    manifest.parent.mkdir(parents=True, exist_ok=True)
+    log = []
+    for t in todo:
+        final = Path("runs/gymhil") / t["tag"] / "final_model.zip"
+        if not final.exists():
+            print(f"\n=== training {t['tag']} ===", flush=True)
+            t["returncode"] = subprocess.call(t["cmd"], cwd=str(PROJECT_DIR))
+        csv = Path(args.results) / f"{t['tag']}.csv"
+        if not csv.exists() and final.exists():
+            subprocess.call([sys.executable, "-m",
+                             "piper_rl.scripts.eval_precision",
+                             "--env", "gymhil-pick", "--model", str(final),
+                             "--episodes", str(args.eval_episodes),
+                             "--workers", str(args.eval_workers),
+                             "--tag", t["tag"], "--out-dir", args.results],
+                            cwd=str(PROJECT_DIR))
+        log.append(t)
+        manifest.write_text(_json.dumps(log, indent=2))
+    print(f"\nmanifest: {manifest}")
+    return 0
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -116,11 +176,35 @@ def main(argv=None):
     p.add_argument("--results", type=str, default="results/precision")
     p.add_argument("--eval-episodes", type=int, default=2000)
     p.add_argument("--eval-workers", type=int, default=2)
+    p.add_argument("--env", choices=["piper", "gymhil", "both"], default="piper",
+                   help="which environment's cells to run. 'gymhil' is the "
+                        "second environment (Franka, operational-space "
+                        "control) and is far cheaper per run.")
+    p.add_argument("--gymhil-timesteps", type=int, default=300_000)
     p.add_argument("--dry-run", action="store_true")
     p.add_argument("--hours-per-run", type=float, default=6.0)
     args = p.parse_args(argv)
 
     todo = []
+    if args.env in ("gymhil", "both"):
+        for cell in gymhil_cells():
+            for seed in args.seeds:
+                tag = f"{cell['name']}_s{seed}"
+                cmd = [sys.executable, "-m", "piper_rl.scripts.train_gymhil",
+                       "--tag", tag, "--seed", str(seed),
+                       "--timesteps", str(args.gymhil_timesteps),
+                       "--out", "runs/gymhil"]
+                for k, v in cell["flags"].items():
+                    cmd += [f"--{k.replace('_', '-')}", str(v)]
+                todo.append({"tag": tag, "cell": cell["name"], "seed": seed,
+                             "purpose": cell["purpose"], "cmd": cmd,
+                             "env": "gymhil"})
+    if args.env == "gymhil":
+        _report(todo, args)
+        if args.dry_run:
+            return 0
+        return _run(todo, args)
+
     for cell in cells(args.phase):
         seeds = [0] if cell["name"] == "budget3x" else args.seeds
         for seed in seeds:

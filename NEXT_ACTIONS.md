@@ -140,3 +140,45 @@ fails in this sandbox with `GLFWError: The GLFW library is not initialized`. It
 needs an OpenGL context to render the forehead camera and the container has
 none; it is unrelated to anything in this branch and will pass on your machine.
 The other 58 tests pass, including all 38 new ones.
+
+---
+
+## 8. The second environment (added after the HIL-SERL reframing)
+
+`gym-hil` is installed, characterised, tested and wired into the same
+evaluator, trainer and sweep runner. Nothing here is blocked on you except the
+compute.
+
+```bash
+export MUJOCO_GL=osmesa            # needed once per shell; osmesa is installed
+python -m piper_rl.scripts.run_sweep --env gymhil --dry-run
+python -m piper_rl.scripts.run_sweep --env gymhil --seeds 0 1 2
+```
+
+24 runs at roughly an hour each — the whole cross-environment check is about a
+day, against 258 h for the Piper sweep. Do this **before** the Piper Phase 1 if
+you want an early read on whether H1 is about interfaces or about your arm: it
+is by far the cheapest information in the plan.
+
+Two things it already produced without any training:
+
+- **gym-hil's released interface**, which its documentation does not state:
+  25 mm per step, 10 Hz, no smoothing, no joint-velocity clamp, 100-step
+  episodes. The base env ids apply *no* scaling at all — an action of 1.0
+  commands a one-metre mocap displacement. The realised displacement of a
+  saturated step is only ~40 % of the commanded cap (~10 mm), because
+  operational-space control does not reach the mocap target within one 100 ms
+  step.
+- **`PandaArrangeBoxes` is not learnable from state as released**: success is a
+  conjunction over five blocks, the state observation is block 1's position
+  alone. Four blocks and five targets are unobservable. That is why the sweep
+  uses `PandaPickCube`. This is worth reporting to the maintainers as an issue
+  regardless of the paper.
+
+Both facts answer, as measurements, the questions your cold-email drafts to
+Michel Aractingi / Adil Zouitine and Stone Tao were going to *ask*. Rewrite
+those two emails to lead with the answer rather than the question — an email
+that tells a maintainer something true about their own package gets replied to.
+
+Also fixed in passing: `libosmesa6` is now installed, so the headless-render
+test that used to fail now passes. The suite is **75 passed, 0 failed**.

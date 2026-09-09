@@ -102,7 +102,29 @@ def _worker(payload):
     os.environ.setdefault("OMP_NUM_THREADS", "1")
 
     cfg = build_cfg(args)
-    env = InstrumentedPiperEnv(cfg, solver=build_solver(args))
+    if args.env == "piper":
+        env = InstrumentedPiperEnv(cfg, solver=build_solver(args))
+    else:
+        # Second environment: gym-hil's MuJoCo Franka, the open simulation
+        # companion to the HIL-SERL line of work. Same delta-action interface
+        # family, different arm, different controller, different author.
+        from piper_rl.precision.gymhil_env import (GymHilPrecisionEnv,
+                                                   GymHilInterface, ARRANGE, PICK)
+        iface = GymHilInterface(
+            max_step_dist=(args.max_step_dist if args.max_step_dist is not None
+                           else 0.025),
+            action_smoothing=(args.action_smoothing
+                              if args.action_smoothing is not None else 1.0),
+            control_hz=(args.control_hz if args.control_hz is not None else 10.0),
+            timestep=args.timestep)
+        env = GymHilPrecisionEnv(ARRANGE if args.env == "gymhil-arrange" else PICK,
+                                 interface=iface)
+        cfg.max_step_dist = iface.max_step_dist
+        cfg.action_smoothing = iface.action_smoothing
+        cfg.control_hz = iface.control_hz
+        cfg.max_episode_steps = env.max_episode_steps
+        cfg.noise.obs_latency_steps = 0
+        cfg.limits.max_joint_vel = float("nan")
 
     policy = None
     if args.model:
@@ -187,6 +209,12 @@ def main(argv=None):
     p.add_argument("--seed", type=int, default=10_000)
     p.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 2)))
     p.add_argument("--tag", type=str, required=True)
+    p.add_argument("--env", choices=["piper", "gymhil-arrange", "gymhil-pick"],
+                   default="piper",
+                   help="which environment to evaluate in. The gym-hil options "
+                        "are the second environment of the study: a Franka "
+                        "under operational-space control rather than a Piper "
+                        "under differential IK.")
     p.add_argument("--out-dir", type=str, default="results/precision")
     # --- interface ---------------------------------------------------- #
     p.add_argument("--max-step-dist", type=float, default=None, help="m")
@@ -237,8 +265,28 @@ def main(argv=None):
             w.writerow(r)
 
     cfg = build_cfg(args)
+    if args.env != "piper":
+        # build_cfg resolves the Piper interface; the gym-hil cells resolve a
+        # different one in the worker, and the meta must record what actually
+        # ran, not the default it never used.
+        from piper_rl.precision.gymhil_env import GymHilInterface
+        gi = GymHilInterface(
+            max_step_dist=(args.max_step_dist if args.max_step_dist is not None
+                           else 0.025),
+            action_smoothing=(args.action_smoothing
+                              if args.action_smoothing is not None else 1.0),
+            control_hz=(args.control_hz if args.control_hz is not None else 10.0),
+            timestep=args.timestep)
+        cfg.max_step_dist = gi.max_step_dist
+        cfg.action_smoothing = gi.action_smoothing
+        cfg.control_hz = gi.control_hz
+        cfg.max_episode_steps = int(round(gi.max_episode_s * gi.control_hz))
+        cfg.noise.obs_latency_steps = 0
+        cfg.limits.max_joint_vel = float("nan")
+        cfg.limits.max_tcp_speed = gi.max_step_dist * gi.control_hz
     meta = {
-        "tag": args.tag, "model": args.model, "episodes": args.episodes,
+        "tag": args.tag, "env": args.env, "model": args.model,
+        "episodes": args.episodes,
         "seed": args.seed, "git_hash": git_hash(),
         "wall_clock_s": round(dt, 1), "workers": len(payloads),
         "interface": {"max_step_dist_m": cfg.max_step_dist,

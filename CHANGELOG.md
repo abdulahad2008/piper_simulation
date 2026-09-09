@@ -68,3 +68,56 @@ Two further facts that emerged and are recorded so they are not rediscovered:
 - `release/piper_sac_v2_96pct.zip` is not the best checkpoint of its own run:
   `runs/corner_ft/checkpoints/*_1059408_steps.zip` reaches c50 = 14.6 mm against
   the release's 16.1 mm.
+
+### Second environment: gym-hil (HIL-SERL's open simulation companion)
+
+The study now measures the step-size axis in an environment written by other
+people, for a different arm, under a different controller: Hugging Face's
+`gym-hil` (Apache-2.0), the MuJoCo suite that accompanies the human-in-the-loop
+RL line of work of Luo et al. (Science Robotics 2025).
+
+| | this repo (Piper) | gym-hil (Franka) |
+|---|---|---|
+| controller | differential IK + safety layer | operational-space, mocap target |
+| max step (commanded) | 30 mm | 25 mm |
+| max step (realised in one step) | — | ~10 mm (0.40x the cap) |
+| control rate | 20 Hz | 10 Hz |
+| smoothing | 0.45 | none |
+| joint-velocity clamp | 1.0 rad/s, binds on 78-83 % of steps | none |
+| episode budget | 200 steps = 10 s | 100 steps = 10 s |
+| success tolerance | 45 mm | 50 mm grasp / 30 mm arrangement |
+
+Two facts about gym-hil that its documentation does not state, both now pinned
+by tests so a package update cannot change them silently:
+
+- The 25 mm cap lives in `EEActionWrapper` and applies only to the wrapped env
+  ids. The `Base` ids apply no scaling at all: an action of 1.0 commands a
+  one-metre mocap displacement, clipped to the workspace box. The base class's
+  signature says 50 Hz; the task envs default to 10 Hz.
+- `PandaArrangeBoxes` is not learnable from state as released. Success requires
+  five blocks within 30 mm of five targets; `environment_state` is three
+  numbers, block 1's position. The sweep therefore uses `PandaPickCube` with
+  the terminal gripper-to-block distance as the precision measure — the same
+  quantity gym-hil's own success condition thresholds at 50 mm.
+
+### Added
+
+- `piper_rl/precision/gymhil_env.py` — the second environment behind the same
+  episode-summary contract, so `eval_precision.py` and `reproduce.py` need no
+  special cases and both environments write byte-compatible CSVs.
+- `piper_rl/scripts/train_gymhil.py` — SAC on gym-hil with the same
+  hyperparameters, the same interface flags and the same final-checkpoint rule.
+  Throughput is 63 env-steps/s on two CPU cores, so a cell is about an hour.
+- `run_sweep.py --env gymhil` — 24 cells (step, smoothing and rate axes, three
+  seeds).
+- `tests/test_gymhil_interface.py` — 16 tests, including one that pins the
+  tolerance-to-step-size ratio in both environments and one that records the
+  ArrangeBoxes observability defect.
+- `tests/conftest.py` — imports torch and triton before any OpenGL context.
+  OSMesa and triton each load their own LLVM; creating the GL context first and
+  importing torch after segfaults the interpreter during pytest collection.
+
+### Fixed
+
+- `libosmesa6` installed, so the headless-render test in
+  `tests/test_human_aware_env.py` passes. Suite: **75 passed, 0 failed**.
