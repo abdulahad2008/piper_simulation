@@ -1,0 +1,33 @@
+{
+  "tag": "ckpt_sac_full_00819528",
+  "model": "runs/sac_full/checkpoints/piper_819528_steps.zip",
+  "episodes": 1000,
+  "seed": 30000,
+  "git_hash": "6a22834",
+  "wall_clock_s": 280.8,
+  "workers": 2,
+  "interface": {
+    "max_step_dist_m": 0.03,
+    "action_smoothing": 0.45,
+    "control_hz": 20.0,
+    "max_joint_vel": 1.0,
+    "max_tcp_speed": 0.6,
+    "obs_latency_steps": 1,
+    "max_episode_steps": 200
+  },
+  "solver": {
+    "timestep": null,
+    "iterations": null,
+    "impratio": null,
+    "solref_scale": 1.0
+  },
+  "domain_rand": true,
+  "noise": true,
+  "versions": {
+    "mujoco": "3.3.7",
+    "stable_baselines3": "2.9.0",
+    "torch": "2.14.0+cu130",
+    "gymnasium": "1.3.0",
+    "numpy": "2.4.4"
+  }
+}

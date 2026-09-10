@@ -60,6 +60,29 @@ from stable_baselines3.common.callbacks import (CheckpointCallback, EvalCallback
 from stable_baselines3.common.noise import NormalActionNoise
 
 from piper_rl.config import EnvConfig
+from piper_rl.precision.solver import SolverOverride
+
+
+def _git_hash() -> str:
+    """Recorded in every run config so a result can be traced to code."""
+    import subprocess
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=str(Path(__file__).resolve().parents[2]),
+            stderr=subprocess.DEVNULL).decode().strip()
+    except Exception:
+        return "unknown"
+
+
+def _versions() -> dict:
+    out = {}
+    for mod in ("mujoco", "stable_baselines3", "torch", "gymnasium", "numpy"):
+        try:
+            out[mod] = __import__(mod).__version__
+        except Exception:
+            out[mod] = "unavailable"
+    return out
 from piper_rl.piper_env import PiperPickPlaceEnv
 from piper_rl.human_config import HumanAwareEnvConfig
 from piper_rl.human_aware_env import PiperHumanAwarePickPlaceEnv
@@ -70,12 +93,26 @@ ALGOS = {"sac": SAC, "td3": TD3, "ppo": PPO}
 
 
 # --------------------------------------------------------------------------- #
-def make_env(cfg: EnvConfig, seed: int, rank: int = 0, monitor_dir=None):
+def make_env(cfg: EnvConfig, seed: int, rank: int = 0, monitor_dir=None,
+             solver: "SolverOverride | None" = None,
+             fourier: int = 0, fourier_sigma: float = 1.0):
     def _init():
         c = copy.deepcopy(cfg)
-        env_cls = (PiperHumanAwarePickPlaceEnv
-                   if isinstance(c, HumanAwareEnvConfig) else PiperPickPlaceEnv)
-        env = env_cls(c)
+        if isinstance(c, HumanAwareEnvConfig):
+            env = PiperHumanAwarePickPlaceEnv(c)
+        elif solver is not None and not solver.is_identity():
+            # A solver cell must use the instrumented env, which is the only
+            # place the override is applied and n_substeps recomputed.
+            from piper_rl.precision import InstrumentedPiperEnv
+            env = InstrumentedPiperEnv(c, solver=solver)
+        else:
+            env = PiperPickPlaceEnv(c)
+        if fourier:
+            from piper_rl.precision.fourier import FourierObservation
+            # The SAME B in every parallel env and at evaluation: seed is fixed,
+            # not derived from `rank`.
+            env = FourierObservation(env, n_frequencies=fourier,
+                                     sigma=fourier_sigma, seed=0)
         env.reset(seed=seed + rank)
         env.action_space.seed(seed + rank)
         path = None if monitor_dir is None else str(Path(monitor_dir) / f"m{rank}")
@@ -86,8 +123,10 @@ def make_env(cfg: EnvConfig, seed: int, rank: int = 0, monitor_dir=None):
 
 
 def build_vec_env(cfg: EnvConfig, n_envs: int, seed: int, monitor_dir=None,
-                  subproc: bool = True):
-    fns = [make_env(cfg, seed, i, monitor_dir) for i in range(n_envs)]
+                  subproc: bool = True, solver=None, fourier: int = 0,
+                  fourier_sigma: float = 1.0):
+    fns = [make_env(cfg, seed, i, monitor_dir, solver, fourier, fourier_sigma)
+           for i in range(n_envs)]
     if n_envs > 1 and subproc:
         # "fork" does not exist on Windows -- hard-coding it made --n-envs > 1
         # crash there with `ValueError: cannot find context for 'fork'`.
@@ -204,6 +243,43 @@ def main(argv=None):
                    help="one-off bonus at success, scaled by how far inside the "
                         "tolerance the object landed. Default 0 (off). 60 is a "
                         "reasonable value next to bonus_success=200.")
+    # ---------------- action interface (the swept variables of the -------- #
+    # ---------------- precision-floor study) ------------------------------ #
+    p.add_argument("--max-step-dist", type=float, default=None,
+                   help="m, max commanded TCP displacement per control step "
+                        "(EnvConfig.max_step_dist). The Delta_max axis.")
+    p.add_argument("--action-smoothing", type=float, default=None,
+                   help="exponential smoothing of the JOINT TARGET after IK; "
+                        "1.0 = none. The alpha axis. Note this is a "
+                        "controller-side low-pass filter, not smoothing of "
+                        "the action itself.")
+    p.add_argument("--control-hz", type=float, default=None,
+                   help="policy rate. Observation latency and the episode "
+                        "budget are re-derived so they stay fixed in SECONDS; "
+                        "otherwise the f axis is confounded three ways.")
+    p.add_argument("--max-joint-vel", type=float, default=None,
+                   help="rad/s, safety-layer joint-velocity clamp "
+                        "(SafetyConfig/RobotLimits.max_joint_vel). At the "
+                        "released settings this clamp binds on ~83%% of steps, "
+                        "so it is a swept variable, not a constant.")
+    p.add_argument("--max-tcp-speed", type=float, default=None,
+                   help="m/s, safety-layer Cartesian rate limit. Must be >= "
+                        "max_step_dist * control_hz or every command is scaled "
+                        "down; raise it for the 50 Hz cell.")
+    # ---------------- contact solver (the H0d kill gate) ------------------ #
+    p.add_argument("--timestep", type=float, default=None,
+                   help="s, MuJoCo integration timestep, applied after the "
+                        "model is loaded; n_substeps follows it.")
+    p.add_argument("--solver-iters", type=int, default=None)
+    p.add_argument("--impratio", type=float, default=None)
+    p.add_argument("--solref-scale", type=float, default=1.0,
+                   help="scales the solref TIME CONSTANT of the object geom "
+                        "and the finger pads; dampratio is preserved.")
+    # ---------------- representation control arm (H0c) -------------------- #
+    p.add_argument("--fourier-features", type=int, default=0,
+                   help="0 = off. Otherwise the number of random Fourier "
+                        "frequencies concatenated onto the state.")
+    p.add_argument("--fourier-sigma", type=float, default=1.0)
     p.add_argument("--hard-corner-frac", type=float, default=None,
                    help="fraction of episodes spawned in the outer-radius / "
                         "far-azimuth corner where the failures live. Default 0.")
@@ -283,17 +359,61 @@ def main(argv=None):
     if args.hard_corner_frac is not None:
         cfg.domain_rand.hard_corner_frac = args.hard_corner_frac
 
+    # ---- action interface -------------------------------------------- #
+    # Latency and the episode budget are held in SECONDS across the control-
+    # rate axis. Changing control_hz alone would also change (a) the number of
+    # physics sub-steps, (b) the safety clamp max_dq = max_joint_vel/hz,
+    # (c) the observation latency in ms, and (d) the episode budget in s.
+    # (a) and (b) are part of the interface and are meant to move; (c) and (d)
+    # are not, so they are re-derived here.
+    base_hz = cfg.control_hz
+    latency_s = cfg.noise.obs_latency_steps / base_hz
+    budget_s = cfg.max_episode_steps / base_hz
+    if args.control_hz is not None:
+        cfg.control_hz = args.control_hz
+        cfg.noise.obs_latency_steps = int(round(latency_s * cfg.control_hz))
+        cfg.max_episode_steps = int(round(budget_s * cfg.control_hz))
+        print(f"control rate: {cfg.control_hz:g} Hz  "
+              f"(latency {cfg.noise.obs_latency_steps} steps = "
+              f"{1000*latency_s:.0f} ms, budget {cfg.max_episode_steps} steps "
+              f"= {budget_s:.0f} s)")
+    if args.max_step_dist is not None:
+        cfg.max_step_dist = args.max_step_dist
+    if args.action_smoothing is not None:
+        cfg.action_smoothing = args.action_smoothing
+    if args.max_joint_vel is not None:
+        cfg.limits.max_joint_vel = args.max_joint_vel
+    if args.max_tcp_speed is not None:
+        cfg.limits.max_tcp_speed = args.max_tcp_speed
+    if cfg.max_step_dist * cfg.control_hz > cfg.limits.max_tcp_speed:
+        print(f"WARNING: max_step_dist*control_hz = "
+              f"{cfg.max_step_dist*cfg.control_hz:.2f} m/s exceeds "
+              f"max_tcp_speed = {cfg.limits.max_tcp_speed:.2f} m/s; the "
+              f"safety layer will rate-limit essentially every command. "
+              f"Raise --max-tcp-speed or accept and report it.")
+
+    solver = SolverOverride(timestep=args.timestep,
+                            iterations=args.solver_iters,
+                            impratio=args.impratio,
+                            solref_scale=args.solref_scale)
+
     with open(out / "config.json", "w") as f:
-        json.dump({"args": vars(args), "env": cfg.to_dict()}, f, indent=2,
-                  default=str)
+        json.dump({"args": vars(args), "env": cfg.to_dict(),
+                   "solver": solver.as_dict(),
+                   "git_hash": _git_hash(),
+                   "versions": _versions()}, f, indent=2, default=str)
 
     # ------------------------------------------------------------------ envs
     train_env = build_vec_env(cfg, args.n_envs, args.seed,
-                              monitor_dir=str(out), subproc=args.n_envs > 1)
+                              monitor_dir=str(out), subproc=args.n_envs > 1,
+                              solver=solver, fourier=args.fourier_features,
+                              fourier_sigma=args.fourier_sigma)
     # Evaluation env: curriculum OFF (always the true initial state), same
     # dynamics randomisation, different seeds.
     eval_cfg = cfg.eval_variant()
-    eval_env = build_vec_env(eval_cfg, 1, args.seed + 10_000, subproc=False)
+    eval_env = build_vec_env(eval_cfg, 1, args.seed + 10_000, subproc=False,
+                             solver=solver, fourier=args.fourier_features,
+                             fourier_sigma=args.fourier_sigma)
 
     # ------------------------------------------------------------------ model
     Algo = ALGOS[args.algo]

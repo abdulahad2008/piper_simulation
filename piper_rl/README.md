@@ -197,7 +197,7 @@ Five phases. The full definition, with weights, is in
 | | first time clear of the table | +12 once |
 | transport | `Δ‖object − target‖`, **only while held and airborne** | +18 /m |
 | | first time over the target | +6 once |
-| place | placed + released + settled | **+120 once** |
+| place | placed + released + settled | **+200 once** |
 
 | penalty | weight |
 |---|---|
@@ -221,7 +221,7 @@ Five phases. The full definition, with weights, is in
 3. **Shaping is phase-gated.** Transport reward only pays while the object is
    genuinely held *and* more than 2 cm off the table, so shoving the cup along
    the surface with the gripper earns nothing.
-4. **The success bonus (+120) dominates** the entire achievable shaping budget
+4. **The success bonus (+200) dominates** the entire achievable shaping budget
    (~45 for a perfect run), so finishing is always optimal.
 
 `validate_model.py` check 5 tests exactly this: it scores a do-nothing policy, a

@@ -21,7 +21,7 @@ maps one-to-one onto the end-pose command mode of the real PIPER SDK.
 ``action_mode="joint"`` gives ``Box(-1, 1, (7,))`` = per-joint position deltas +
 gripper, the most literal match to the hardware's joint-command interface.
 
-**Observation space** (``obs_mode="state"``), ``Box(-inf, inf, (52,))`` float32 --
+**Observation space** (``obs_mode="state"``), ``Box(-inf, inf, (51,))`` float32 --
 see :meth:`_state_obs` for the exact layout. Every proprioceptive and object
 term is corrupted with Gaussian noise and delayed by ``obs_latency_steps``.
 

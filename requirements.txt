@@ -1,23 +1,34 @@
 # AgileX PIPER pick-and-place RL stack
 # Python 3.10-3.12.  Install with:  pip install -r requirements.txt
+#
+# Versions are PINNED, not lower-bounded. A precision floor is a
+# sub-millimetre statement about a contact simulation; MuJoCo minor releases
+# change contact solving, and an unpinned environment cannot reproduce a
+# number in this repository. The exact versions used to produce every CSV in
+# results/precision/ are also written into each `*.meta.json`.
 
-mujoco>=3.1
-gymnasium>=0.29
-stable-baselines3[extra]>=2.3
-torch>=2.2
-numpy>=1.24
-imageio>=2.31
-imageio-ffmpeg>=0.4          # mp4 writing for eval videos
-tensorboard>=2.14            # training curves
-pytest>=7.4                  # automated environment and regression tests
+mujoco==3.3.7
+gymnasium==1.3.0
+stable-baselines3==2.9.0
+torch==2.14.0            # CPU or CUDA build; record which in the meta.json
+numpy==2.4.4
+pandas==3.0.2
+scipy==1.17.1
+matplotlib==3.10.9
+imageio==2.37.3
+imageio-ffmpeg==0.6.0        # mp4 writing for eval videos
+tensorboard==2.21.0          # training curves
+pytest==9.1.1                # environment, interface and tolerance tests
+optuna==5.0.0                # the HPO control arm (Phase 2)
 
 # --- optional -------------------------------------------------------------- #
 # piper_sdk                  # AgileX SDK, ONLY needed for real-hardware work
 # opencv-python              # if you build the perception module for sim2real
 
 # --- Linux headless rendering ---------------------------------------------- #
-# MuJoCo needs a GL backend to render the forehead camera. On a desktop with a
-# display this is automatic. On a headless Linux box:
+# Rendering is NOT needed to train or to evaluate; it is needed only for the
+# eval video. Do not set MUJOCO_GL unless you are rendering -- setting it to
+# osmesa without libosmesa6 installed makes `import mujoco` fail.
 #     sudo apt-get install libosmesa6 libgl1-mesa-dri
 #     export MUJOCO_GL=osmesa
 # or, with an NVIDIA GPU and EGL available:
