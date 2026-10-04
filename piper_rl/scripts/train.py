@@ -283,6 +283,14 @@ def main(argv=None):
     p.add_argument("--hard-corner-frac", type=float, default=None,
                    help="fraction of episodes spawned in the outer-radius / "
                         "far-azimuth corner where the failures live. Default 0.")
+    p.add_argument("--human-safe-separation-distance", type=float, default=None,
+                   help="m; surface distance below which human proximity is penalized")
+    p.add_argument("--human-near-miss-distance", type=float, default=None,
+                   help="m; surface distance below which a human near miss is recorded")
+    p.add_argument("--human-proximity-penalty-weight", type=float, default=None,
+                   help="weight of the quadratic human-proximity penalty")
+    p.add_argument("--human-collision-penalty", type=float, default=None,
+                   help="one-off reward penalty for the first robot-human collision")
     p.add_argument("--device", default="auto")
     p.add_argument("--net-arch", type=int, nargs="+", default=None,
                    help="hidden layer sizes, e.g. --net-arch 512 512 256")
@@ -303,6 +311,18 @@ def main(argv=None):
         p.error("--curriculum-total-timesteps must be positive")
     if args.curriculum_ramp_timesteps is not None and args.curriculum_ramp_timesteps <= 0:
         p.error("--curriculum-ramp-timesteps must be positive")
+    safety_args = (args.human_safe_separation_distance,
+                   args.human_near_miss_distance,
+                   args.human_proximity_penalty_weight,
+                   args.human_collision_penalty)
+    if args.task != "human-aware" and any(value is not None for value in safety_args):
+        p.error("human safety overrides require --task human-aware")
+    if any(value is not None and value <= 0 for value in safety_args):
+        p.error("human safety overrides must be positive")
+    if (args.human_safe_separation_distance is not None
+            and args.human_near_miss_distance is not None
+            and args.human_near_miss_distance > args.human_safe_separation_distance):
+        p.error("--human-near-miss-distance cannot exceed --human-safe-separation-distance")
 
     if args.torch_threads:
         torch.set_num_threads(args.torch_threads)
@@ -358,6 +378,16 @@ def main(argv=None):
         cfg.reward.w_precision = args.w_precision
     if args.hard_corner_frac is not None:
         cfg.domain_rand.hard_corner_frac = args.hard_corner_frac
+    if args.task == "human-aware":
+        safety = cfg.human_safety
+        if args.human_safe_separation_distance is not None:
+            safety.safe_separation_distance = args.human_safe_separation_distance
+        if args.human_near_miss_distance is not None:
+            safety.near_miss_distance = args.human_near_miss_distance
+        if args.human_proximity_penalty_weight is not None:
+            safety.proximity_penalty_weight = args.human_proximity_penalty_weight
+        if args.human_collision_penalty is not None:
+            safety.human_collision_penalty = args.human_collision_penalty
 
     # ---- action interface -------------------------------------------- #
     # Latency and the episode budget are held in SECONDS across the control-

@@ -480,7 +480,15 @@ def evaluate_command(model: Path, experiment: str, episodes: int, seed: int, out
     return command
 
 
-def common_selection(spec: RunSpec) -> dict:
+def common_selection(spec: RunSpec, metric: str = "task_success_rate") -> dict:
+    """Select a checkpoint using held-back common-ID episodes.
+
+    The default preserves the preregistered original protocol.  Safety pilots
+    may select collision-free success first and use collision rate only as a
+    deterministic tie breaker.
+    """
+    if metric not in {"task_success_rate", "collision_free_success_rate"}:
+        raise ValueError(f"unsupported selection metric: {metric}")
     result = result_dir(spec)
     run = run_dir(spec)
     candidates: list[tuple[str, Path, int | None]] = []
@@ -498,13 +506,17 @@ def common_selection(spec: RunSpec) -> dict:
         summary = load_json(prefix.with_suffix(".json"))["summary"]
         evaluations.append({"label": label, "step": step, "path": str(model),
                             "sha256": sha256(model), "summary": summary})
-    # Stable max implements preregistered earlier-grid tie breaking; callback-best sorts after grid.
-    selected = max(enumerate(evaluations), key=lambda item: (item[1]["summary"]["task_success_rate"], -item[0]))[1]
+    # Stable max implements earlier-grid tie breaking; callback-best sorts after grid.
+    selected = max(
+        enumerate(evaluations),
+        key=lambda item: (item[1]["summary"][metric],
+                          -item[1]["summary"]["human_collision_rate"], -item[0]),
+    )[1]
     selected_path = Path(selected["path"])
     output = run / "selected_common_id_model.zip"
     shutil.copy2(selected_path, output)
     selection = {"distribution": "evaluation_id", "seed_start": COMMON_ID_SEED,
-                 "episodes": COMMON_ID_EPISODES, "metric": "task_success_rate",
+                 "episodes": COMMON_ID_EPISODES, "metric": metric,
                  "candidates": evaluations, "selected": {**selected, "path": str(output),
                  "sha256": sha256(output)}}
     atomic_json(result / "checkpoint_validation.json", selection)

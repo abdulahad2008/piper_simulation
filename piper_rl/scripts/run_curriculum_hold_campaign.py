@@ -27,22 +27,32 @@ from piper_rl.scripts import run_multiseed_campaign as campaign
 RAMP_TIMESTEPS = 1_200_000
 TOTAL_TIMESTEPS = 2_000_000
 DEFAULT_SEEDS = (3, 4, 5)
+SAFETY_TUNING = {
+    "human_safe_separation_distance": 0.18,
+    "human_near_miss_distance": 0.09,
+    "human_proximity_penalty_weight": 10.0,
+    "human_collision_penalty": 300.0,
+}
 ROOT: Path
 STATE_PATH: Path
 SPECS: tuple[campaign.RunSpec, ...]
+SAFETY_PILOT: bool
 
 
-def configure_campaign(seeds: tuple[int, ...]) -> None:
+def configure_campaign(seeds: tuple[int, ...], safety_pilot: bool = False) -> None:
     """Set the campaign identity before reading or writing its state."""
-    global ROOT, STATE_PATH, SPECS
+    global ROOT, STATE_PATH, SPECS, SAFETY_PILOT
     ordered = tuple(sorted(set(seeds)))
     if not ordered:
         raise ValueError("at least one seed is required")
     label = f"s{ordered[0]}_s{ordered[-1]}" if len(ordered) > 1 else f"s{ordered[0]}"
-    ROOT = Path("results") / f"human_aware_curriculum_hold_{label}"
+    SAFETY_PILOT = safety_pilot
+    prefix = "human_aware_curriculum_hold_safety" if safety_pilot else "human_aware_curriculum_hold"
+    ROOT = Path("results") / f"{prefix}_{label}"
     STATE_PATH = ROOT / "campaign_state.json"
     SPECS = tuple(
-        campaign.RunSpec("curriculum_hold", seed, f"human_aware_curriculum_hold_s{seed}",
+        campaign.RunSpec("curriculum_hold_safety" if safety_pilot else "curriculum_hold", seed,
+                         f"{prefix}_s{seed}",
                          "curriculum", 0.0, "human_aware_sac_v1")
         for seed in ordered
     )
@@ -69,6 +79,7 @@ def state() -> dict[str, Any]:
             "total_timesteps": TOTAL_TIMESTEPS,
         },
         "reference_run": "human_aware_sac_v1",
+        "safety_tuning": SAFETY_TUNING if SAFETY_PILOT else None,
         "runs": {
             spec.run_name: {"method": spec.method, "seed": spec.seed, "status": "pending"}
             for spec in SPECS
@@ -93,6 +104,8 @@ def expected_config(spec: campaign.RunSpec,
     args = campaign.normalize_args(copy.deepcopy(reference["args"]))
     args.setdefault("curriculum_total_timesteps", None)
     args.setdefault("curriculum_ramp_timesteps", None)
+    for name in SAFETY_TUNING:
+        args.setdefault(name, None)
     args.update({
         "seed": spec.seed,
         "run_name": spec.run_name,
@@ -104,6 +117,8 @@ def expected_config(spec: campaign.RunSpec,
         "load": None,
         "resume": None,
     })
+    if SAFETY_PILOT:
+        args.update(SAFETY_TUNING)
     # A resumed run records the remaining work in its config.  Validate that
     # form against the checkpoint named by the config instead of treating the
     # intentional bookkeeping differences as a scientific configuration change.
@@ -130,6 +145,11 @@ def expected_config(spec: campaign.RunSpec,
     cfg.curriculum = not args["no_curriculum"]
     cfg.domain_rand.enabled = not args["no_domain_rand"]
     cfg.noise.enabled = not args["no_noise"]
+    if SAFETY_PILOT:
+        for name, value in SAFETY_TUNING.items():
+            attribute = ("human_collision_penalty" if name == "human_collision_penalty"
+                         else name.removeprefix("human_"))
+            setattr(cfg.human_safety, attribute, value)
     return {"args": args, "env": cfg.to_dict()}
 
 
@@ -167,6 +187,9 @@ def training_command(spec: campaign.RunSpec) -> list[str]:
         "--eval-freq", "20000", "--n-eval-episodes", "15", "--checkpoint-freq", "50000",
         "--action-mode", "cartesian", "--device", "auto",
     ]
+    if SAFETY_PILOT:
+        for name, value in SAFETY_TUNING.items():
+            command.extend([f"--{name.replace('_', '-')}", str(value)])
     checkpoint = resumable_checkpoint(spec)
     if checkpoint is not None:
         completed = checkpoint_step(checkpoint)
@@ -312,7 +335,8 @@ def run_one(spec: campaign.RunSpec, current: dict[str, Any]) -> None:
         set_status(current, spec, "trained", training_finished_at=now(), duration_seconds=duration,
                    final_timestep=validation["final_timestep"], model_hashes=validation["model_hashes"])
     set_status(current, spec, "evaluating", evaluation_started_at=now())
-    selection = campaign.common_selection(spec)
+    selection = campaign.common_selection(
+        spec, metric="collision_free_success_rate" if SAFETY_PILOT else "task_success_rate")
     heldout = campaign.heldout_evaluations(spec, selection)
     campaign.curate_run(spec, validation, selection, heldout, duration)
     set_status(current, spec, "completed", completed_at=now(),
@@ -326,8 +350,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--all", action="store_true", help="run every pending seed sequentially")
     parser.add_argument("--seeds", type=int, nargs="+", default=list(DEFAULT_SEEDS),
                         help="training seeds for this campaign (default: 3 4 5)")
+    parser.add_argument("--safety-pilot", action="store_true",
+                        help="use the preregistered safety-tuned reward and collision-first selection")
     args = parser.parse_args(argv)
-    configure_campaign(tuple(args.seeds))
+    if args.safety_pilot and len(set(args.seeds)) != 1:
+        parser.error("--safety-pilot requires exactly one seed")
+    configure_campaign(tuple(args.seeds), safety_pilot=args.safety_pilot)
     run_names = {spec.run_name for spec in SPECS}
     if args.run and args.run not in run_names:
         parser.error("--run must name a run implied by --seeds")
