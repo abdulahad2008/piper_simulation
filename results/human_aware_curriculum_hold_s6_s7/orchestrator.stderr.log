@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\Games\piper_sim\piper_rl\scripts\run_curriculum_hold_campaign.py", line 316, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "D:\Games\piper_sim\piper_rl\scripts\run_curriculum_hold_campaign.py", line 308, in main
+    run_one(spec, current)
+  File "D:\Games\piper_sim\piper_rl\scripts\run_curriculum_hold_campaign.py", line 278, in run_one
+    validation = verify_trained(spec)
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Games\piper_sim\piper_rl\scripts\run_curriculum_hold_campaign.py", line 245, in verify_trained
+    raise RuntimeError(f"{spec.run_name} did not reach an intact {TOTAL_TIMESTEPS:,}-step state")
+RuntimeError: human_aware_curriculum_hold_s6 did not reach an intact 2,000,000-step state

@@ -1,0 +1,43 @@
+COMMAND: D:\Games\piper_sim\.venv\Scripts\python.exe -B -m piper_rl.scripts.evaluate_human_aware --model runs\human_aware_curriculum_hold_safety_s8\checkpoints\piper_1500000_steps.zip --algo sac --experiment randomized-id --episodes 50 --seed 21000 --out results\human_aware_curriculum_hold_safety_s8\checkpoint_validation\step_1500000
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+{
+  "experiment": "randomized-id",
+  "distribution": "evaluation_id",
+  "episodes": 50,
+  "deterministic_prediction": true,
+  "task_success_rate": 0.0,
+  "task_success_95ci": [
+    0.0,
+    0.07135003417431873
+  ],
+  "collision_free_success_rate": 0.0,
+  "human_collision_rate": 0.2,
+  "human_collision_95ci": [
+    0.11243629945973886,
+    0.3303737210448524
+  ],
+  "near_miss_rate": 0.24,
+  "mean_minimum_separation": 0.1908760059845498,
+  "median_minimum_separation": 0.20452375429600828,
+  "p05_minimum_separation": -0.00014482670538365285,
+  "worst_minimum_separation": -0.0003278384780603105,
+  "mean_completion_time_successes": null,
+  "mean_episode_duration": 7.613,
+  "mean_episode_length": 152.26,
+  "mean_placement_error": 0.3345335829941316,
+  "median_placement_error": 0.3265705856125766,
+  "p90_placement_error": 0.4398821162301567,
+  "grasp_rate": 0.14,
+  "lift_rate": 0.0,
+  "mean_safety_interventions": 126.14,
+  "mean_safety_clamped_steps": 126.14,
+  "mean_safety_clamp_rate": 0.7760480267866163,
+  "mean_proximity_steps": 15.04,
+  "mean_waiting_steps": 13.22,
+  "mean_waiting_time": 0.661,
+  "mean_episode_reward": -61.76883892572575,
+  "mean_human_safety_cost": 28.414760357067703
+}
+episode CSV: results\human_aware_curriculum_hold_safety_s8\checkpoint_validation\step_1500000.csv
+summary JSON: results\human_aware_curriculum_hold_safety_s8\checkpoint_validation\step_1500000.json

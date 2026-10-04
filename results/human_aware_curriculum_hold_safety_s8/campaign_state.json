@@ -1,0 +1,93 @@
+{
+  "schema": "piper_human_aware_curriculum_hold_campaign_v1",
+  "created_at": "2026-09-24T15:47:49.391534+00:00",
+  "schedule": {
+    "start_difficulty": 0.0,
+    "end_difficulty": 1.0,
+    "ramp_timesteps": 1200000,
+    "hold_timesteps": 800000,
+    "total_timesteps": 2000000
+  },
+  "reference_run": "human_aware_sac_v1",
+  "safety_tuning": {
+    "human_safe_separation_distance": 0.18,
+    "human_near_miss_distance": 0.09,
+    "human_proximity_penalty_weight": 10.0,
+    "human_collision_penalty": 300.0
+  },
+  "runs": {
+    "human_aware_curriculum_hold_safety_s8": {
+      "method": "curriculum_hold_safety",
+      "seed": 8,
+      "status": "evaluating",
+      "started_at": "2026-09-24T15:47:49.393535+00:00",
+      "training_started_at": "2026-09-24T15:47:51.354391+00:00",
+      "command": [
+        "D:\\Games\\piper_sim\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "piper_rl.scripts.train",
+        "--task",
+        "human-aware",
+        "--human-preset",
+        "curriculum",
+        "--human-difficulty",
+        "0.0",
+        "--curriculum-ramp-timesteps",
+        "1200000",
+        "--algo",
+        "sac",
+        "--timesteps",
+        "2000000",
+        "--n-envs",
+        "4",
+        "--seed",
+        "8",
+        "--run-name",
+        "human_aware_curriculum_hold_safety_s8",
+        "--out",
+        "runs",
+        "--eval-freq",
+        "20000",
+        "--n-eval-episodes",
+        "15",
+        "--checkpoint-freq",
+        "50000",
+        "--action-mode",
+        "cartesian",
+        "--device",
+        "auto",
+        "--human-safe-separation-distance",
+        "0.18",
+        "--human-near-miss-distance",
+        "0.09",
+        "--human-proximity-penalty-weight",
+        "10.0",
+        "--human-collision-penalty",
+        "300.0"
+      ],
+      "last_training_status": {
+        "at": "2026-09-25T05:49:04.555967+00:00",
+        "active_run": "human_aware_curriculum_hold_safety_s8",
+        "confirmed_timestep": 1900000,
+        "observed_tensorboard_timestep": 1940000,
+        "percent_complete": 95.0,
+        "fps": 38.0,
+        "elapsed_seconds": 50473.202999999994,
+        "estimated_remaining_seconds": 1561.0268969072163,
+        "latest_success_rate": 0.3799999952316284,
+        "latest_collision_rate": 0.1599999964237213,
+        "finite_values": true
+      },
+      "training_finished_at": "2026-09-25T06:15:48.486564+00:00",
+      "duration_seconds": 52077.077999999994,
+      "final_timestep": 2000000,
+      "model_hashes": {
+        "callback_best": "1f0a23b79b680c43d2487974ff58fbb327a69458e2555f80de4e4606bcfd086a",
+        "final": "a572573b8549fcf93a99cfda30dd7a7e512abb2bf1e6e24256eb068aa659ae14"
+      },
+      "evaluation_started_at": "2026-09-25T06:15:48.487563+00:00"
+    }
+  },
+  "updated_at": "2026-09-25T06:15:48.487563+00:00"
+}
