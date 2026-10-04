@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import collections
 import csv
 import json
 import math
@@ -14,6 +15,7 @@ from stable_baselines3 import PPO, SAC, TD3
 
 from piper_rl.human_aware_env import PiperHumanAwarePickPlaceEnv
 from piper_rl.human_config import HumanAwareEnvConfig
+from piper_rl.human_motion import HumanTrajectoryGenerator
 
 
 EXPERIMENTS = {
@@ -29,6 +31,68 @@ EXPERIMENTS = {
     "randomized-id": ("evaluation_id", True, "evaluation_id"),
     "ood": ("evaluation_ood", True, "evaluation_ood"),
 }
+
+
+class _HumanObservationProbeEnv(PiperHumanAwarePickPlaceEnv):
+    """Change policy-visible human channels without changing physical state."""
+
+    def __init__(self, cfg, human_obs_source):
+        self.human_obs_source = human_obs_source
+        self._probe_motion_generator = HumanTrajectoryGenerator(
+            HumanAwareEnvConfig.from_preset("fixed_exact_h036_v1").human_motion)
+        super().__init__(cfg)
+
+    def reset(self, *, seed=None, options=None):
+        if seed is None:
+            raise ValueError("human-observation probes require an episode seed")
+        self._probe_rng = np.random.default_rng(seed)
+        self._probe_obs_buf = collections.deque()
+        self._frozen_human_obs = None
+        return super().reset(seed=seed, options=options)
+
+    def _after_reset(self, rng, options, randomization_info):
+        info = super()._after_reset(rng, options, randomization_info)
+        if self.human_obs_source == "phantom-exact-h036":
+            self._probe_trajectory = self._probe_motion_generator.sample(
+                self._probe_rng, self.obj_pos, self.target_pos, force_present=True)
+        return info
+
+    def _extra_state_obs(self):
+        # Preserve the physical env's RNG stream and observation bookkeeping.
+        # The discarded actual observation consumes exactly its usual noise draws.
+        actual = super()._extra_state_obs()
+        if not self.human_cfg.include_human_state:
+            raise ValueError("human-observation probes require the 13 human channels")
+        if self.human_obs_source == "frozen-parked":
+            if self._frozen_human_obs is None:
+                self._frozen_human_obs = actual.copy()
+                self._frozen_human_obs[0] = 0.0
+            return self._frozen_human_obs.copy()
+
+        state = self._probe_trajectory.state(
+            float(self.data.time - self._human_time_zero))
+        # Reuse the existing 13-channel encoder, including its noise, latency,
+        # and real-TCP relative position. No mocap/physics setters are called.
+        saved = (self.human_state, self._human_episode_active,
+                 self.np_random, self._human_obs_buf)
+        try:
+            self.human_state = state
+            self._human_episode_active = True
+            self.np_random = self._probe_rng
+            self._human_obs_buf = self._probe_obs_buf
+            return super()._extra_state_obs()
+        finally:
+            (self.human_state, self._human_episode_active,
+             self.np_random, self._human_obs_buf) = saved
+
+
+def _make_env(cfg, human_obs_source="actual"):
+    """Keep the default on the original, unmodified environment code path."""
+    if human_obs_source == "actual":
+        return PiperHumanAwarePickPlaceEnv(cfg)
+    if human_obs_source not in {"phantom-exact-h036", "frozen-parked"}:
+        raise ValueError(f"unknown human observation source: {human_obs_source}")
+    return _HumanObservationProbeEnv(cfg, human_obs_source)
 
 
 def _load_model(path: str, algo: str, env):
@@ -72,6 +136,10 @@ def main(argv=None):
     p.add_argument("--stochastic", action="store_true",
                    help="use stochastic prediction; deterministic is the default")
     p.add_argument("--no-human-state", action="store_true")
+    p.add_argument("--human-obs-source",
+                   choices=["actual", "phantom-exact-h036", "frozen-parked"],
+                   default="actual",
+                   help="evaluation-only source for the 13 human observation channels")
     args = p.parse_args(argv)
 
     preset, include_state, distribution_label = EXPERIMENTS[args.experiment]
@@ -80,16 +148,16 @@ def main(argv=None):
     cfg.human_distribution = distribution_label
     cfg.render_camera = args.camera
     policy_probe = _load_model(args.model, args.algo, None)
-    env = PiperHumanAwarePickPlaceEnv(cfg)
+    env = _make_env(cfg, args.human_obs_source)
     if (args.experiment == "no-human" and not args.no_human_state
             and policy_probe.observation_space != env.observation_space):
         # A no-human episode can serve either a legacy 51-state policy or a
-        # human-aware 64-state policy whose human channels remain zero. Infer
+        # human-aware 64-state policy observing a parked, absent human. Infer
         # that choice from the saved policy while retaining the explicit
         # --no-human-state override.
         env.close()
         cfg.include_human_state = True
-        env = PiperHumanAwarePickPlaceEnv(cfg)
+        env = _make_env(cfg, args.human_obs_source)
     if policy_probe.observation_space != env.observation_space:
         raise ValueError(
             f"policy observation space {policy_probe.observation_space} does not match "

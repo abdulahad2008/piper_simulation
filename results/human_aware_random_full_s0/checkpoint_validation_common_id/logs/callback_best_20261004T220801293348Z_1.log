@@ -1,0 +1,42 @@
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+{
+  "experiment": "randomized-id",
+  "distribution": "evaluation_id",
+  "episodes": 50,
+  "deterministic_prediction": true,
+  "task_success_rate": 0.74,
+  "task_success_95ci": [
+    0.6044657801100008,
+    0.8412862034863262
+  ],
+  "collision_free_success_rate": 0.74,
+  "human_collision_rate": 0.12,
+  "human_collision_95ci": [
+    0.05617523710624646,
+    0.23805078886623582
+  ],
+  "near_miss_rate": 0.18,
+  "mean_minimum_separation": 0.25174671747880767,
+  "median_minimum_separation": 0.2904446608029481,
+  "p05_minimum_separation": -0.0003470950714430255,
+  "worst_minimum_separation": -0.03758933030429355,
+  "mean_completion_time_successes": 2.866216216216216,
+  "mean_episode_duration": 3.8990000000000005,
+  "mean_episode_length": 77.98,
+  "mean_placement_error": 0.07966906785801187,
+  "median_placement_error": 0.027564962115666863,
+  "p90_placement_error": 0.26932381324343685,
+  "grasp_rate": 0.94,
+  "lift_rate": 0.74,
+  "mean_safety_interventions": 61.98,
+  "mean_safety_clamped_steps": 61.98,
+  "mean_safety_clamp_rate": 0.7606684161835043,
+  "mean_proximity_steps": 7.92,
+  "mean_waiting_steps": 6.52,
+  "mean_waiting_time": 0.326,
+  "mean_episode_reward": 189.02914122221682,
+  "mean_human_safety_cost": 17.579912917987045
+}
+episode CSV: results\human_aware_random_full_s0\checkpoint_validation_common_id\callback_best.csv
+summary JSON: results\human_aware_random_full_s0\checkpoint_validation_common_id\callback_best.json
