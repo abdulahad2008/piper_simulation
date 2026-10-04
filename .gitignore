@@ -1,23 +1,39 @@
-﻿*.pkl
-runs/sac_full/replay_buffer.pkl
+# Byte-compiled / cache
 __pycache__/
 *.py[cod]
 .pytest_cache/
-runs/corner_ft/replay_buffer.pkl
-runs/precision_ft/replay_buffer.pkl
-
-# Local training outputs
-/runs/
-/out/
+.ipynb_checkpoints/
 
 # Large ML artifacts
 *.pkl
 *.pt
 *.pth
 
-# Python-generated files
-__pycache__/
-*.py[cod]
+# Local training outputs.
+#
+# NOTE: `runs/` is currently COMMITTED in this repository (~177 MB of
+# checkpoints) even though it is listed here -- the files were added before the
+# ignore rule and git keeps tracking what it already tracks. The checkpoints are
+# what makes Phase 0 of the precision study reproducible without a GPU, so they
+# have deliberately not been removed. Before the paper release they should move
+# to a GitHub Release or a Zenodo DOI and be dropped from the tree with
+# `git rm -r --cached runs out`, leaving `release/` and `results/precision/`.
+/runs/
+/out/
 
-# System files
-.DS_Store
+# Generated paper artefacts: reproduce.py rebuilds these from results/precision/
+/paper/generated/
+
+# Environments
+.venv/
+venv/
+
+# LaTeX build products
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.log
+paper/*.out
+paper/*.synctex.gz

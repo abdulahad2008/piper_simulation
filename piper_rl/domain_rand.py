@@ -157,7 +157,9 @@ class DomainRandomizer:
             self.m.mat_rgba[self.table_matid] = base
 
         # ---------------- table friction --------------------------------- #
-        self.m.geom_friction[self.table_geom, 0] = rng.uniform(*c.table_friction)
+        table_mu = rng.uniform(*c.table_friction)
+        self.m.geom_friction[self.table_geom, 0] = table_mu
+        info["table_friction"] = float(table_mu)
 
         # ---------------- lighting --------------------------------------- #
         lp = self._nominal["light_pos"][self.light_id].copy()
@@ -169,9 +171,12 @@ class DomainRandomizer:
         # ---------------- actuator + joint dynamics ---------------------- #
         # MuJoCo position actuator: gainprm[0] = kp, biasprm[1] = -kp,
         # biasprm[2] = -kv.
+        kp_scales, kv_scales = [], []
         for a in range(self.m.nu):
             kp_s = rng.uniform(*c.actuator_kp_scale)
             kv_s = rng.uniform(*c.actuator_kv_scale)
+            kp_scales.append(kp_s)
+            kv_scales.append(kv_s)
             self.m.actuator_gainprm[a, 0] = \
                 self._nominal["actuator_gainprm"][a, 0] * kp_s
             self.m.actuator_biasprm[a, 1] = \
@@ -179,12 +184,26 @@ class DomainRandomizer:
             self.m.actuator_biasprm[a, 2] = \
                 self._nominal["actuator_biasprm"][a, 2] * kv_s
 
+        damping_scales, frictionloss_scales = [], []
         for dof in self.arm_dofs:
-            self.m.dof_damping[dof] = (self._nominal["dof_damping"][dof]
-                                       * rng.uniform(*c.joint_damping_scale))
+            d_s = rng.uniform(*c.joint_damping_scale)
+            f_s = rng.uniform(*c.joint_frictionloss_scale)
+            damping_scales.append(d_s)
+            frictionloss_scales.append(f_s)
+            self.m.dof_damping[dof] = self._nominal["dof_damping"][dof] * d_s
             self.m.dof_frictionloss[dof] = (
-                self._nominal["dof_frictionloss"][dof]
-                * rng.uniform(*c.joint_frictionloss_scale))
+                self._nominal["dof_frictionloss"][dof] * f_s)
+
+        info["actuator_kp_scale"] = np.asarray(kp_scales, dtype=float)
+        info["actuator_kv_scale"] = np.asarray(kv_scales, dtype=float)
+        info["joint_damping_scale"] = np.asarray(damping_scales, dtype=float)
+        info["joint_frictionloss_scale"] = np.asarray(frictionloss_scales,
+                                                      dtype=float)
+        # NOTE: the released MJCF sets no joint damping, so dof_damping is 0 and
+        # `joint_damping_scale` multiplies zero -- it is a no-op. The scales are
+        # logged anyway so the log is honest about what was *drawn* vs applied.
+        info["joint_damping_is_noop"] = bool(
+            np.allclose(self._nominal["dof_damping"][self.arm_dofs], 0.0))
 
         # ---------------- markers ---------------------------------------- #
         self._place_target(tgt_xy, half_h)
