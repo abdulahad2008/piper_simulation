@@ -957,3 +957,89 @@ Exit code: 0
 ### Publication command
 Start: 2026-10-04T23:58:43.226852+00:00
 Command: git add -- piper_rl/scripts/evaluate_human_aware.py piper_rl/scripts/seed0_common_selection.py results/final_eval_2026_10/RUN_LOG.md results/final_eval_2026_10/SUMMARY.md results/final_eval_2026_10/UNEXPECTED.md results/final_eval_2026_10/determinism/comparison.json results/final_eval_2026_10/determinism/fixed_s0_actual_no_human.csv results/final_eval_2026_10/determinism/fixed_s0_actual_no_human.json results/final_eval_2026_10/determinism/logs/fixed_s0_actual_no_human_20261004T230404200974Z_1.log results/human_aware_curriculum_hold_safety_s8/TRAINING_SUMMARY.md results/human_aware_curriculum_hold_safety_s8/campaign_state.json results/human_aware_curriculum_hold_safety_s8/evaluations.npz results/human_aware_curriculum_hold_safety_s8/heldout/constrained_fixed_height_randomized.csv results/human_aware_curriculum_hold_safety_s8/heldout/constrained_fixed_height_randomized.json results/human_aware_curriculum_hold_safety_s8/heldout/exact_h036.csv results/human_aware_curriculum_hold_safety_s8/heldout/exact_h036.json results/human_aware_curriculum_hold_safety_s8/heldout/ood.csv results/human_aware_curriculum_hold_safety_s8/heldout/ood.json results/human_aware_curriculum_hold_safety_s8/heldout/randomized_id.csv results/human_aware_curriculum_hold_safety_s8/heldout/randomized_id.json results/human_aware_curriculum_hold_safety_s8/heldout/shifted_exact_h036.csv results/human_aware_curriculum_hold_safety_s8/heldout/shifted_exact_h036.json results/human_aware_curriculum_hold_safety_s8/logs/heldout_constrained_fixed_height_randomized.log results/human_aware_curriculum_hold_safety_s8/logs/heldout_exact_h036.log results/human_aware_curriculum_hold_safety_s8/logs/heldout_ood.log results/human_aware_curriculum_hold_safety_s8/logs/heldout_randomized_id.log results/human_aware_curriculum_hold_safety_s8/logs/heldout_shifted_exact_h036.log results/human_aware_curriculum_hold_safety_s8/model_hashes.json results/human_aware_curriculum_hold_safety_s8/training_summary.json results/human_aware_probe_human_cue/human_aware_curriculum_s1/P1.csv
+
+End: 2026-10-04T23:58:44.472432+00:00
+Exit code: 0
+
+### Publication command
+Start: 2026-10-04T23:58:44.472432+00:00
+Command: git add -- results/human_aware_probe_human_cue/human_aware_curriculum_s1/P1.json results/human_aware_probe_human_cue/human_aware_curriculum_s1/P2.csv results/human_aware_probe_human_cue/human_aware_curriculum_s1/P2.json results/human_aware_probe_human_cue/human_aware_curriculum_s1/logs/P1_20261004T233514060075Z_1.log results/human_aware_probe_human_cue/human_aware_curriculum_s1/logs/P2_20261004T233901647563Z_1.log results/human_aware_probe_human_cue/human_aware_curriculum_s2/P1.csv results/human_aware_probe_human_cue/human_aware_curriculum_s2/P1.json results/human_aware_probe_human_cue/human_aware_curriculum_s2/P2.csv results/human_aware_probe_human_cue/human_aware_curriculum_s2/P2.json results/human_aware_probe_human_cue/human_aware_curriculum_s2/logs/P1_20261004T234347597510Z_1.log results/human_aware_probe_human_cue/human_aware_curriculum_s2/logs/P2_20261004T234746025006Z_1.log results/human_aware_probe_human_cue/human_aware_fixed_s0/P1.csv results/human_aware_probe_human_cue/human_aware_fixed_s0/P1.json results/human_aware_probe_human_cue/human_aware_fixed_s0/P2.csv results/human_aware_probe_human_cue/human_aware_fixed_s0/P2.json results/human_aware_probe_human_cue/human_aware_fixed_s0/logs/P1_20261004T230458014958Z_1.log results/human_aware_probe_human_cue/human_aware_fixed_s0/logs/P2_20261004T230837382985Z_1.log results/human_aware_probe_human_cue/human_aware_fixed_s1/P1.csv results/human_aware_probe_human_cue/human_aware_fixed_s1/P1.json results/human_aware_probe_human_cue/human_aware_fixed_s1/P2.csv results/human_aware_probe_human_cue/human_aware_fixed_s1/P2.json results/human_aware_probe_human_cue/human_aware_fixed_s1/logs/P1_20261004T231647341569Z_1.log results/human_aware_probe_human_cue/human_aware_fixed_s1/logs/P2_20261004T232015629267Z_1.log results/human_aware_probe_human_cue/human_aware_fixed_s2/P1.csv results/human_aware_probe_human_cue/human_aware_fixed_s2/P1.json results/human_aware_probe_human_cue/human_aware_fixed_s2/P2.csv results/human_aware_probe_human_cue/human_aware_fixed_s2/P2.json results/human_aware_probe_human_cue/human_aware_fixed_s2/logs/P1_20261004T232503040257Z_1.log results/human_aware_probe_human_cue/human_aware_fixed_s2/logs/P2_20261004T232829219827Z_1.log results/human_aware_random_full_s0/checkpoint_validation_common_id.json
+
+End: 2026-10-04T23:58:45.717984+00:00
+Exit code: 0
+
+### Publication command
+Start: 2026-10-04T23:58:45.717984+00:00
+Command: git add -- results/human_aware_random_full_s0/checkpoint_validation_common_id/callback_best.csv results/human_aware_random_full_s0/checkpoint_validation_common_id/callback_best.json results/human_aware_random_full_s0/checkpoint_validation_common_id/logs/callback_best_20261004T220801293348Z_1.log results/human_aware_random_full_s0/checkpoint_validation_common_id/logs/step_1000000_20261004T220338615007Z_1.log results/human_aware_random_full_s0/checkpoint_validation_common_id/logs/step_100000_20261004T215430211461Z_1.log results/human_aware_random_full_s0/checkpoint_validation_common_id/logs/step_1500000_20261004T220546176247Z_1.log results/human_aware_random_full_s0/checkpoint_validation_common_id/logs/step_2000000_20261004T220657179092Z_1.log results/human_aware_random_full_s0/checkpoint_validation_common_id/logs/step_200000_20261004T215641545026Z_1.log results/human_aware_random_full_s0/checkpoint_validation_common_id/logs/step_400000_20261004T215858363621Z_1.log results/human_aware_random_full_s0/checkpoint_validation_common_id/logs/step_600000_20261004T220114379931Z_1.log results/human_aware_random_full_s0/checkpoint_validation_common_id/step_100000.csv results/human_aware_random_full_s0/checkpoint_validation_common_id/step_100000.json results/human_aware_random_full_s0/checkpoint_validation_common_id/step_1000000.csv results/human_aware_random_full_s0/checkpoint_validation_common_id/step_1000000.json results/human_aware_random_full_s0/checkpoint_validation_common_id/step_1500000.csv results/human_aware_random_full_s0/checkpoint_validation_common_id/step_1500000.json results/human_aware_random_full_s0/checkpoint_validation_common_id/step_200000.csv results/human_aware_random_full_s0/checkpoint_validation_common_id/step_200000.json results/human_aware_random_full_s0/checkpoint_validation_common_id/step_2000000.csv results/human_aware_random_full_s0/checkpoint_validation_common_id/step_2000000.json results/human_aware_random_full_s0/checkpoint_validation_common_id/step_400000.csv results/human_aware_random_full_s0/checkpoint_validation_common_id/step_400000.json results/human_aware_random_full_s0/checkpoint_validation_common_id/step_600000.csv results/human_aware_random_full_s0/checkpoint_validation_common_id/step_600000.json results/human_aware_random_full_s0/heldout_common_id/constrained_fixed_height_randomized.csv results/human_aware_random_full_s0/heldout_common_id/constrained_fixed_height_randomized.json results/human_aware_random_full_s0/heldout_common_id/exact_h036.csv results/human_aware_random_full_s0/heldout_common_id/exact_h036.json results/human_aware_random_full_s0/heldout_common_id/logs/constrained_fixed_height_randomized_20261004T221734874967Z_1.log results/human_aware_random_full_s0/heldout_common_id/logs/exact_h036_20261004T221329971276Z_1.log
+
+End: 2026-10-04T23:58:46.721517+00:00
+Exit code: 0
+
+### Publication command
+Start: 2026-10-04T23:58:46.721517+00:00
+Command: git add -- results/human_aware_random_full_s0/heldout_common_id/logs/no_human_20261004T220922832420Z_1.log results/human_aware_random_full_s0/heldout_common_id/logs/ood_20261004T223536714261Z_1.log results/human_aware_random_full_s0/heldout_common_id/logs/randomized_id_20261004T222511406232Z_1.log results/human_aware_random_full_s0/heldout_common_id/logs/shifted_exact_h036_20261004T222132688942Z_1.log results/human_aware_random_full_s0/heldout_common_id/no_human.csv results/human_aware_random_full_s0/heldout_common_id/no_human.json results/human_aware_random_full_s0/heldout_common_id/ood.csv results/human_aware_random_full_s0/heldout_common_id/ood.json results/human_aware_random_full_s0/heldout_common_id/randomized_id.csv results/human_aware_random_full_s0/heldout_common_id/randomized_id.json results/human_aware_random_full_s0/heldout_common_id/shifted_exact_h036.csv results/human_aware_random_full_s0/heldout_common_id/shifted_exact_h036.json results/human_aware_sac_v1/checkpoint_validation_common_id.json results/human_aware_sac_v1/checkpoint_validation_common_id/callback_best.csv results/human_aware_sac_v1/checkpoint_validation_common_id/callback_best.json results/human_aware_sac_v1/checkpoint_validation_common_id/logs/callback_best_20261004T215316491618Z_1.log results/human_aware_sac_v1/checkpoint_validation_common_id/logs/step_1000000_20261004T214905448210Z_1.log results/human_aware_sac_v1/checkpoint_validation_common_id/logs/step_100000_20261004T214025507430Z_1.log results/human_aware_sac_v1/checkpoint_validation_common_id/logs/step_1500000_20261004T215048277731Z_1.log results/human_aware_sac_v1/checkpoint_validation_common_id/logs/step_2000000_20261004T215200812877Z_1.log results/human_aware_sac_v1/checkpoint_validation_common_id/logs/step_200000_20261004T214229638382Z_1.log results/human_aware_sac_v1/checkpoint_validation_common_id/logs/step_400000_20261004T214430827953Z_1.log results/human_aware_sac_v1/checkpoint_validation_common_id/logs/step_600000_20261004T214656014081Z_1.log results/human_aware_sac_v1/checkpoint_validation_common_id/step_100000.csv results/human_aware_sac_v1/checkpoint_validation_common_id/step_100000.json results/human_aware_sac_v1/checkpoint_validation_common_id/step_1000000.csv results/human_aware_sac_v1/checkpoint_validation_common_id/step_1000000.json results/human_aware_sac_v1/checkpoint_validation_common_id/step_1500000.csv results/human_aware_sac_v1/checkpoint_validation_common_id/step_1500000.json results/human_aware_sac_v1/checkpoint_validation_common_id/step_200000.csv
+
+End: 2026-10-04T23:58:47.910973+00:00
+Exit code: 0
+
+### Publication command
+Start: 2026-10-04T23:58:47.910973+00:00
+Command: git add -- results/human_aware_sac_v1/checkpoint_validation_common_id/step_200000.json results/human_aware_sac_v1/checkpoint_validation_common_id/step_2000000.csv results/human_aware_sac_v1/checkpoint_validation_common_id/step_2000000.json results/human_aware_sac_v1/checkpoint_validation_common_id/step_400000.csv results/human_aware_sac_v1/checkpoint_validation_common_id/step_400000.json results/human_aware_sac_v1/checkpoint_validation_common_id/step_600000.csv results/human_aware_sac_v1/checkpoint_validation_common_id/step_600000.json tests/test_human_cue_probe.py
+
+End: 2026-10-04T23:58:48.254801+00:00
+Exit code: 0
+
+### Publication command
+Start: 2026-10-04T23:58:48.254801+00:00
+Command: git diff --cached --name-only -z
+
+End: 2026-10-04T23:58:48.297807+00:00
+Exit code: 0
+
+### Publication command
+Start: 2026-10-04T23:58:48.298776+00:00
+Command: git diff --cached --check
+
+End: 2026-10-04T23:58:48.374810+00:00
+Exit code: 0
+
+### Publication command
+Start: 2026-10-04T23:58:48.375811+00:00
+Command: git commit -m "Add final HRI evaluation results and eval-only human-cue probes"
+
+End: 2026-10-04T23:58:49.712957+00:00
+Exit code: 0
+
+### Publication command
+Start: 2026-10-04T23:58:49.712957+00:00
+Command: git push -u origin final-eval-2026-10
+
+End: 2026-10-04T23:58:53.517065+00:00
+Exit code: 0
+
+### Credential lookup (secret stdout captured and never logged)
+Start: 2026-10-04T23:58:53.517065+00:00
+Command: git credential fill (protocol=https, host=github.com)
+
+End: 2026-10-04T23:58:53.988080+00:00
+Exit code: 0
+
+### GitHub API command
+Start: 2026-10-04T23:58:53.989087+00:00
+Command: GET https://api.github.com/repos/abdulahad2008/piper_simulation/pulls?state=open&head=abdulahad2008%3Afinal-eval-2026-10&base=main
+
+End: 2026-10-04T23:58:54.744618+00:00
+Exit code: 0
+
+### GitHub API command
+Start: 2026-10-04T23:58:54.745604+00:00
+Command: POST https://api.github.com/repos/abdulahad2008/piper_simulation/pulls
+
+End: 2026-10-04T23:58:56.931087+00:00
+Exit code: 0
+
+Pull request: https://github.com/abdulahad2008/piper_simulation/pull/7; not merged.
+
+### Publication command
+Start: 2026-10-04T23:58:56.932075+00:00
+Command: git add -- results/final_eval_2026_10/RUN_LOG.md results/final_eval_2026_10/PULL_REQUEST.md
