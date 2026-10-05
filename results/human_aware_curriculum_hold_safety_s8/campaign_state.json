@@ -19,7 +19,7 @@
     "human_aware_curriculum_hold_safety_s8": {
       "method": "curriculum_hold_safety",
       "seed": 8,
-      "status": "evaluating",
+      "status": "completed",
       "started_at": "2026-09-24T15:47:49.393535+00:00",
       "training_started_at": "2026-09-24T15:47:51.354391+00:00",
       "command": [
@@ -79,15 +79,19 @@
         "latest_collision_rate": 0.1599999964237213,
         "finite_values": true
       },
-      "training_finished_at": "2026-09-25T06:15:48.486564+00:00",
+      "training_finished_at": "2026-10-04T20:33:39.838086+00:00",
       "duration_seconds": 52077.077999999994,
       "final_timestep": 2000000,
       "model_hashes": {
         "callback_best": "1f0a23b79b680c43d2487974ff58fbb327a69458e2555f80de4e4606bcfd086a",
         "final": "a572573b8549fcf93a99cfda30dd7a7e512abb2bf1e6e24256eb068aa659ae14"
       },
-      "evaluation_started_at": "2026-09-25T06:15:48.487563+00:00"
+      "evaluation_started_at": "2026-10-04T20:33:39.840086+00:00",
+      "recovered_completed_training": true,
+      "completed_at": "2026-10-04T21:39:58.685126+00:00",
+      "selected_model_sha256": "0721ac0dada8e2239f24f386eef6c90cdbda3c091c0317d21794d279d0e8bee5",
+      "selected_checkpoint": "step_1000000"
     }
   },
-  "updated_at": "2026-09-25T06:15:48.487563+00:00"
+  "updated_at": "2026-10-04T21:39:58.685126+00:00"
 }

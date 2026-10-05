@@ -1,0 +1,43 @@
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+{
+  "experiment": "ood",
+  "distribution": "evaluation_ood",
+  "episodes": 500,
+  "deterministic_prediction": true,
+  "task_success_rate": 0.01,
+  "task_success_95ci": [
+    0.004278690781520357,
+    0.023193435378764938
+  ],
+  "collision_free_success_rate": 0.01,
+  "human_collision_rate": 0.244,
+  "human_collision_95ci": [
+    0.20839823999994375,
+    0.2835055646878788
+  ],
+  "near_miss_rate": 0.29,
+  "mean_minimum_separation": 0.12151894020343762,
+  "median_minimum_separation": 0.13443950747366598,
+  "p05_minimum_separation": -0.0003481759379440841,
+  "worst_minimum_separation": -0.03208549703214965,
+  "mean_completion_time_successes": 4.42,
+  "mean_episode_duration": 7.7128000000000005,
+  "mean_episode_length": 154.256,
+  "mean_placement_error": 0.297145314140226,
+  "median_placement_error": 0.3000659634006173,
+  "p90_placement_error": 0.40030628195160145,
+  "grasp_rate": 0.18,
+  "lift_rate": 0.006,
+  "mean_safety_interventions": 132.526,
+  "mean_safety_clamped_steps": 132.526,
+  "mean_safety_clamp_rate": 0.8372336243118544,
+  "mean_proximity_steps": 10.052,
+  "mean_waiting_steps": 4.678,
+  "mean_waiting_time": 0.23390000000000002,
+  "mean_episode_reward": -64.35597595203419,
+  "mean_human_safety_cost": 31.208003832391906
+}
+episode CSV: results\human_aware_curriculum_hold_safety_s8\heldout\ood.csv
+summary JSON: results\human_aware_curriculum_hold_safety_s8\heldout\ood.json
+video: results\human_aware_curriculum_hold_safety_s8\videos\ood.mp4

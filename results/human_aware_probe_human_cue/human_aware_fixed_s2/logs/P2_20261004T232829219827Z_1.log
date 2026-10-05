@@ -1,0 +1,42 @@
+Wrapping the env with a `Monitor` wrapper
+Wrapping the env in a DummyVecEnv.
+{
+  "experiment": "fixed-exact-h036-v1",
+  "distribution": "fixed_exact_h036_v1",
+  "episodes": 200,
+  "deterministic_prediction": true,
+  "task_success_rate": 0.335,
+  "task_success_95ci": [
+    0.2732398096874265,
+    0.4029793722656195
+  ],
+  "collision_free_success_rate": 0.335,
+  "human_collision_rate": 0.66,
+  "human_collision_95ci": [
+    0.5918836703220929,
+    0.7220856077840445
+  ],
+  "near_miss_rate": 0.705,
+  "mean_minimum_separation": 0.046070612332539077,
+  "median_minimum_separation": -5.929172983169806e-05,
+  "p05_minimum_separation": -0.0002621713866102035,
+  "worst_minimum_separation": -0.00046971686918074324,
+  "mean_completion_time_successes": 2.9604477611940303,
+  "mean_episode_duration": 5.3115,
+  "mean_episode_length": 106.23,
+  "mean_placement_error": 0.19325895968469728,
+  "median_placement_error": 0.22936999539191089,
+  "p90_placement_error": 0.3894856045857418,
+  "grasp_rate": 0.465,
+  "lift_rate": 0.38,
+  "mean_safety_interventions": 87.585,
+  "mean_safety_clamped_steps": 87.585,
+  "mean_safety_clamp_rate": 0.7878799016073704,
+  "mean_proximity_steps": 28.66,
+  "mean_waiting_steps": 27.165,
+  "mean_waiting_time": 1.3582500000000002,
+  "mean_episode_reward": 20.27870597007062,
+  "mean_human_safety_cost": 82.23117928108572
+}
+episode CSV: results\human_aware_probe_human_cue\human_aware_fixed_s2\P2.csv
+summary JSON: results\human_aware_probe_human_cue\human_aware_fixed_s2\P2.json

@@ -1,0 +1,1 @@
+- S8 common-ID scores and the complete no-human suite were reused under the mandated skip rule. No fresh no-human determinism rerun was performed; the stored result remains 3.0% task success and 0.0% collision.
