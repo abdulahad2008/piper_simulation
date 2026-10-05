@@ -1043,3 +1043,60 @@ Pull request: https://github.com/abdulahad2008/piper_simulation/pull/7; not merg
 ### Publication command
 Start: 2026-10-04T23:58:56.932075+00:00
 Command: git add -- results/final_eval_2026_10/RUN_LOG.md results/final_eval_2026_10/PULL_REQUEST.md
+
+End: 2026-10-04T23:58:57.057495+00:00
+Exit code: 0
+
+### Publication command
+Start: 2026-10-04T23:58:57.058495+00:00
+Command: git commit -m "Record final-evaluation pull request and publication log"
+
+End: 2026-10-04T23:58:57.226536+00:00
+Exit code: 0
+
+### Publication command
+Start: 2026-10-04T23:58:57.226536+00:00
+Command: git push
+
+End: 2026-10-04T23:59:00.033943+00:00
+Exit code: 0
+End: 2026-10-05T04:59:00.0579202+05:00
+Exit code: 0
+
+### Command
+Start: 2026-10-05T05:03:33.1404200+05:00
+Command: Final remote PR, commit scope, and summary verification
+
+Start: 2026-10-05T00:03:33.591326+00:00
+Command: git rev-parse HEAD
+
+End: 2026-10-05T00:03:33.632083+00:00
+Exit code: 0
+
+Start: 2026-10-05T00:03:33.632083+00:00
+Command: git rev-parse origin/final-eval-2026-10
+
+End: 2026-10-05T00:03:33.669099+00:00
+Exit code: 0
+
+Start: 2026-10-05T00:03:33.670051+00:00
+Command: git diff --name-only main...HEAD
+
+End: 2026-10-05T00:03:33.715298+00:00
+Exit code: 0
+
+Credential lookup start: 2026-10-05T00:03:33.716292+00:00
+Command: git credential fill (GitHub host; secret stdout captured and never logged)
+
+Credential lookup end: 2026-10-05T00:03:34.192921+00:00
+Exit code: 0
+
+Start: 2026-10-05T00:03:34.192921+00:00
+Command: GET https://api.github.com/repos/abdulahad2008/piper_simulation/pulls/7
+
+End: 2026-10-05T00:03:35.448148+00:00
+Exit code: 0
+
+Final verification passed: PR open/not merged, main target, exact title, remote head matches ae195e074683d95d63a86a802d1c64e5b26366ef; 129 allowlisted files; 41 summary rows; no policy trained.
+End: 2026-10-05T05:03:35.4771669+05:00
+Exit code: 0
