@@ -88,3 +88,20 @@ environment and policy-compatible observation mode. See
 reward, safety metrics, validation, training, and ID/OOD evaluation commands.
 Measured SAC baseline results and their safety caveats are in
 **[results/human_aware_sac_v1/README.md](results/human_aware_sac_v1/README.md)**.
+
+## Sharp-tool tasks and hazard metrics
+
+A new benchmark module for manipulation with a sharp tool near a person. The
+safety signal depends on what the gripper holds, not only on where the robot's
+links are. Task specs T1-T5, held-out suites and third-party notes:
+**[docs/sharp_tools/README.md](docs/sharp_tools/README.md)**.
+
+Hazard per step: `h = a * (1 + v / v0) * clip(1 - d / d0, 0, 1)`, with `d` the
+edge-to-human distance, `a` the alignment of the cutting direction with the
+edge-to-human direction and `v` the closing speed; episode exposure is
+`E = sum(h * dt)` (defaults `d0 = 0.15 m`, `v0 = 0.25 m/s`).
+
+```bash
+python -m pytest piper_rl/hazard -q
+python piper_rl/scripts/demo_hazard.py
+```

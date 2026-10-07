@@ -1,0 +1,11 @@
+# Constrained-RL stack (R2). Install in a SEPARATE environment, not on top of requirements.txt.
+#
+# These cannot share an environment with requirements-sharp-tools.txt or requirements.txt:
+# safety-gymnasium 1.0.0 (latest) pins mujoco==2.3.3 and gymnasium==0.28.1, while the
+# core file needs mujoco>=3.0 and gymnasium>=0.29 (this repo pins 3.3.7 / 1.3.0). uv reports
+# the combination as unsatisfiable on Python 3.11 and 3.12. Neither package builds on
+# Python 3.13 (pygame / pandas wheels fail to build).
+# The pair resolves on Python 3.11 alone, with gymnasium 0.28.1, mujoco 2.3.3, numpy 1.23.5,
+# torch 2.14.1. Not tested against BladeHazardWrapper.
+safety-gymnasium==1.0.0
+omnisafe==0.5.0

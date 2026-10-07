@@ -1,0 +1,8 @@
+# Core dependencies for piper_rl/hazard (metrics, wrapper, demo, figures, tests).
+# The repository's pinned requirements.txt already satisfies these floors.
+mujoco>=3.0
+gymnasium>=0.29
+numpy
+scipy
+pillow
+pytest
