@@ -1,0 +1,6 @@
+[submodule "third_party/human-robot-gym"]
+	path = third_party/human-robot-gym
+	url = https://github.com/TUMcps/human-robot-gym
+[submodule "third_party/sara-shield"]
+	path = third_party/sara-shield
+	url = https://github.com/TUMcps/sara-shield

@@ -1,0 +1,39 @@
+<!--
+  Rigid chef's knife for MuJoCo. Include inside a <body> that is either a
+  free body or a child of the gripper's tool frame.
+
+  Frame: +X runs from the handle toward the tip, +Z points OUT OF THE SHARP
+  EDGE (cutting direction), +Y is the flat of the blade. The spine is at -Z.
+
+  Dimensions: 200 mm blade, 40 mm tall, 2 mm thick; 110 mm handle.
+  Mass about 0.16 kg, roughly a light chef's knife.
+
+  Sites used by hazard/mujoco_bridge.py:
+    blade_heel, blade_tip   ends of the edge segment
+    blade_frame             site whose local +Z is the cutting direction
+-->
+<mujoco model="knife">
+  <asset>
+    <material name="knife_steel" rgba="0.75 0.77 0.80 1" specular="0.9" shininess="0.8"/>
+    <material name="knife_handle" rgba="0.12 0.08 0.05 1"/>
+  </asset>
+  <default>
+    <default class="knife">
+      <geom condim="3" friction="0.6 0.005 0.0001" solref="0.005 1"/>
+    </default>
+  </default>
+  <worldbody>
+    <body name="knife" pos="0 0 0">
+      <!-- handle, centred at x = -0.055 -->
+      <geom class="knife" name="knife_handle" type="box" size="0.055 0.011 0.013"
+            pos="-0.055 0 0" material="knife_handle" mass="0.08"/>
+      <!-- blade body: box 200 x 2 x 40 mm, edge at +Z face -->
+      <geom class="knife" name="knife_blade" type="box" size="0.100 0.001 0.020"
+            pos="0.100 0 0" material="knife_steel" mass="0.08"/>
+      <!-- edge sites on the +Z face -->
+      <site name="blade_heel" pos="0.000 0 0.020" size="0.003" rgba="1 0 0 1"/>
+      <site name="blade_tip"  pos="0.200 0 0.020" size="0.003" rgba="1 0 0 1"/>
+      <site name="blade_frame" pos="0.100 0 0.020" size="0.002" rgba="0 1 0 0.5"/>
+    </body>
+  </worldbody>
+</mujoco>
