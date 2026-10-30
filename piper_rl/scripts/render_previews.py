@@ -32,7 +32,7 @@ from piper_rl.config import PROJECT_DIR
 from piper_rl.human_aware_env import PiperHumanAwarePickPlaceEnv
 from piper_rl.human_config import HumanAwareEnvConfig
 from piper_rl.piper_env import TABLE_TOP
-from piper_rl.scripts.make_pan_scene import STOVE_XY, TRIVET_XY, CENTRE_X, HEIGHT as PAN_HEIGHT
+from piper_rl.scripts.make_pan_scene import STOVE_XY, TRIVET_XY, TRIVET_TOP, CENTRE_X, HEIGHT as PAN_HEIGHT
 
 SCENES = {
     "pan": PROJECT_DIR / "agilex_piper" / "piper_human_pan_task.xml",
@@ -44,7 +44,7 @@ INTRUSION_RADIUS = 0.25
 HUMAN_GEOMS = ("human_upper_arm_geom", "human_forearm_geom", "human_hand_geom")
 CARRY_Z = 0.285                                 # TCP (= pan rim) height while carrying: the crossing hand's
                                                 # underside passes at 0.295 m, 1 cm above the rim
-PLACE_Z = TABLE_TOP + 0.008 + PAN_HEIGHT + 0.012  # pan base 1.2 cm above the trivet top
+PLACE_Z = TRIVET_TOP + PAN_HEIGHT + 0.012        # pan base 1.2 cm above the trivet top
 HOLD_UNTIL_S = 4.6                              # wait on the stove so the crossing meets the carry mid-air
 
 
@@ -70,7 +70,7 @@ class PanPreviewEnv(PiperHumanAwarePickPlaceEnv):
         self.model.geom_conaffinity[self.obj_geom] = 0
         self.model.geom_rgba[self.obj_geom, 3] = 0.0
         self._set_object(np.array([-0.6, 0.6, -0.65]), 0.0)
-        self.model.site_pos[self.target_site] = [TRIVET_XY[0], TRIVET_XY[1], TABLE_TOP + 0.008]
+        self.model.site_pos[self.target_site] = [TRIVET_XY[0], TRIVET_XY[1], TRIVET_TOP]
         self.target_pos = self.model.site_pos[self.target_site].copy()
         return super()._after_reset(rng, options, info_dr)
 
