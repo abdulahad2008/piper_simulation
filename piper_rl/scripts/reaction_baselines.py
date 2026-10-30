@@ -19,12 +19,14 @@ Reactions (all through the 5-number action interface, 20 Hz):
            T_r = 0.05 s, T_s = 0.30 s, v_r = 0.30 m/s, S_s = 6 mm and the hand
            speed v_h from the trajectory; resume when the distance exceeds
            S + 5 cm
-  retract  the carry, but when the hand enters the 25 cm intrusion zone move
-           the pan away from the hand at full speed (horizontal unit vector
-           from hand to pan centre, plus up) until the distance exceeds 30 cm,
-           then resume. The ISO distance is sized for stopping, not escaping:
-           triggered at S, a retract starts about 0.45 s before contact and
-           cannot clear a 0.22 m/s hand (smoke test, 30 Oct).
+  retract  the carry, but when the hand enters the 25 cm intrusion zone lift
+           the pan at full speed (the hand sweeps at table level, so up is
+           the only direction that clears it; a horizontal retreat gets the
+           pan chased to the workspace edge, trace of 30 Oct) with a half-
+           speed horizontal component away from the hand, hold there until
+           the hand is further than 30 cm, then resume. The ISO distance is
+           sized for stopping, not escaping: triggered at S, a retract starts
+           about 0.45 s before contact and cannot clear a 0.22 m/s hand.
 
 Person types (the human clock runs the planned path at rate +1, 0 or -1):
   keeps_going   today's person: never reacts
@@ -265,8 +267,8 @@ def run_episode(env: ReactionEnv, reaction: str, seed: int) -> dict:
                     n = np.linalg.norm(away)
                     away = away / n if n > 1e-6 else np.array([1.0, 0.0, 0.0])
                     act = np.zeros(5)
-                    act[:2] = away[:2]
-                    act[2] = 0.6
+                    act[:2] = 0.5 * away[:2]
+                    act[2] = 1.0
                     act[4] = -1.0
             else:
                 env.hold_q = None
@@ -295,6 +297,7 @@ def run_episode(env: ReactionEnv, reaction: str, seed: int) -> dict:
         "trajectory_type": env.human_trajectory.trajectory_type,
         "start_delay_s": start_delay,
         "success": int(success),
+        "completed_any_time": int(t_complete is not None),
         "completion_time_s": t_complete if t_complete is not None else "",
         "intrusion_time_s": t_intrusion if t_intrusion is not None else "",
         "intrusion_before_completion": int(t_intrusion is not None and (t_complete is None or t_intrusion < t_complete)),
@@ -335,6 +338,7 @@ def summarise(rows: list[dict]) -> dict:
         out[f"{reaction}/{person}"] = {
             "episodes": n,
             "success_pct": 100 * sum(r["success"] for r in sel) / n,
+            "completed_any_time_pct": 100 * sum(r["completed_any_time"] for r in sel) / n,
             "intrusion_before_completion_pct": 100 * len(intr) / n,
             "success_pct_given_intrusion": (100 * sum(r["success"] for r in intr) / len(intr)) if intr else None,
             "hot_contact_pct": 100 * sum(r["hot_contact_steps"] > 0 for r in sel) / n,
@@ -382,10 +386,10 @@ def main(argv=None):
          "parameters": {"T_r": T_R, "T_s": T_S, "v_r": V_R, "S_s": S_S, "intrusion_r": INTRUSION_R,
                         "human_delay": HUMAN_REACT_DELAY, "exposure_r": EXPOSURE_R},
          "cells": summary}, indent=1))
-    print(f"\n{'cell':<24}{'succ%':>7}{'intr%':>7}{'succ|intr':>10}{'hot%':>6}{'hndl%':>7}{'robot%':>7}{'exp1s':>7}{'p5hot mm':>9}{'t_done':>7}{'t_react':>8}")
+    print(f"\n{'cell':<24}{'succ%':>7}{'done%':>7}{'intr%':>7}{'succ|intr':>10}{'hot%':>6}{'hndl%':>7}{'robot%':>7}{'exp1s':>7}{'p5hot mm':>9}{'t_done':>7}{'t_react':>8}")
     for k, v in summary.items():
         f = lambda x, fmt: (fmt % x) if x is not None else "-"
-        print(f"{k:<24}{v['success_pct']:>7.1f}{v['intrusion_before_completion_pct']:>7.1f}{f(v['success_pct_given_intrusion'],'%.1f'):>10}"
+        print(f"{k:<24}{v['success_pct']:>7.1f}{v['completed_any_time_pct']:>7.1f}{v['intrusion_before_completion_pct']:>7.1f}{f(v['success_pct_given_intrusion'],'%.1f'):>10}"
               f"{v['hot_contact_pct']:>6.1f}{v['handle_contact_pct']:>7.1f}{v['robot_contact_pct']:>7.1f}"
               f"{f(v['mean_exposure_1s_after_intrusion_s'],'%.2f'):>7}{v['p5_min_hot_distance_mm']:>9.0f}"
               f"{f(v['mean_completion_time_s'],'%.2f'):>7}{f(v['mean_reaction_time_s'],'%.2f'):>8}")
