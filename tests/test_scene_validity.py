@@ -294,6 +294,28 @@ class TestDrawnArmGeometry:
         assert rep.min_base_distance_at_rest >= -PENETRATION_TOL, f"{preset}: {rep.first.get('base')}"
 
 
+PAN_PRESETS = ("training_id", "evaluation_ood", "fixed_exact_h036_v1")
+
+
+@pytest.mark.skipif("pan" not in SCENES, reason="pan scene not generated")
+@pytest.mark.parametrize("preset", PAN_PRESETS)
+class TestPanSceneGeometry:
+    """The same sweep on the hot-pan scene: the person must also stay clear of
+    the stove, the hob ring and the trivet (all static collision geoms)."""
+
+    def test_person_never_penetrates_static_geometry(self, preset):
+        rep = sweep(preset, scene="pan")
+        names = set(rep.min_static_distance)
+        assert {"table", "floor", "stove", "hob", "trivet"} <= names, names
+        bad = {k: v for k, v in rep.min_static_distance.items() if v < -PENETRATION_TOL}
+        assert not bad, f"{preset}: penetrations (m) {bad}; first: {rep.first.get('penetration')}"
+
+    def test_capsule_length_equals_joint_distance(self, preset):
+        rep = sweep(preset, scene="pan")
+        assert rep.worst_length_err <= LENGTH_TOL, rep.first.get("length")
+        assert rep.deepest_in_footprint >= TABLE_TOP - PENETRATION_TOL, rep.first.get("footprint")
+
+
 class TestHazardBridgeGeometry:
     """The hazard module reads the same capsules; it must see the joint lengths."""
 

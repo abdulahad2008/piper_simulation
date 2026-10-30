@@ -65,11 +65,22 @@
            diffuse="0.75 0.75 0.75"/>
     <light name="fill_light" pos="0.9 -0.7 1.2" dir="-0.5 0.4 -0.8"
            directional="true" diffuse="0.25 0.25 0.28"/>
-    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane"/>
+    <!-- Floor at z = -0.70 (30 Oct 2026, kitchen-hazard study): the work
+         surface is then 0.90 m above the floor, a standard kitchen worktop
+         (EN 1116:2018: 850/900/950 mm). Before this the floor was at z = 0.
+         The COLLISION table box is byte-for-byte the published one (top at
+         z = 0.20, 0.20 m thick): changing its size changes the box-cylinder
+         contact solve for the cup at machine precision, and the task is
+         chaotic enough that this flipped 5 of 40 test outcomes. The skirt
+         below it is visual only. -->
+    <geom name="floor" size="0 0 0.05" type="plane" material="groundplane" pos="0 0 -0.70"/>
 
     <!-- Work surface. Top at z=0.20; spans x in [-0.14,0.66], y in [-0.35,0.35]. -->
     <geom name="table" type="box" size="0.40 0.35 0.10" pos="0.26 0 0.10"
           material="table" friction="1.0 0.02 0.001"/>
+    <!-- Visual-only skirt from the table block down to the floor. -->
+    <geom name="table_skirt" type="box" size="0.40 0.35 0.35" pos="0.26 0 -0.35"
+          material="table" contype="0" conaffinity="0" group="1"/>
 
     <!-- ==================== OBJECT TO PICK ("cup") =========================
          Cylinder, 4.8 cm diameter x 7 cm tall, 60 g -- a coffee-mug envelope.

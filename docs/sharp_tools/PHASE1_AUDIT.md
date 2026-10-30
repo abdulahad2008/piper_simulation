@@ -117,6 +117,39 @@ platform-stable actor (export the SAC actor to float64 numpy with no fused
 kernels) would make the evaluations reproducible anywhere. Not done in Phase 1
 because it changes the evaluation path; it is a candidate for Phase 2.
 
+### 1.6 Finding: any change to the table's collision box changes every result (not a bug; a property)
+
+While lowering the floor (decision 3) I first extended the table box down to
+the new floor. The box's size enters MuJoCo's box–cylinder contact solve for
+the cup, so the cup–table contact force changed at machine precision. With
+the hold s3 policy on the same 40 seeds (15 no-human, 15 random ID, 10 OOD),
+**0 of 40 rollouts stayed bitwise identical and 5 of 40 changed outcome**
+(success ↔ timeout, success ↔ collision). The task amplifies 1e-16
+differences into different episodes within a few seconds [Certain].
+
+Consequences: the published collision geometry (table box 0.40 × 0.35 × 0.10
+at z = 0.10) is now frozen; the counter height is a visual-only skirt
+(`table_skirt`, contype 0) plus the floor plane at z = −0.70. With that
+layout the same 40 rollouts are **40 of 40 bitwise identical** to the
+published scene. This also explains section 1.5: a different torch build is
+a far larger perturbation than a box size. Per-episode comparisons are only
+valid between runs that share the machine, the build and the exact scene
+files; everything else must be compared as statistics over seeds.
+
+### 1.7 Finding, fixed in the pan scene: a kinematic person must not push the tool
+
+The person's capsules are mocap bodies (infinite mass). When the hand met the
+pan welded to link6, the contact solver resolved it with force and flung the
+arm: the TCP jumped 0.6 m in 0.2 s (3 m/s) in the first preview episode. Since
+the person never reacts and the study counts contacts rather than forces, the
+consistent model is "contact detected, no force": the pan scene gives the
+three person geoms `gap="1"` (MuJoCo keeps the contact in `data.contact`,
+marked excluded, and leaves it out of the solver). Verified: the hand placed
+inside the pan produces 15 detected contacts, 0 active constraints, and the
+arm does not move over 100 substeps [Certain]. The cup scene is untouched
+(its episodes end at the first contact, so forces never acted there for more
+than one substep). The knife scene will get the same treatment in Phase 3.
+
 ## 2. Size audit
 
 Current values are from the scene files and from
@@ -213,17 +246,27 @@ set the stop distance exceeds the arm's 0.63 m reach even with perfect
 sensing, so a stopping controller cannot be made safe there; that is the
 case the paper should show, not hide.
 
-## 4. Decisions for you
+## 4. Decisions (answered 30 Oct, 12:38)
 
-1. Arm radii (thin by 1–2 cm) and segment lengths (upper arm short, reach too
-   long): keep the corrected interpolated arm as decided, or move to a
-   fixed-length two-link arm for the new kitchen study only? The earlier cup
-   results stay on the corrected interpolated arm either way.
-2. Pan size: 24 cm / 1.1 kg welded (realistic kitchen, unrealistic grip) or
-   16–20 cm / 0.5 kg (realistic grip)?
-3. Scale fix for figures (floor at −0.70 m): renders only, or also in the
-   training scenes?
-4. Stop parameters: adopt T_s = 0.30 s, T_r = 0.05 s, v_r = 0.30 m/s, S_s = 6 mm?
+1. Arm model: **corrected interpolated arm** (radii and lengths reported as a limitation).
+2. Pan: **the smaller one**. Built as the Fissler Cenit 20 cm: top 20 cm, base
+   14.5 cm, 5.5 cm high, handle 17.5 cm, 525 g (retailer spec, Sources).
+   `piper_rl/scripts/make_pan_scene.py` generates `piper_pan.xml`,
+   `piper_human_pan_task.xml` and a `_torso` variant for figures.
+3. Floor at −0.70 m: **both renders and training scenes**, implemented as a
+   visual-only skirt so the collision geometry is unchanged (section 1.6).
+4. Stop parameters: **adopt** T_r = 0.05 s, T_s = 0.30 s, v_r = 0.30 m/s, S_s = 6 mm.
+5. Cross-platform reproducibility: **fix in Phase 2** (float64 numpy actor).
+
+## 5. Previews (Phase 4, delivered early)
+
+`piper_rl/scripts/render_previews.py` → `docs/sharp_tools/previews/preview_{a,b,c,d}.png (copies of out/previews, which is git-ignored)`
+and `preview_checks.json`. One scripted episode (seed 31000, exact fixed
+crossing delayed to meet the carry), three moments each, checks printed under
+every frame: segment-length error 0.00 mm, penetration 0.00 mm, person–table
+≥ 49 mm in all frames. In this episode the keep-working robot and the
+non-reacting person do meet (the person's arm touches the pan wall at 5.45 s,
+force-free); the pan still reaches the trivet (0 mm from its centre at 10 s).
 
 ## Sources (opened on 30 Oct 2026)
 
@@ -234,5 +277,5 @@ case the paper should show, not hide.
 - ISO/TS 15066 body model values: https://arxiv.org/pdf/2311.13814 (Table 1); Fraunhofer IFF slides via NIST: https://www.nist.gov/document/head-toe-biomechanical-thresholds-protect-robot-operators-against-injuries
 - ISO 10218:2025 FAQ: https://www.automate.org/robotics/blogs/updated-iso-10218-faq
 - Hot-surface thresholds (BS EN 13202:2000 table): https://ewh.ieee.org/r4/chicago/pstc/content/Accessible-hot-surfaces-and-burn-hazards.pdf
-- Frying pans: https://www.knivesandtools.com/en/pt/-le-creuset-3-ply-frying-pan-24-cm-2-1l.htm ; https://www.coolblue.de/en/product/978565/tefal-experience-frying-pan-24cm.html
+- Frying pans: https://www.knivesandtools.com/en/pt/-le-creuset-3-ply-frying-pan-24-cm-2-1l.htm ; https://www.coolblue.de/en/product/978565/tefal-experience-frying-pan-24cm.html ; the one built: Fissler Cenit 20 cm https://www.knivesandtools.com/en/pt/-fissler-cenit-045-300-20-100-20-cm-frying-pan.htm
 - Chef's knife: https://knivesandtools.dk/en/pt/-victorinox-fibrox-chefs-knife-20-cm-5206320.htm
