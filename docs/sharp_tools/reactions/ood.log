@@ -1,0 +1,22 @@
+ood keeps_going keep     200 episodes done (293 s)
+ood keeps_going stop     200 episodes done (578 s)
+ood keeps_going retract  200 episodes done (876 s)
+ood halts       keep     200 episodes done (1167 s)
+ood halts       stop     200 episodes done (1453 s)
+ood halts       retract  200 episodes done (1761 s)
+ood pulls_back  keep     200 episodes done (2070 s)
+ood pulls_back  stop     200 episodes done (2376 s)
+ood pulls_back  retract  200 episodes done (2678 s)
+
+cell                      succ%  done%  intr% succ|intr  hot%  hndl% robot%  exp1s p5hot mm t_done t_react
+keep/halts                100.0  100.0   33.5     100.0   0.0    0.0    0.0   0.00       70   3.41       -
+keep/keeps_going          100.0  100.0   33.5     100.0  43.5   40.5   36.5   0.36      -40   3.41       -
+keep/pulls_back           100.0  100.0   33.5     100.0   0.0    0.0    0.0   0.00       76   3.41       -
+retract/halts              26.0   92.0   33.5      40.3   0.0   30.0   30.5   0.00       48   4.49    0.00
+retract/keeps_going        39.0   97.0   33.5      61.2   0.0   32.5   33.0   0.00       61   4.50    0.00
+retract/pulls_back         16.0   84.0   33.5      22.4   0.0   20.0   21.0   0.00       56   4.14    0.00
+stop/halts                 97.5   97.5   33.5      92.5   0.0    0.0    0.0   0.00       70   3.39    0.92
+stop/keeps_going           98.5   99.0   33.5      95.5  46.5   45.5   36.5   0.42      -39   3.94    1.09
+stop/pulls_back           100.0  100.0   33.5     100.0   0.0    0.0    0.0   0.00       76   3.41       -
+written out/reactions/reactions_ood.csv
+ALLDONE
