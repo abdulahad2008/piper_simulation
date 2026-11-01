@@ -1,0 +1,121 @@
+# tests/test_scene_validity.py run on main @ 6286bfe (before the arm fix)
+# SCENE_VALIDITY_EPISODES=1000 SCENE_VALIDITY_PHYSICS_EPISODES=10, Linux, Python 3.13, mujoco 3.3.7, numpy 2.4.4, torch 2.15.0+cpu
+# 30 Oct 2026. Assertion lines, then the pass/fail list.
+
+E   AssertionError: no_human: worst length error 858.9 mm over 201000 samples; first: ep 0 t=0.00s: human_upper_arm_geom drawn 1.0000 m, joint distance 0.2045 m
+E   AssertionError: training_id: worst length error 863.5 mm over 201000 samples; first: ep 0 t=0.00s: human_upper_arm_geom drawn 1.0000 m, joint distance 0.1645 m
+E   AssertionError: curriculum_d0: worst length error 864.3 mm over 201000 samples; first: ep 0 t=0.00s: human_upper_arm_geom drawn 1.0000 m, joint distance 0.2066 m
+E   AssertionError: curriculum_d05: worst length error 867.7 mm over 201000 samples; first: ep 0 t=0.00s: human_upper_arm_geom drawn 1.0000 m, joint distance 0.1645 m
+E   AssertionError: curriculum_d1: worst length error 863.5 mm over 201000 samples; first: ep 0 t=0.00s: human_upper_arm_geom drawn 1.0000 m, joint distance 0.1645 m
+E   AssertionError: fixed_height_randomized: worst length error 834.0 mm over 201000 samples; first: ep 0 t=0.00s: human_upper_arm_geom drawn 1.0000 m, joint distance 0.1686 m
+E   AssertionError: fixed_exact_h036_v1: worst length error 834.0 mm over 201000 samples; first: ep 0 t=0.00s: human_upper_arm_geom drawn 1.0000 m, joint distance 0.1669 m
+E   AssertionError: fixed_exact_shifted_h036_v1: worst length error 834.0 mm over 201000 samples; first: ep 0 t=0.00s: human_upper_arm_geom drawn 1.0000 m, joint distance 0.1669 m
+E   AssertionError: evaluation_id: worst length error 863.5 mm over 201000 samples; first: ep 0 t=0.00s: human_upper_arm_geom drawn 1.0000 m, joint distance 0.1645 m
+E   AssertionError: evaluation_ood: worst length error 859.1 mm over 201000 samples; first: ep 0 t=0.00s: human_upper_arm_geom drawn 1.0000 m, joint distance 0.1645 m
+E   AssertionError: no_human: ep 0 t=0.00s: human_upper_arm_geom endpoints off by 795.5 mm
+E   AssertionError: training_id: ep 0 t=0.00s: human_upper_arm_geom endpoints off by 835.5 mm
+E   AssertionError: curriculum_d0: ep 0 t=0.00s: human_upper_arm_geom endpoints off by 793.4 mm
+E   AssertionError: curriculum_d05: ep 0 t=0.00s: human_upper_arm_geom endpoints off by 835.5 mm
+E   AssertionError: curriculum_d1: ep 0 t=0.00s: human_upper_arm_geom endpoints off by 835.5 mm
+E   AssertionError: fixed_height_randomized: ep 0 t=0.00s: human_upper_arm_geom endpoints off by 831.4 mm
+E   AssertionError: fixed_exact_h036_v1: ep 0 t=0.00s: human_upper_arm_geom endpoints off by 833.1 mm
+E   AssertionError: fixed_exact_shifted_h036_v1: ep 0 t=0.00s: human_upper_arm_geom endpoints off by 833.1 mm
+E   AssertionError: evaluation_id: ep 0 t=0.00s: human_upper_arm_geom endpoints off by 835.5 mm
+E   AssertionError: evaluation_ood: ep 0 t=0.00s: human_upper_arm_geom endpoints off by 835.5 mm
+E   AssertionError: no_human: lowest point over the footprint z=0.041 m; first: ep 12 t=0.00s: human_forearm_geom reaches z=0.041 m over the table footprint (top 0.2 m)
+E   AssertionError: training_id: lowest point over the footprint z=-0.070 m; first: ep 0 t=2.70s: human_forearm_geom reaches z=0.062 m over the table footprint (top 0.2 m)
+E   AssertionError: curriculum_d0: lowest point over the footprint z=-0.043 m; first: ep 8 t=3.40s: human_forearm_geom reaches z=0.007 m over the table footprint (top 0.2 m)
+E   AssertionError: curriculum_d05: lowest point over the footprint z=-0.071 m; first: ep 0 t=3.40s: human_forearm_geom reaches z=0.058 m over the table footprint (top 0.2 m)
+E   AssertionError: curriculum_d1: lowest point over the footprint z=-0.070 m; first: ep 0 t=2.70s: human_forearm_geom reaches z=0.062 m over the table footprint (top 0.2 m)
+E   AssertionError: fixed_height_randomized: lowest point over the footprint z=-0.062 m; first: ep 0 t=2.05s: human_forearm_geom reaches z=0.083 m over the table footprint (top 0.2 m)
+E   AssertionError: fixed_exact_h036_v1: lowest point over the footprint z=-0.025 m; first: ep 0 t=2.15s: human_forearm_geom reaches z=0.029 m over the table footprint (top 0.2 m)
+E   AssertionError: fixed_exact_shifted_h036_v1: lowest point over the footprint z=-0.025 m; first: ep 0 t=1.90s: human_forearm_geom reaches z=0.031 m over the table footprint (top 0.2 m)
+E   AssertionError: evaluation_id: lowest point over the footprint z=-0.070 m; first: ep 0 t=2.70s: human_forearm_geom reaches z=0.062 m over the table footprint (top 0.2 m)
+E   AssertionError: evaluation_ood: lowest point over the footprint z=-0.069 m; first: ep 0 t=3.25s: human_forearm_geom reaches z=0.054 m over the table footprint (top 0.2 m)
+E   AssertionError: no_human: penetrations (m) {'floor': -0.09507333605025117, 'table': -0.01424812614300433}; first: ep 1 t=0.00s: human_forearm_geom penetrates floor by 21.6 mm
+E   AssertionError: training_id: penetrations (m) {'floor': -0.09141473745690157, 'table': -0.13199841627939096}; first: ep 0 t=2.70s: human_forearm_geom penetrates table by 17.0 mm
+E   AssertionError: curriculum_d0: penetrations (m) {'floor': -0.09020469801972628, 'table': -0.1319985358962974}; first: ep 1 t=0.00s: human_forearm_geom penetrates floor by 51.1 mm
+E   AssertionError: curriculum_d05: penetrations (m) {'floor': -0.08864108413127744, 'table': -0.13199784075508025}; first: ep 0 t=3.40s: human_forearm_geom penetrates table by 0.1 mm
+E   AssertionError: curriculum_d1: penetrations (m) {'floor': -0.09141473745690157, 'table': -0.13199841627939096}; first: ep 0 t=2.70s: human_forearm_geom penetrates table by 17.0 mm
+E   AssertionError: fixed_height_randomized: penetrations (m) {'floor': -0.0692355500850805, 'table': -0.13199273759429708}; first: ep 0 t=2.05s: human_forearm_geom penetrates table by 2.5 mm
+E   AssertionError: fixed_exact_h036_v1: penetrations (m) {'floor': -0.024533079615881553, 'table': -0.11013576271880143}; first: ep 0 t=2.15s: human_forearm_geom penetrates table by 2.7 mm
+E   AssertionError: fixed_exact_shifted_h036_v1: penetrations (m) {'floor': -0.024707996748710964, 'table': -0.10995271916830854}; first: ep 0 t=1.90s: human_forearm_geom penetrates table by 9.9 mm
+E   AssertionError: evaluation_id: penetrations (m) {'floor': -0.09141473745690157, 'table': -0.13199841627939096}; first: ep 0 t=2.70s: human_forearm_geom penetrates table by 17.0 mm
+E   AssertionError: evaluation_ood: penetrations (m) {'floor': -0.09141473745690157, 'table': -0.13199735182708594}; first: ep 0 t=3.25s: human_forearm_geom penetrates table by 7.6 mm
+E   AssertionError: ([0.10999999999999997, 0.9999999999999997, 0.9999999999999999], [0.11, 0.17049936461208903, 0.21157645167461814])
+E   AssertionError: knife: knife_handle (contype=0, conaffinity=0) cannot contact the person
+E   AssertionError: knife: no contact reported between the hand and knife
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_broadphase_bound_matches_drawn_size[no_human]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_broadphase_bound_matches_drawn_size[training_id]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_broadphase_bound_matches_drawn_size[curriculum_d0]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_broadphase_bound_matches_drawn_size[curriculum_d05]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_broadphase_bound_matches_drawn_size[curriculum_d1]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_broadphase_bound_matches_drawn_size[fixed_height_randomized]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_broadphase_bound_matches_drawn_size[fixed_exact_h036_v1]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_broadphase_bound_matches_drawn_size[fixed_exact_shifted_h036_v1]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_broadphase_bound_matches_drawn_size[evaluation_id]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_broadphase_bound_matches_drawn_size[evaluation_ood]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_clear_of_robot_base_at_rest[no_human]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_clear_of_robot_base_at_rest[training_id]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_clear_of_robot_base_at_rest[curriculum_d0]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_clear_of_robot_base_at_rest[curriculum_d05]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_clear_of_robot_base_at_rest[curriculum_d1]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_clear_of_robot_base_at_rest[fixed_height_randomized]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_clear_of_robot_base_at_rest[fixed_exact_h036_v1]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_clear_of_robot_base_at_rest[fixed_exact_shifted_h036_v1]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_clear_of_robot_base_at_rest[evaluation_id]
+PASSED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_clear_of_robot_base_at_rest[evaluation_ood]
+PASSED tests/test_scene_validity.py::TestHeldObject::test_held_object_rigid_in_gripper[knife]
+PASSED tests/test_scene_validity.py::TestGuardsFiniteAndDeterministic::test_guard_no_nan_or_exploding_values[training_id]
+PASSED tests/test_scene_validity.py::TestGuardsFiniteAndDeterministic::test_guard_no_nan_or_exploding_values[evaluation_ood]
+PASSED tests/test_scene_validity.py::TestGuardsFiniteAndDeterministic::test_guard_no_nan_or_exploding_values[fixed_exact_h036_v1]
+PASSED tests/test_scene_validity.py::TestGuardsFiniteAndDeterministic::test_guard_no_nan_or_exploding_values[no_human]
+PASSED tests/test_scene_validity.py::TestGuardsFiniteAndDeterministic::test_guard_same_seed_same_episode[training_id]
+PASSED tests/test_scene_validity.py::TestGuardsFiniteAndDeterministic::test_guard_same_seed_same_episode[evaluation_ood]
+PASSED tests/test_scene_validity.py::TestGuardsFiniteAndDeterministic::test_guard_same_seed_same_episode[fixed_exact_h036_v1]
+PASSED tests/test_scene_validity.py::TestGuardsFiniteAndDeterministic::test_guard_same_seed_same_episode[no_human]
+PASSED tests/test_scene_validity.py::TestGuardNoHumanInvariance::test_guard_no_human_outcome_invariant_to_arm_geometry
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_length_equals_joint_distance[no_human]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_length_equals_joint_distance[training_id]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_length_equals_joint_distance[curriculum_d0]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_length_equals_joint_distance[curriculum_d05]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_length_equals_joint_distance[curriculum_d1]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_length_equals_joint_distance[fixed_height_randomized]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_length_equals_joint_distance[fixed_exact_h036_v1]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_length_equals_joint_distance[fixed_exact_shifted_h036_v1]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_length_equals_joint_distance[evaluation_id]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_length_equals_joint_distance[evaluation_ood]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_endpoints_coincide_with_joint_points[no_human]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_endpoints_coincide_with_joint_points[training_id]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_endpoints_coincide_with_joint_points[curriculum_d0]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_endpoints_coincide_with_joint_points[curriculum_d05]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_endpoints_coincide_with_joint_points[curriculum_d1]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_endpoints_coincide_with_joint_points[fixed_height_randomized]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_endpoints_coincide_with_joint_points[fixed_exact_h036_v1]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_endpoints_coincide_with_joint_points[fixed_exact_shifted_h036_v1]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_endpoints_coincide_with_joint_points[evaluation_id]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_capsule_endpoints_coincide_with_joint_points[evaluation_ood]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_below_table_top_inside_footprint[no_human]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_below_table_top_inside_footprint[training_id]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_below_table_top_inside_footprint[curriculum_d0]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_below_table_top_inside_footprint[curriculum_d05]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_below_table_top_inside_footprint[curriculum_d1]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_below_table_top_inside_footprint[fixed_height_randomized]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_below_table_top_inside_footprint[fixed_exact_h036_v1]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_below_table_top_inside_footprint[fixed_exact_shifted_h036_v1]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_below_table_top_inside_footprint[evaluation_id]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_below_table_top_inside_footprint[evaluation_ood]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_penetrates_static_geometry[no_human]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_penetrates_static_geometry[training_id]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_penetrates_static_geometry[curriculum_d0]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_penetrates_static_geometry[curriculum_d05]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_penetrates_static_geometry[curriculum_d1]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_penetrates_static_geometry[fixed_height_randomized]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_penetrates_static_geometry[fixed_exact_h036_v1]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_penetrates_static_geometry[fixed_exact_shifted_h036_v1]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_penetrates_static_geometry[evaluation_id]
+FAILED tests/test_scene_validity.py::TestDrawnArmGeometry::test_person_never_penetrates_static_geometry[evaluation_ood]
+FAILED tests/test_scene_validity.py::TestHazardBridgeGeometry::test_bridge_capsules_match_joint_points
+FAILED tests/test_scene_validity.py::TestHeldObject::test_held_object_touchable_by_person[knife]
+FAILED tests/test_scene_validity.py::TestHeldObject::test_held_object_contact_is_detected[knife]
+43 failed, 30 passed, 1 warning in 910.12s (0:15:10)
