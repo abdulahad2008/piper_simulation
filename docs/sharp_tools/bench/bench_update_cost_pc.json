@@ -1,0 +1,21 @@
+{
+  "info": {"platform": "Windows-10-10.0.19045-SP1", "python": "3.13.9", "torch": "2.14.0+cpu", "cpu_count": 48, "time": "2026-10-30 23:41:23", "note": "pasted from the PC run of piper_rl.scripts.bench_update_cost, idle machine (CPU 0.19 % busy before launch)"},
+  "learners": [
+    {"learner": "sac", "threads": 1, "ms_per_update": 27.88480033333447, "n_updates": 300},
+    {"learner": "sac", "threads": 2, "ms_per_update": 21.772182999999735, "n_updates": 300},
+    {"learner": "tqc", "threads": 1, "ms_per_update": 48.117474999999104, "n_updates": 300},
+    {"learner": "tqc", "threads": 2, "ms_per_update": 35.27093500000168, "n_updates": 300},
+    {"learner": "crossq", "threads": 1, "ms_per_update": 59.122815666666305, "n_updates": 300},
+    {"learner": "crossq", "threads": 2, "ms_per_update": 39.13174033333538, "n_updates": 300},
+    {"learner": "sbx_sac", "threads": 1, "ms_per_update": 16.917784000000516, "n_updates": 300},
+    {"learner": "sbx_sac", "threads": 2, "ms_per_update": 21.458345333333757, "n_updates": 300},
+    {"learner": "sbx_crossq", "threads": 1, "ms_per_update": 30.103491333335718, "n_updates": 300},
+    {"learner": "sbx_crossq", "threads": 2, "ms_per_update": 28.89456200000192, "n_updates": 300}
+  ],
+  "envs": [
+    {"n_envs": 1, "env_steps_per_s": 58.00562367421809, "ms_per_vec_step": 17.23970774999998},
+    {"n_envs": 4, "env_steps_per_s": 199.4632643020999, "ms_per_vec_step": 20.053817999998955},
+    {"n_envs": 8, "env_steps_per_s": 381.5263009745809, "ms_per_vec_step": 20.968410250000034}
+  ],
+  "stage_a_10min": {"time": "2026-10-31 00:52:47", "cpu_busy_pct": 45.49, "steps_per_s": {"sb3_sac_utd1": 35, "sb3_sac_utd025": 79, "sbx_sac_utd1": 42, "sbx_sac_utd05": 68, "sbx_sac_utd025": 99, "sbx_crossq_utd1": 31, "ppo16": 159.9}, "note": "ppo16 value computed from 80000 steps / 500.245 s (no FPS line yet)"}
+}

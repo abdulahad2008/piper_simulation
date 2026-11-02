@@ -55,8 +55,8 @@ from stable_baselines3 import SAC, TD3, PPO
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import (DummyVecEnv, SubprocVecEnv,
                                               VecNormalize)
-from stable_baselines3.common.callbacks import (CheckpointCallback, EvalCallback,
-                                                CallbackList)
+from stable_baselines3.common.callbacks import (BaseCallback, CheckpointCallback,
+                                                EvalCallback, CallbackList)
 from stable_baselines3.common.noise import NormalActionNoise
 
 from piper_rl.config import EnvConfig
@@ -89,7 +89,72 @@ from piper_rl.human_aware_env import PiperHumanAwarePickPlaceEnv
 from piper_rl.callbacks import (TaskMetricsCallback, PeriodicDumpCallback,
                                 HumanCurriculumCallback)
 
-ALGOS = {"sac": SAC, "td3": TD3, "ppo": PPO}
+ALGOS = {"sac": SAC, "td3": TD3, "ppo": PPO,
+         # loaded on use: sb3-contrib and SBX (JAX) learners for the Phase 2 benchmark
+         "tqc": None, "crossq": None, "sbx_sac": None, "sbx_crossq": None, "sbx_tqc": None}
+
+
+def resolve_algo(name: str):
+    """Return the learner class; sb3-contrib and SBX are imported only when asked for."""
+    if ALGOS.get(name) is not None:
+        return ALGOS[name]
+    if name == "tqc":
+        from sb3_contrib import TQC as A
+    elif name == "crossq":
+        from sb3_contrib import CrossQ as A
+    elif name == "sbx_sac":
+        from sbx import SAC as A
+    elif name == "sbx_crossq":
+        from sbx import CrossQ as A
+    elif name == "sbx_tqc":
+        from sbx import TQC as A
+    else:
+        raise KeyError(name)
+    return A
+
+
+class WallClockBudgetCallback(BaseCallback):
+    """Stop training after a wall-clock budget, so learners of different speed
+    are compared at equal time, not equal steps."""
+
+    def __init__(self, max_seconds: float):
+        super().__init__()
+        self.max_seconds = float(max_seconds)
+        self.t0 = None
+
+    def _on_training_start(self) -> None:
+        self.t0 = time.time()
+
+    def _on_step(self) -> bool:
+        if self.max_seconds > 0 and time.time() - self.t0 > self.max_seconds:
+            print(f"wall-clock budget of {self.max_seconds:.0f} s reached at "
+                  f"{self.num_timesteps:,} steps; stopping")
+            return False
+        return True
+
+
+class WallClockEvalLog(BaseCallback):
+    """Runs after every EvalCallback evaluation and appends (wall seconds,
+    steps, mean reward, success rate) to eval/wallclock.json. The learning
+    curves of the benchmark are drawn from this file."""
+
+    def __init__(self, path: Path):
+        super().__init__()
+        self.path = Path(path)
+        self.t0 = time.time()
+        self.rows = []
+
+    def _on_step(self) -> bool:
+        ev = self.parent
+        row = {"wall_s": time.time() - self.t0,
+               "timesteps": int(ev.evaluations_timesteps[-1]) if ev.evaluations_timesteps else int(self.num_timesteps),
+               "mean_reward": float(ev.last_mean_reward)}
+        if getattr(ev, "evaluations_successes", None):
+            row["success_rate"] = float(np.mean(ev.evaluations_successes[-1]))
+        self.rows.append(row)
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self.path.write_text(json.dumps(self.rows, indent=1))
+        return True
 
 
 # --------------------------------------------------------------------------- #
@@ -152,8 +217,8 @@ def default_hyperparams(algo: str, n_envs: int, net_arch=None,
     better setting and costs almost nothing there.
     """
     net_arch = list(net_arch) if net_arch else [256, 256]
-    if algo == "sac":
-        return dict(
+    if algo in ("sac", "sbx_sac", "tqc", "sbx_tqc", "crossq", "sbx_crossq"):
+        hp = dict(
             learning_rate=3e-4,
             buffer_size=400_000,            # ~1600 episodes of 250 steps
             batch_size=batch_size or 256,
@@ -170,6 +235,10 @@ def default_hyperparams(algo: str, n_envs: int, net_arch=None,
             use_sde=False,
             policy_kwargs=dict(net_arch=net_arch),
         )
+        if "crossq" in algo:
+            # CrossQ has no target networks: drop the keys it does not take.
+            hp.pop("tau", None)
+        return hp
     if algo == "td3":
         return dict(
             learning_rate=3e-4, buffer_size=400_000,
@@ -191,7 +260,8 @@ def default_hyperparams(algo: str, n_envs: int, net_arch=None,
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--algo", choices=list(ALGOS), default="sac")
+    p.add_argument("--algo", choices=list(ALGOS), default="sac",
+                   help="sac/td3/ppo (SB3); tqc, crossq (sb3-contrib); sbx_sac, sbx_crossq, sbx_tqc (SBX, JAX)")
     p.add_argument("--task", choices=["pick-place", "human-aware"],
                    default="pick-place", help="environment task; default unchanged")
     p.add_argument("--human-preset",
@@ -301,6 +371,9 @@ def main(argv=None):
     p.add_argument("--learning-starts", type=int, default=None,
                    help="random environment steps before SAC/TD3 updates; "
                         "default preserves the experiment setting (5000)")
+    p.add_argument("--max-wall-seconds", type=float, default=0.0,
+                   help="stop training after this wall-clock budget (0 = no limit); "
+                        "used by the Phase 2 benchmark to compare learners at equal time")
     p.add_argument("--torch-threads", type=int, default=None,
                    help="threads for the gradient update. On a many-core box "
                         "leave ~n_envs cores free for the simulators; see "
@@ -446,7 +519,7 @@ def main(argv=None):
                              fourier_sigma=args.fourier_sigma)
 
     # ------------------------------------------------------------------ model
-    Algo = ALGOS[args.algo]
+    Algo = resolve_algo(args.algo)
     hp = default_hyperparams(args.algo, args.n_envs, args.net_arch,
                              args.batch_size, args.gradient_steps,
                              args.learning_starts)
@@ -484,8 +557,9 @@ def main(argv=None):
                   f"buffer is shared -- but the effective gradient-to-env-step "
                   f"ratio changes unless you scale --gradient-steps with it.")
     else:
+        extra = {} if args.algo.startswith("sbx_") else {"device": args.device}
         model = Algo("MlpPolicy", train_env, seed=args.seed, verbose=1,
-                     device=args.device, tensorboard_log=str(out / "tb"), **hp)
+                     tensorboard_log=str(out / "tb"), **extra, **hp)
 
     # ------------------------------------------------------------- callbacks
     metrics_cb = TaskMetricsCallback(window=50)
@@ -502,8 +576,11 @@ def main(argv=None):
             log_path=str(out / "eval"),
             eval_freq=max(1, args.eval_freq // args.n_envs),
             n_eval_episodes=args.n_eval_episodes,
-            deterministic=True, render=False, verbose=1),
+            deterministic=True, render=False, verbose=1,
+            callback_after_eval=WallClockEvalLog(out / "eval" / "wallclock.json")),
     ]
+    if args.max_wall_seconds > 0:
+        callback_items.append(WallClockBudgetCallback(args.max_wall_seconds))
     if args.task == "human-aware" and args.human_preset == "curriculum":
         callback_items.append(HumanCurriculumCallback(
             total_timesteps=(args.curriculum_total_timesteps or args.timesteps),

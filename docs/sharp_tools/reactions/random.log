@@ -1,0 +1,21 @@
+random keeps_going keep     200 episodes done (317 s)
+random keeps_going stop     200 episodes done (619 s)
+random keeps_going retract  200 episodes done (917 s)
+random halts       keep     200 episodes done (1221 s)
+random halts       stop     200 episodes done (1534 s)
+random halts       retract  200 episodes done (1842 s)
+random pulls_back  keep     200 episodes done (2143 s)
+random pulls_back  stop     200 episodes done (2436 s)
+random pulls_back  retract  200 episodes done (2740 s)
+
+cell                      succ%  done%  intr% succ|intr  hot%  hndl% robot%  exp1s p5hot mm t_done t_react
+keep/halts                100.0  100.0   46.0     100.0  11.5    3.0    0.0   0.25      -36   3.54       -
+keep/keeps_going          100.0  100.0   46.0     100.0  66.5   50.5   42.0   0.51      -39   3.54       -
+keep/pulls_back           100.0  100.0   46.0     100.0   9.0    0.0    0.0   0.11      -22   3.54       -
+retract/halts              20.5   81.0   46.0      17.4   0.0   36.0   36.5   0.00       46   4.64    0.00
+retract/keeps_going        36.0   91.0   46.0      41.3   0.0   38.0   38.5   0.00       46   5.10    0.00
+retract/pulls_back         16.5   73.5   46.0      15.2   0.0   30.0   31.0   0.00       44   4.14    0.00
+stop/halts                 89.0   89.0   46.0      76.1  12.5    0.5    0.0   0.25      -32   3.45    0.32
+stop/keeps_going           99.0   99.5   46.0      97.8  66.5   50.5   42.0   0.51      -42   3.96    1.06
+stop/pulls_back           100.0  100.0   46.0     100.0   8.0    0.0    0.0   0.10       -6   3.58    0.31
+written out/reactions/reactions_random.csv

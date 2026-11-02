@@ -25,8 +25,18 @@ def test_knife_scene_is_base_plus_knife():
         "knife_handle", "knife_blade"}
     assert _names(knife, mujoco.mjtObj.mjOBJ_SITE, knife.nsite) - _names(base, mujoco.mjtObj.mjOBJ_SITE, base.nsite) == {
         "blade_heel", "blade_tip", "blade_frame"}
+    # The knife collides with the person's capsules (contype 2, conaffinity 3)
+    # and with nothing else: not the robot, the table or the object (all 1/1).
     for gid in (knife.geom("knife_handle").id, knife.geom("knife_blade").id):
-        assert knife.geom_contype[gid] == 0 and knife.geom_conaffinity[gid] == 0
+        assert knife.geom_contype[gid] == 4 and knife.geom_conaffinity[gid] == 2
+        for other in ("human_hand_geom", "human_forearm_geom", "human_upper_arm_geom"):
+            o = knife.geom(other).id
+            assert (knife.geom_contype[gid] & knife.geom_conaffinity[o]) or \
+                   (knife.geom_contype[o] & knife.geom_conaffinity[gid])
+        for other in ("table", "obj_geom", "link6_col", "pad_left_tip"):
+            o = knife.geom(other).id
+            assert not ((knife.geom_contype[gid] & knife.geom_conaffinity[o]) or
+                        (knife.geom_contype[o] & knife.geom_conaffinity[gid])), other
 
 
 def test_handle_centre_on_tcp_and_blade_along_gripper_axis():

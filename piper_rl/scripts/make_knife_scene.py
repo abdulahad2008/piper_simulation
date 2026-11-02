@@ -14,9 +14,12 @@ three source files. tests/test_knife_scene.py fails if the generated files drift
 
 Knife mounting: the handle centre sits on the `tcp` site and the blade runs
 along the gripper approach axis (link6 +z), edge toward link6 -x. Knife geoms
-have contype=conaffinity=0, so the knife does not change contacts or the
-existing robot/human collision logic; the hazard wrapper measures it
-geometrically. The knife body carries gravcomp=1 like every arm link.
+use contype=4, conaffinity=2: they collide with the person's capsules
+(contype 2, conaffinity 3) and with nothing else, so a blunt hit with the
+handle or spine is a real MuJoCo contact while the robot, table and object
+contacts are unchanged. Before 30 Oct 2026 the knife had contype=conaffinity=0
+and could not touch the person at all. The hazard wrapper still measures the
+edge geometrically. The knife body carries gravcomp=1 like every arm link.
 """
 from __future__ import annotations
 
@@ -36,12 +39,13 @@ KNIFE_ASSETS = """
 # so knife +X -> link6 +z. pos puts the handle centre (knife x = -0.055) on tcp (z = 0.105).
 KNIFE_BODY = """
                   <!-- Knife held in the gripper. Sites: blade_heel, blade_tip (edge ends),
-                       blade_frame (local +z = cutting direction). Non-colliding by design. -->
+                       blade_frame (local +z = cutting direction). Collides with the
+                       person's capsules only (contype 4 / conaffinity 2 vs 2 / 3). -->
                   <body name="knife" pos="0 0 0.16" quat="0.70710678 0 -0.70710678 0" gravcomp="1">
                     <geom name="knife_handle" type="box" size="0.055 0.011 0.013" pos="-0.055 0 0"
-                          material="knife_handle" mass="0.08" contype="0" conaffinity="0" group="2"/>
+                          material="knife_handle" mass="0.08" contype="4" conaffinity="2" group="2"/>
                     <geom name="knife_blade" type="box" size="0.100 0.001 0.020" pos="0.100 0 0"
-                          material="knife_steel" mass="0.08" contype="0" conaffinity="0" group="2"/>
+                          material="knife_steel" mass="0.08" contype="4" conaffinity="2" group="2"/>
                     <site name="blade_heel" pos="0.000 0 0.020" size="0.003" rgba="1 0 0 1"/>
                     <site name="blade_tip" pos="0.200 0 0.020" size="0.003" rgba="1 0 0 1"/>
                     <site name="blade_frame" pos="0.100 0 0.020" size="0.002" rgba="0 1 0 0.5"/>

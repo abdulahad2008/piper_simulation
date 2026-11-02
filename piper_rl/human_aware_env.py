@@ -19,7 +19,12 @@ HUMAN_OBSERVATION_DIM = 13
 
 def _quat_from_z_axis(direction: np.ndarray) -> np.ndarray:
     """Quaternion rotating local +Z onto ``direction`` (w, x, y, z)."""
-    v = np.asarray(direction, dtype=np.float64)
+    # Copy before normalising. ``np.asarray`` returned the caller's own array,
+    # and the in-place ``v /= norm`` then left every caller holding a unit
+    # vector. ``_set_segment`` measured its segment from that same array, so
+    # each capsule half-length became 0.5 m (about 1.07 m long arm segments
+    # that passed through the table). Present from 9c1175b to 6286bfe.
+    v = np.array(direction, dtype=np.float64, copy=True)
     norm = np.linalg.norm(v)
     if norm < 1e-12:
         return np.array([1.0, 0.0, 0.0, 0.0])
