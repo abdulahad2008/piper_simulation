@@ -11,8 +11,11 @@
 #   sbx_sac_half   SBX SAC, 0.5 updates per env step (Stage A's best per hour);
 #                  4 envs x 2 updates by default, or SBX_ENVS x SBX_G
 #   sbx_sac_utd1   SBX SAC, 1 update per env step, 4 envs
-#   sb3_sac_ctrl   SB3 SAC, 1 update per env step, 4 envs, torch threads
-#                  unmanaged = the October setting (the control)
+#   sb3_sac_ctrl   SB3 SAC, 1 update per env step, 4 envs, torch pinned to
+#                  2 threads (the control). Attempt 1 on 2-3 Nov ran this with
+#                  unmanaged torch threads, as in October: three such runs took
+#                  the 48-thread machine to 100 % and cut every run 2.7-4x
+#                  (docs/sharp_tools/bench/stage_b/STAGE_B.md). Never again.
 set -u
 HOURS="${HOURS:-10}"; SEEDS="${SEEDS:-0 1 2}"; OUT="${OUT:-runs/stage_b}"; PY="${PY:-python}"
 SBX_ENVS="${SBX_ENVS:-4}"; SBX_G="${SBX_G:-2}"
@@ -30,7 +33,8 @@ for seed in $SEEDS; do
     nohup $PY -m piper_rl.scripts.train --algo sbx_sac --n-envs 4 --gradient-steps 4 --torch-threads 1 \
     $COMMON --seed $seed --run-name "sbx_sac_utd1_s$seed" > "$OUT/sbx_sac_utd1_s$seed.log" 2>&1 &
   sleep 5
-  nohup $PY -m piper_rl.scripts.train --algo sac --n-envs 4 --gradient-steps 4 \
+  OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 \
+    nohup $PY -m piper_rl.scripts.train --algo sac --n-envs 4 --gradient-steps 4 --torch-threads 2 \
     $COMMON --seed $seed --run-name "sb3_sac_ctrl_s$seed" > "$OUT/sb3_sac_ctrl_s$seed.log" 2>&1 &
   sleep 5
 done
