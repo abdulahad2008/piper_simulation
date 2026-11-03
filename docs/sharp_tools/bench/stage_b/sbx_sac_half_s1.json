@@ -1,0 +1,104 @@
+[
+ {
+  "wall_s": 2038.024894952774,
+  "timesteps": 40000,
+  "mean_reward": -82.83925659999998,
+  "success_rate": 0.0
+ },
+ {
+  "wall_s": 4117.809599637985,
+  "timesteps": 80000,
+  "mean_reward": -75.54685139000001,
+  "success_rate": 0.0
+ },
+ {
+  "wall_s": 6200.42977309227,
+  "timesteps": 120000,
+  "mean_reward": -97.17560085000001,
+  "success_rate": 0.0
+ },
+ {
+  "wall_s": 8350.050233364105,
+  "timesteps": 160000,
+  "mean_reward": -65.67377685999999,
+  "success_rate": 0.0
+ },
+ {
+  "wall_s": 10587.474305391312,
+  "timesteps": 200000,
+  "mean_reward": -65.30906975,
+  "success_rate": 0.0
+ },
+ {
+  "wall_s": 12807.321631193161,
+  "timesteps": 240000,
+  "mean_reward": -69.14886609000001,
+  "success_rate": 0.0
+ },
+ {
+  "wall_s": 14953.183346271515,
+  "timesteps": 280000,
+  "mean_reward": -76.34744649000001,
+  "success_rate": 0.0
+ },
+ {
+  "wall_s": 17070.49730372429,
+  "timesteps": 320000,
+  "mean_reward": -70.4161684,
+  "success_rate": 0.0
+ },
+ {
+  "wall_s": 19122.771893262863,
+  "timesteps": 360000,
+  "mean_reward": -68.45736021,
+  "success_rate": 0.0
+ },
+ {
+  "wall_s": 21276.141095399857,
+  "timesteps": 400000,
+  "mean_reward": -62.34569432999999,
+  "success_rate": 0.0
+ },
+ {
+  "wall_s": 23437.647335767746,
+  "timesteps": 440000,
+  "mean_reward": -64.70193685999999,
+  "success_rate": 0.0
+ },
+ {
+  "wall_s": 25614.44025182724,
+  "timesteps": 480000,
+  "mean_reward": -66.45781973000001,
+  "success_rate": 0.0
+ },
+ {
+  "wall_s": 27844.830050468445,
+  "timesteps": 520000,
+  "mean_reward": -66.78090424,
+  "success_rate": 0.0
+ },
+ {
+  "wall_s": 30103.431243419647,
+  "timesteps": 560000,
+  "mean_reward": -57.16874476000001,
+  "success_rate": 0.0
+ },
+ {
+  "wall_s": 32310.631442308426,
+  "timesteps": 600000,
+  "mean_reward": -62.43982067000001,
+  "success_rate": 0.0
+ },
+ {
+  "wall_s": 34533.61236643791,
+  "timesteps": 640000,
+  "mean_reward": -61.07811992,
+  "success_rate": 0.0
+ },
+ {
+  "wall_s": 36247.45129299164,
+  "timesteps": 680000,
+  "mean_reward": -54.84851251999999,
+  "success_rate": 0.0
+ }
+]

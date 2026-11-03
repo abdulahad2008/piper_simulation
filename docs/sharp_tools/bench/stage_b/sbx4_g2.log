@@ -1,0 +1,3565 @@
+Using cpu device
+
+======================================================================
+SBX_SAC  |  2,000,000 steps  |  4 env(s)  |  obs (64,)  |  act (5,)
+run dir: runs\rate_test\sbx4_g2
+======================================================================
+
+Logging to runs\rate_test\sbx4_g2\tb\SAC_1
+D:\Games\piper_sim\.venv\Lib\site-packages\stable_baselines3\common\callbacks.py:419: UserWarning: Training and eval env are not of the same type<stable_baselines3.common.vec_env.subproc_vec_env.SubprocVecEnv object at 0x000001A3B5BDA510> != <stable_baselines3.common.vec_env.dummy_vec_env.DummyVecEnv object at 0x000001A3B5BDAA50>
+  warnings.warn("Training and eval env are not of the same type" f"{self.training_env} != {self.eval_env}")
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 4.24     |
+|    ep_len                      | 84.9     |
+|    ep_len_mean                 | 84.5     |
+|    ep_rew_mean                 | -59.2    |
+|    episodes                    | 9        |
+|    grasp_rate                  | 0.667    |
+|    human_collision_rate        | 0.444    |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 55.7     |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.0801   |
+|    near_misses                 | 0.667    |
+|    place_err_mm                | 209      |
+|    proximity_steps             | 13.2     |
+|    safety_clamped              | 71.3     |
+|    success_rate                | 0        |
+|    waiting_steps               | 4.22     |
+| time/                          |          |
+|    episodes                    | 10       |
+|    fps                         | 208      |
+|    time_elapsed                | 5        |
+|    total_timesteps             | 1112     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.1      |
+|    collision_steps             | 0        |
+|    completion_time             | 4.7      |
+|    ep_len                      | 94       |
+|    episodes                    | 20       |
+|    grasp_rate                  | 0.6      |
+|    human_collision_rate        | 0.4      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 48       |
+|    lift_rate                   | 0.05     |
+|    minimum_human_distance      | 0.162    |
+|    near_misses                 | 0.5      |
+|    place_err_mm                | 226      |
+|    proximity_steps             | 9.5      |
+|    safety_clamped              | 79.2     |
+|    success_rate                | 0.1      |
+|    waiting_steps               | 2.15     |
+---------------------------------------------
+---------------------------------
+| rollout/           |          |
+|    ep_len_mean     | 94       |
+|    ep_rew_mean     | -36.5    |
+|    success_rate    | 0.1      |
+| time/              |          |
+|    episodes        | 20       |
+|    fps             | 208      |
+|    time_elapsed    | 9        |
+|    total_timesteps | 2000     |
+---------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.069    |
+|    collision_steps             | 0        |
+|    completion_time             | 5.3      |
+|    ep_len                      | 106      |
+|    ep_len_mean                 | 105      |
+|    ep_rew_mean                 | -51.1    |
+|    episodes                    | 29       |
+|    grasp_rate                  | 0.586    |
+|    human_collision_rate        | 0.345    |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 43.3     |
+|    lift_rate                   | 0.103    |
+|    minimum_human_distance      | 0.162    |
+|    near_misses                 | 0.414    |
+|    place_err_mm                | 251      |
+|    proximity_steps             | 13       |
+|    safety_clamped              | 89.8     |
+|    success_rate                | 0.0667   |
+|    waiting_steps               | 4.31     |
+| time/                          |          |
+|    episodes                    | 30       |
+|    fps                         | 208      |
+|    time_elapsed                | 16       |
+|    total_timesteps             | 3440     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.108    |
+|    collision_steps             | 0        |
+|    completion_time             | 5.1      |
+|    ep_len                      | 102      |
+|    episodes                    | 37       |
+|    grasp_rate                  | 0.595    |
+|    human_collision_rate        | 0.351    |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 44.3     |
+|    lift_rate                   | 0.108    |
+|    minimum_human_distance      | 0.162    |
+|    near_misses                 | 0.459    |
+|    place_err_mm                | 246      |
+|    proximity_steps             | 13.3     |
+|    safety_clamped              | 85.7     |
+|    success_rate                | 0.108    |
+|    waiting_steps               | 3.81     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.103    |
+|    collision_steps             | 0        |
+|    completion_time             | 5.12     |
+|    ep_len                      | 102      |
+|    ep_len_mean                 | 105      |
+|    ep_rew_mean                 | -45.2    |
+|    episodes                    | 39       |
+|    grasp_rate                  | 0.59     |
+|    human_collision_rate        | 0.359    |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 45.3     |
+|    lift_rate                   | 0.128    |
+|    minimum_human_distance      | 0.161    |
+|    near_misses                 | 0.462    |
+|    place_err_mm                | 247      |
+|    proximity_steps             | 13.4     |
+|    safety_clamped              | 85.8     |
+|    success_rate                | 0.1      |
+|    waiting_steps               | 3.92     |
+| time/                          |          |
+|    episodes                    | 40       |
+|    fps                         | 207      |
+|    time_elapsed                | 20       |
+|    total_timesteps             | 4340     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.0816   |
+|    collision_steps             | 0        |
+|    completion_time             | 5.62     |
+|    ep_len                      | 112      |
+|    ep_len_mean                 | 112      |
+|    ep_rew_mean                 | -46      |
+|    episodes                    | 49       |
+|    grasp_rate                  | 0.531    |
+|    human_collision_rate        | 0.327    |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 41.9     |
+|    lift_rate                   | 0.102    |
+|    minimum_human_distance      | 0.155    |
+|    near_misses                 | 0.408    |
+|    place_err_mm                | 261      |
+|    proximity_steps             | 15       |
+|    safety_clamped              | 95.3     |
+|    success_rate                | 0.08     |
+|    waiting_steps               | 4.96     |
+| time/                          |          |
+|    episodes                    | 50       |
+|    fps                         | 153      |
+|    time_elapsed                | 38       |
+|    total_timesteps             | 5872     |
+| train/                         |          |
+|    actor_loss                  | -1.02    |
+|    critic_loss                 | 5.78     |
+|    ent_coef                    | 0.0892   |
+|    ent_coef_loss               | -12.4    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 434      |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.08     |
+|    collision_steps             | 0        |
+|    completion_time             | 5.76     |
+|    ep_len                      | 115      |
+|    episodes                    | 51       |
+|    grasp_rate                  | 0.54     |
+|    human_collision_rate        | 0.3      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 38.9     |
+|    lift_rate                   | 0.1      |
+|    minimum_human_distance      | 0.158    |
+|    near_misses                 | 0.38     |
+|    place_err_mm                | 257      |
+|    proximity_steps             | 14.9     |
+|    safety_clamped              | 98.2     |
+|    success_rate                | 0.08     |
+|    waiting_steps               | 5.28     |
+| train/                         |          |
+|    actor_loss                  | -1.59    |
+|    critic_loss                 | 173      |
+|    ent_coef                    | 0.0879   |
+|    ent_coef_loss               | -11.1    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 498      |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.08     |
+|    collision_steps             | 0        |
+|    completion_time             | 5.71     |
+|    ep_len                      | 114      |
+|    ep_len_mean                 | 110      |
+|    ep_rew_mean                 | -50.6    |
+|    episodes                    | 59       |
+|    grasp_rate                  | 0.5      |
+|    human_collision_rate        | 0.34     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 42.7     |
+|    lift_rate                   | 0.16     |
+|    minimum_human_distance      | 0.161    |
+|    near_misses                 | 0.4      |
+|    place_err_mm                | 264      |
+|    proximity_steps             | 15.1     |
+|    safety_clamped              | 98.9     |
+|    success_rate                | 0.0667   |
+|    waiting_steps               | 6.78     |
+| time/                          |          |
+|    episodes                    | 60       |
+|    fps                         | 135      |
+|    time_elapsed                | 49       |
+|    total_timesteps             | 6732     |
+| train/                         |          |
+|    actor_loss                  | -3       |
+|    critic_loss                 | 131      |
+|    ent_coef                    | 0.0822   |
+|    ent_coef_loss               | -6.53    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 864      |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 0        |
+|    completion_time             | 5.71     |
+|    ep_len                      | 114      |
+|    ep_len_mean                 | 107      |
+|    ep_rew_mean                 | -52.8    |
+|    episodes                    | 69       |
+|    grasp_rate                  | 0.46     |
+|    human_collision_rate        | 0.4      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 49.9     |
+|    lift_rate                   | 0.18     |
+|    minimum_human_distance      | 0.13     |
+|    near_misses                 | 0.46     |
+|    place_err_mm                | 276      |
+|    proximity_steps             | 16.7     |
+|    safety_clamped              | 99.7     |
+|    success_rate                | 0.0571   |
+|    waiting_steps               | 8.64     |
+| time/                          |          |
+|    episodes                    | 70       |
+|    fps                         | 123      |
+|    time_elapsed                | 62       |
+|    total_timesteps             | 7680     |
+| train/                         |          |
+|    actor_loss                  | -4.4     |
+|    critic_loss                 | 90.1     |
+|    ent_coef                    | 0.0756   |
+|    ent_coef_loss               | -3.98    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 1338     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 0        |
+|    completion_time             | 5.4      |
+|    ep_len                      | 108      |
+|    episodes                    | 73       |
+|    grasp_rate                  | 0.44     |
+|    human_collision_rate        | 0.46     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 56.3     |
+|    lift_rate                   | 0.2      |
+|    minimum_human_distance      | 0.12     |
+|    near_misses                 | 0.52     |
+|    place_err_mm                | 266      |
+|    proximity_steps             | 16       |
+|    safety_clamped              | 94       |
+|    success_rate                | 0.04     |
+|    waiting_steps               | 8.1      |
+| train/                         |          |
+|    actor_loss                  | -3.48    |
+|    critic_loss                 | 115      |
+|    ent_coef                    | 0.0734   |
+|    ent_coef_loss               | -7       |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 1498     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 0        |
+|    completion_time             | 5.27     |
+|    ep_len                      | 105      |
+|    ep_len_mean                 | 105      |
+|    ep_rew_mean                 | -59.1    |
+|    episodes                    | 79       |
+|    grasp_rate                  | 0.4      |
+|    human_collision_rate        | 0.5      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 59.6     |
+|    lift_rate                   | 0.16     |
+|    minimum_human_distance      | 0.106    |
+|    near_misses                 | 0.56     |
+|    place_err_mm                | 268      |
+|    proximity_steps             | 16       |
+|    safety_clamped              | 92.2     |
+|    success_rate                | 0.05     |
+|    waiting_steps               | 8.48     |
+| time/                          |          |
+|    episodes                    | 80       |
+|    fps                         | 115      |
+|    time_elapsed                | 74       |
+|    total_timesteps             | 8580     |
+| train/                         |          |
+|    actor_loss                  | -6.29    |
+|    critic_loss                 | 117      |
+|    ent_coef                    | 0.0692   |
+|    ent_coef_loss               | -7.67    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 1788     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 5.7      |
+|    ep_len                      | 114      |
+|    episodes                    | 89       |
+|    grasp_rate                  | 0.32     |
+|    human_collision_rate        | 0.52     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 60.9     |
+|    lift_rate                   | 0.14     |
+|    minimum_human_distance      | 0.0943   |
+|    near_misses                 | 0.54     |
+|    place_err_mm                | 277      |
+|    proximity_steps             | 15.2     |
+|    safety_clamped              | 101      |
+|    success_rate                | 0        |
+|    waiting_steps               | 9.44     |
+| train/                         |          |
+|    actor_loss                  | -8.36    |
+|    critic_loss                 | 17.5     |
+|    ent_coef                    | 0.061    |
+|    ent_coef_loss               | -2.99    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 2498     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 5.7      |
+|    ep_len                      | 114      |
+|    ep_len_mean                 | 108      |
+|    ep_rew_mean                 | -61      |
+|    episodes                    | 89       |
+|    grasp_rate                  | 0.32     |
+|    human_collision_rate        | 0.52     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 60.9     |
+|    lift_rate                   | 0.14     |
+|    minimum_human_distance      | 0.0943   |
+|    near_misses                 | 0.54     |
+|    place_err_mm                | 277      |
+|    proximity_steps             | 15.2     |
+|    safety_clamped              | 101      |
+|    success_rate                | 0.0444   |
+|    waiting_steps               | 9.44     |
+| time/                          |          |
+|    episodes                    | 90       |
+|    fps                         | 107      |
+|    time_elapsed                | 93       |
+|    total_timesteps             | 10004    |
+| train/                         |          |
+|    actor_loss                  | -7.08    |
+|    critic_loss                 | 75.2     |
+|    ent_coef                    | 0.061    |
+|    ent_coef_loss               | -2.65    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 2500     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 5.44     |
+|    ep_len                      | 109      |
+|    ep_len_mean                 | 110      |
+|    ep_rew_mean                 | -59      |
+|    episodes                    | 99       |
+|    grasp_rate                  | 0.36     |
+|    human_collision_rate        | 0.54     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 62.3     |
+|    lift_rate                   | 0.16     |
+|    minimum_human_distance      | 0.0999   |
+|    near_misses                 | 0.56     |
+|    place_err_mm                | 268      |
+|    proximity_steps             | 12.9     |
+|    safety_clamped              | 97.5     |
+|    success_rate                | 0.04     |
+|    waiting_steps               | 9.12     |
+| time/                          |          |
+|    episodes                    | 100      |
+|    fps                         | 102      |
+|    time_elapsed                | 109      |
+|    total_timesteps             | 11264    |
+| train/                         |          |
+|    actor_loss                  | -13.3    |
+|    critic_loss                 | 26.3     |
+|    ent_coef                    | 0.0579   |
+|    ent_coef_loss               | -0.819   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 3130     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 5.48     |
+|    ep_len                      | 110      |
+|    episodes                    | 104      |
+|    grasp_rate                  | 0.38     |
+|    human_collision_rate        | 0.52     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 61.1     |
+|    lift_rate                   | 0.16     |
+|    minimum_human_distance      | 0.101    |
+|    near_misses                 | 0.54     |
+|    place_err_mm                | 273      |
+|    proximity_steps             | 12.3     |
+|    safety_clamped              | 97.6     |
+|    success_rate                | 0        |
+|    waiting_steps               | 8.48     |
+| train/                         |          |
+|    actor_loss                  | -13.9    |
+|    critic_loss                 | 34.6     |
+|    ent_coef                    | 0.0573   |
+|    ent_coef_loss               | -0.405   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 3498     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 5.7      |
+|    ep_len                      | 114      |
+|    ep_len_mean                 | 114      |
+|    ep_rew_mean                 | -56      |
+|    episodes                    | 109      |
+|    grasp_rate                  | 0.36     |
+|    human_collision_rate        | 0.44     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 54.9     |
+|    lift_rate                   | 0.14     |
+|    minimum_human_distance      | 0.108    |
+|    near_misses                 | 0.56     |
+|    place_err_mm                | 276      |
+|    proximity_steps             | 15.6     |
+|    safety_clamped              | 101      |
+|    success_rate                | 0.04     |
+|    waiting_steps               | 11.3     |
+| time/                          |          |
+|    episodes                    | 110      |
+|    fps                         | 99       |
+|    time_elapsed                | 125      |
+|    total_timesteps             | 12476    |
+| train/                         |          |
+|    actor_loss                  | -14.6    |
+|    critic_loss                 | 68.4     |
+|    ent_coef                    | 0.057    |
+|    ent_coef_loss               | 0.944    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 3736     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 6        |
+|    ep_len                      | 120      |
+|    ep_len_mean                 | 117      |
+|    ep_rew_mean                 | -64.4    |
+|    episodes                    | 119      |
+|    grasp_rate                  | 0.36     |
+|    human_collision_rate        | 0.4      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 52.1     |
+|    lift_rate                   | 0.1      |
+|    minimum_human_distance      | 0.111    |
+|    near_misses                 | 0.58     |
+|    place_err_mm                | 274      |
+|    proximity_steps             | 18.2     |
+|    safety_clamped              | 107      |
+|    success_rate                | 0.02     |
+|    waiting_steps               | 12.7     |
+| time/                          |          |
+|    episodes                    | 120      |
+|    fps                         | 96       |
+|    time_elapsed                | 143      |
+|    total_timesteps             | 13812    |
+| train/                         |          |
+|    actor_loss                  | -12.5    |
+|    critic_loss                 | 16.5     |
+|    ent_coef                    | 0.0553   |
+|    ent_coef_loss               | -0.896   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 4404     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 6.16     |
+|    ep_len                      | 123      |
+|    episodes                    | 122      |
+|    grasp_rate                  | 0.34     |
+|    human_collision_rate        | 0.36     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 47.7     |
+|    lift_rate                   | 0.08     |
+|    minimum_human_distance      | 0.117    |
+|    near_misses                 | 0.56     |
+|    place_err_mm                | 277      |
+|    proximity_steps             | 18       |
+|    safety_clamped              | 111      |
+|    success_rate                | 0        |
+|    waiting_steps               | 12.4     |
+| train/                         |          |
+|    actor_loss                  | -8.59    |
+|    critic_loss                 | 50.6     |
+|    ent_coef                    | 0.0551   |
+|    ent_coef_loss               | 2.87     |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 4498     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 6.14     |
+|    ep_len                      | 123      |
+|    ep_len_mean                 | 114      |
+|    ep_rew_mean                 | -60.2    |
+|    episodes                    | 129      |
+|    grasp_rate                  | 0.38     |
+|    human_collision_rate        | 0.32     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 43.5     |
+|    lift_rate                   | 0.1      |
+|    minimum_human_distance      | 0.132    |
+|    near_misses                 | 0.52     |
+|    place_err_mm                | 274      |
+|    proximity_steps             | 17.9     |
+|    safety_clamped              | 110      |
+|    success_rate                | 0.02     |
+|    waiting_steps               | 13       |
+| time/                          |          |
+|    episodes                    | 130      |
+|    fps                         | 94       |
+|    time_elapsed                | 158      |
+|    total_timesteps             | 14884    |
+| train/                         |          |
+|    actor_loss                  | -12.6    |
+|    critic_loss                 | 51.3     |
+|    ent_coef                    | 0.0548   |
+|    ent_coef_loss               | -0.635   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 4940     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 6.05     |
+|    ep_len                      | 121      |
+|    episodes                    | 138      |
+|    grasp_rate                  | 0.4      |
+|    human_collision_rate        | 0.26     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 37.8     |
+|    lift_rate                   | 0.14     |
+|    minimum_human_distance      | 0.147    |
+|    near_misses                 | 0.48     |
+|    place_err_mm                | 269      |
+|    proximity_steps             | 18.1     |
+|    safety_clamped              | 109      |
+|    success_rate                | 0        |
+|    waiting_steps               | 13.1     |
+| train/                         |          |
+|    actor_loss                  | -15.6    |
+|    critic_loss                 | 17.7     |
+|    ent_coef                    | 0.0573   |
+|    ent_coef_loss               | 0.529    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 5498     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 5.93     |
+|    ep_len                      | 119      |
+|    ep_len_mean                 | 116      |
+|    ep_rew_mean                 | -62.8    |
+|    episodes                    | 139      |
+|    grasp_rate                  | 0.42     |
+|    human_collision_rate        | 0.28     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 40.1     |
+|    lift_rate                   | 0.14     |
+|    minimum_human_distance      | 0.145    |
+|    near_misses                 | 0.5      |
+|    place_err_mm                | 264      |
+|    proximity_steps             | 18.3     |
+|    safety_clamped              | 106      |
+|    success_rate                | 0        |
+|    waiting_steps               | 13.3     |
+| time/                          |          |
+|    episodes                    | 140      |
+|    fps                         | 92       |
+|    time_elapsed                | 174      |
+|    total_timesteps             | 16084    |
+| train/                         |          |
+|    actor_loss                  | -13.3    |
+|    critic_loss                 | 51.1     |
+|    ent_coef                    | 0.0576   |
+|    ent_coef_loss               | -0.607   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 5540     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 5.97     |
+|    ep_len                      | 119      |
+|    ep_len_mean                 | 114      |
+|    ep_rew_mean                 | -60      |
+|    episodes                    | 149      |
+|    grasp_rate                  | 0.42     |
+|    human_collision_rate        | 0.26     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 38.6     |
+|    lift_rate                   | 0.14     |
+|    minimum_human_distance      | 0.14     |
+|    near_misses                 | 0.52     |
+|    place_err_mm                | 259      |
+|    proximity_steps             | 19.8     |
+|    safety_clamped              | 106      |
+|    success_rate                | 0        |
+|    waiting_steps               | 14.2     |
+| time/                          |          |
+|    episodes                    | 150      |
+|    fps                         | 90       |
+|    time_elapsed                | 189      |
+|    total_timesteps             | 17244    |
+| train/                         |          |
+|    actor_loss                  | -17.5    |
+|    critic_loss                 | 24.5     |
+|    ent_coef                    | 0.0578   |
+|    ent_coef_loss               | -0.219   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 6120     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 5.83     |
+|    ep_len                      | 117      |
+|    episodes                    | 157      |
+|    grasp_rate                  | 0.42     |
+|    human_collision_rate        | 0.28     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 37.9     |
+|    lift_rate                   | 0.16     |
+|    minimum_human_distance      | 0.142    |
+|    near_misses                 | 0.46     |
+|    place_err_mm                | 271      |
+|    proximity_steps             | 17.8     |
+|    safety_clamped              | 103      |
+|    success_rate                | 0        |
+|    waiting_steps               | 12.5     |
+| train/                         |          |
+|    actor_loss                  | -16.5    |
+|    critic_loss                 | 29       |
+|    ent_coef                    | 0.0586   |
+|    ent_coef_loss               | 0.246    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 6498     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 5.93     |
+|    ep_len                      | 119      |
+|    ep_len_mean                 | 117      |
+|    ep_rew_mean                 | -59.8    |
+|    episodes                    | 159      |
+|    grasp_rate                  | 0.42     |
+|    human_collision_rate        | 0.3      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 40.4     |
+|    lift_rate                   | 0.14     |
+|    minimum_human_distance      | 0.134    |
+|    near_misses                 | 0.48     |
+|    place_err_mm                | 274      |
+|    proximity_steps             | 18.4     |
+|    safety_clamped              | 105      |
+|    success_rate                | 0        |
+|    waiting_steps               | 13.1     |
+| time/                          |          |
+|    episodes                    | 160      |
+|    fps                         | 89       |
+|    time_elapsed                | 208      |
+|    total_timesteps             | 18620    |
+| train/                         |          |
+|    actor_loss                  | -12      |
+|    critic_loss                 | 55.9     |
+|    ent_coef                    | 0.0598   |
+|    ent_coef_loss               | -0.959   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 6808     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 6.18     |
+|    ep_len                      | 124      |
+|    ep_len_mean                 | 122      |
+|    ep_rew_mean                 | -61.6    |
+|    episodes                    | 169      |
+|    grasp_rate                  | 0.38     |
+|    human_collision_rate        | 0.26     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 34.8     |
+|    lift_rate                   | 0.16     |
+|    minimum_human_distance      | 0.149    |
+|    near_misses                 | 0.4      |
+|    place_err_mm                | 271      |
+|    proximity_steps             | 16.5     |
+|    safety_clamped              | 110      |
+|    success_rate                | 0        |
+|    waiting_steps               | 12.7     |
+| time/                          |          |
+|    episodes                    | 170      |
+|    fps                         | 88       |
+|    time_elapsed                | 225      |
+|    total_timesteps             | 19916    |
+| train/                         |          |
+|    actor_loss                  | -14.5    |
+|    critic_loss                 | 50.4     |
+|    ent_coef                    | 0.0649   |
+|    ent_coef_loss               | -0.621   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 7456     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 6.15     |
+|    ep_len                      | 123      |
+|    episodes                    | 171      |
+|    grasp_rate                  | 0.4      |
+|    human_collision_rate        | 0.3      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 39.5     |
+|    lift_rate                   | 0.16     |
+|    minimum_human_distance      | 0.142    |
+|    near_misses                 | 0.42     |
+|    place_err_mm                | 270      |
+|    proximity_steps             | 17.8     |
+|    safety_clamped              | 110      |
+|    success_rate                | 0        |
+|    waiting_steps               | 14.4     |
+| train/                         |          |
+|    actor_loss                  | -13.5    |
+|    critic_loss                 | 43       |
+|    ent_coef                    | 0.0647   |
+|    ent_coef_loss               | 1.11     |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 7498     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 6.26     |
+|    ep_len                      | 125      |
+|    ep_len_mean                 | 125      |
+|    ep_rew_mean                 | -59.4    |
+|    episodes                    | 179      |
+|    grasp_rate                  | 0.38     |
+|    human_collision_rate        | 0.28     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 38.9     |
+|    lift_rate                   | 0.14     |
+|    minimum_human_distance      | 0.134    |
+|    near_misses                 | 0.44     |
+|    place_err_mm                | 280      |
+|    proximity_steps             | 19.4     |
+|    safety_clamped              | 112      |
+|    success_rate                | 0        |
+|    waiting_steps               | 16       |
+| time/                          |          |
+|    episodes                    | 180      |
+|    fps                         | 87       |
+|    time_elapsed                | 242      |
+|    total_timesteps             | 21200    |
+| train/                         |          |
+|    actor_loss                  | -12.6    |
+|    critic_loss                 | 20.3     |
+|    ent_coef                    | 0.0653   |
+|    ent_coef_loss               | -0.364   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 8098     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 6.31     |
+|    ep_len                      | 126      |
+|    episodes                    | 187      |
+|    grasp_rate                  | 0.36     |
+|    human_collision_rate        | 0.3      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 42.1     |
+|    lift_rate                   | 0.08     |
+|    minimum_human_distance      | 0.118    |
+|    near_misses                 | 0.46     |
+|    place_err_mm                | 280      |
+|    proximity_steps             | 20.6     |
+|    safety_clamped              | 115      |
+|    success_rate                | 0        |
+|    waiting_steps               | 17.3     |
+| train/                         |          |
+|    actor_loss                  | -16.1    |
+|    critic_loss                 | 35.9     |
+|    ent_coef                    | 0.0641   |
+|    ent_coef_loss               | -0.171   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 8498     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 6.28     |
+|    ep_len                      | 126      |
+|    ep_len_mean                 | 123      |
+|    ep_rew_mean                 | -55      |
+|    episodes                    | 189      |
+|    grasp_rate                  | 0.38     |
+|    human_collision_rate        | 0.28     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 39.9     |
+|    lift_rate                   | 0.1      |
+|    minimum_human_distance      | 0.124    |
+|    near_misses                 | 0.44     |
+|    place_err_mm                | 277      |
+|    proximity_steps             | 20.3     |
+|    safety_clamped              | 114      |
+|    success_rate                | 0        |
+|    waiting_steps               | 17.1     |
+| time/                          |          |
+|    episodes                    | 190      |
+|    fps                         | 86       |
+|    time_elapsed                | 256      |
+|    total_timesteps             | 22220    |
+| train/                         |          |
+|    actor_loss                  | -15.9    |
+|    critic_loss                 | 51.8     |
+|    ent_coef                    | 0.0642   |
+|    ent_coef_loss               | -0.901   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 8608     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 6.2      |
+|    ep_len                      | 124      |
+|    ep_len_mean                 | 122      |
+|    ep_rew_mean                 | -58      |
+|    episodes                    | 199      |
+|    grasp_rate                  | 0.32     |
+|    human_collision_rate        | 0.3      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 42.7     |
+|    lift_rate                   | 0.08     |
+|    minimum_human_distance      | 0.122    |
+|    near_misses                 | 0.44     |
+|    place_err_mm                | 276      |
+|    proximity_steps             | 20.2     |
+|    safety_clamped              | 113      |
+|    success_rate                | 0        |
+|    waiting_steps               | 17.9     |
+| time/                          |          |
+|    episodes                    | 200      |
+|    fps                         | 85       |
+|    time_elapsed                | 273      |
+|    total_timesteps             | 23448    |
+| train/                         |          |
+|    actor_loss                  | -10.9    |
+|    critic_loss                 | 47.1     |
+|    ent_coef                    | 0.0658   |
+|    ent_coef_loss               | 0.106    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 9222     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 6.17     |
+|    ep_len                      | 123      |
+|    episodes                    | 205      |
+|    grasp_rate                  | 0.28     |
+|    human_collision_rate        | 0.34     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 46.3     |
+|    lift_rate                   | 0.04     |
+|    minimum_human_distance      | 0.115    |
+|    near_misses                 | 0.46     |
+|    place_err_mm                | 270      |
+|    proximity_steps             | 18.7     |
+|    safety_clamped              | 113      |
+|    success_rate                | 0        |
+|    waiting_steps               | 16.7     |
+| train/                         |          |
+|    actor_loss                  | -12.6    |
+|    critic_loss                 | 32.7     |
+|    ent_coef                    | 0.0649   |
+|    ent_coef_loss               | 0.26     |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 9498     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 6.08     |
+|    ep_len                      | 122      |
+|    ep_len_mean                 | 121      |
+|    ep_rew_mean                 | -60.5    |
+|    episodes                    | 209      |
+|    grasp_rate                  | 0.3      |
+|    human_collision_rate        | 0.34     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 47.3     |
+|    lift_rate                   | 0.04     |
+|    minimum_human_distance      | 0.111    |
+|    near_misses                 | 0.46     |
+|    place_err_mm                | 264      |
+|    proximity_steps             | 19.1     |
+|    safety_clamped              | 111      |
+|    success_rate                | 0        |
+|    waiting_steps               | 17.1     |
+| time/                          |          |
+|    episodes                    | 210      |
+|    fps                         | 85       |
+|    time_elapsed                | 289      |
+|    total_timesteps             | 24684    |
+| train/                         |          |
+|    actor_loss                  | -7.32    |
+|    critic_loss                 | 80.1     |
+|    ent_coef                    | 0.0629   |
+|    ent_coef_loss               | -0.288   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 9840     |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0        |
+|    completion_time             | 5.74     |
+|    ep_len                      | 115      |
+|    ep_len_mean                 | 119      |
+|    ep_rew_mean                 | -53.6    |
+|    episodes                    | 219      |
+|    grasp_rate                  | 0.36     |
+|    human_collision_rate        | 0.32     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 44.8     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.115    |
+|    near_misses                 | 0.44     |
+|    place_err_mm                | 252      |
+|    proximity_steps             | 18       |
+|    safety_clamped              | 103      |
+|    success_rate                | 0        |
+|    waiting_steps               | 16.4     |
+| time/                          |          |
+|    episodes                    | 220      |
+|    fps                         | 84       |
+|    time_elapsed                | 301      |
+|    total_timesteps             | 25556    |
+| train/                         |          |
+|    actor_loss                  | -10.6    |
+|    critic_loss                 | 29.7     |
+|    ent_coef                    | 0.0625   |
+|    ent_coef_loss               | 0.753    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 10276    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0.36     |
+|    completion_time             | 5.71     |
+|    ep_len                      | 114      |
+|    episodes                    | 223      |
+|    grasp_rate                  | 0.4      |
+|    human_collision_rate        | 0.3      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 41.8     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.119    |
+|    near_misses                 | 0.4      |
+|    place_err_mm                | 249      |
+|    proximity_steps             | 15.6     |
+|    safety_clamped              | 101      |
+|    success_rate                | 0        |
+|    waiting_steps               | 14.2     |
+| train/                         |          |
+|    actor_loss                  | -7.58    |
+|    critic_loss                 | 22       |
+|    ent_coef                    | 0.0617   |
+|    ent_coef_loss               | 1.37     |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 10498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0.36     |
+|    completion_time             | 5.72     |
+|    ep_len                      | 114      |
+|    ep_len_mean                 | 121      |
+|    ep_rew_mean                 | -55.7    |
+|    episodes                    | 229      |
+|    grasp_rate                  | 0.4      |
+|    human_collision_rate        | 0.32     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 43.4     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.121    |
+|    near_misses                 | 0.4      |
+|    place_err_mm                | 244      |
+|    proximity_steps             | 15       |
+|    safety_clamped              | 100      |
+|    success_rate                | 0        |
+|    waiting_steps               | 13.4     |
+| time/                          |          |
+|    episodes                    | 230      |
+|    fps                         | 84       |
+|    time_elapsed                | 319      |
+|    total_timesteps             | 26948    |
+| train/                         |          |
+|    actor_loss                  | -6.8     |
+|    critic_loss                 | 47       |
+|    ent_coef                    | 0.0603   |
+|    ent_coef_loss               | -0.465   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 10972    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0.36     |
+|    completion_time             | 5.82     |
+|    ep_len                      | 116      |
+|    episodes                    | 238      |
+|    grasp_rate                  | 0.42     |
+|    human_collision_rate        | 0.32     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 41.2     |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.131    |
+|    near_misses                 | 0.38     |
+|    place_err_mm                | 247      |
+|    proximity_steps             | 13.8     |
+|    safety_clamped              | 102      |
+|    success_rate                | 0        |
+|    waiting_steps               | 12.1     |
+| train/                         |          |
+|    actor_loss                  | -4.87    |
+|    critic_loss                 | 24.8     |
+|    ent_coef                    | 0.0575   |
+|    ent_coef_loss               | -0.545   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 11498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0.36     |
+|    completion_time             | 5.82     |
+|    ep_len                      | 116      |
+|    ep_len_mean                 | 120      |
+|    ep_rew_mean                 | -54.9    |
+|    episodes                    | 239      |
+|    grasp_rate                  | 0.4      |
+|    human_collision_rate        | 0.32     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 41.2     |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.132    |
+|    near_misses                 | 0.38     |
+|    place_err_mm                | 248      |
+|    proximity_steps             | 13.8     |
+|    safety_clamped              | 102      |
+|    success_rate                | 0        |
+|    waiting_steps               | 12.1     |
+| time/                          |          |
+|    episodes                    | 240      |
+|    fps                         | 83       |
+|    time_elapsed                | 335      |
+|    total_timesteps             | 28184    |
+| train/                         |          |
+|    actor_loss                  | -5.53    |
+|    critic_loss                 | 37.9     |
+|    ent_coef                    | 0.0577   |
+|    ent_coef_loss               | 0.362    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 11590    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0.36     |
+|    completion_time             | 6.23     |
+|    ep_len                      | 125      |
+|    ep_len_mean                 | 125      |
+|    ep_rew_mean                 | -59.1    |
+|    episodes                    | 249      |
+|    grasp_rate                  | 0.4      |
+|    human_collision_rate        | 0.32     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 41       |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.138    |
+|    near_misses                 | 0.38     |
+|    place_err_mm                | 266      |
+|    proximity_steps             | 14.4     |
+|    safety_clamped              | 110      |
+|    success_rate                | 0        |
+|    waiting_steps               | 12.6     |
+| time/                          |          |
+|    episodes                    | 250      |
+|    fps                         | 83       |
+|    time_elapsed                | 357      |
+|    total_timesteps             | 29796    |
+| train/                         |          |
+|    actor_loss                  | -4.74    |
+|    critic_loss                 | 33.3     |
+|    ent_coef                    | 0.0525   |
+|    ent_coef_loss               | -1.37    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 12396    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0.36     |
+|    completion_time             | 6.4      |
+|    ep_len                      | 128      |
+|    episodes                    | 252      |
+|    grasp_rate                  | 0.38     |
+|    human_collision_rate        | 0.28     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 36.4     |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.152    |
+|    near_misses                 | 0.34     |
+|    place_err_mm                | 264      |
+|    proximity_steps             | 13.5     |
+|    safety_clamped              | 113      |
+|    success_rate                | 0        |
+|    waiting_steps               | 11.8     |
+| train/                         |          |
+|    actor_loss                  | -5.81    |
+|    critic_loss                 | 41.9     |
+|    ent_coef                    | 0.0523   |
+|    ent_coef_loss               | -0.241   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 12498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0.36     |
+|    completion_time             | 6.39     |
+|    ep_len                      | 128      |
+|    ep_len_mean                 | 124      |
+|    ep_rew_mean                 | -58.9    |
+|    episodes                    | 259      |
+|    grasp_rate                  | 0.36     |
+|    human_collision_rate        | 0.3      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 37.1     |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.153    |
+|    near_misses                 | 0.34     |
+|    place_err_mm                | 262      |
+|    proximity_steps             | 12.6     |
+|    safety_clamped              | 114      |
+|    success_rate                | 0        |
+|    waiting_steps               | 10.4     |
+| time/                          |          |
+|    episodes                    | 260      |
+|    fps                         | 83       |
+|    time_elapsed                | 371      |
+|    total_timesteps             | 30908    |
+| train/                         |          |
+|    actor_loss                  | -3.05    |
+|    critic_loss                 | 29.3     |
+|    ent_coef                    | 0.0506   |
+|    ent_coef_loss               | 0.938    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 12952    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0.36     |
+|    completion_time             | 6.38     |
+|    ep_len                      | 128      |
+|    ep_len_mean                 | 122      |
+|    ep_rew_mean                 | -51.2    |
+|    episodes                    | 269      |
+|    grasp_rate                  | 0.4      |
+|    human_collision_rate        | 0.3      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 37.6     |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.147    |
+|    near_misses                 | 0.36     |
+|    place_err_mm                | 276      |
+|    proximity_steps             | 13.8     |
+|    safety_clamped              | 112      |
+|    success_rate                | 0        |
+|    waiting_steps               | 10       |
+| time/                          |          |
+|    episodes                    | 270      |
+|    fps                         | 82       |
+|    time_elapsed                | 386      |
+|    total_timesteps             | 31988    |
+| train/                         |          |
+|    actor_loss                  | -2.07    |
+|    critic_loss                 | 22.7     |
+|    ent_coef                    | 0.05     |
+|    ent_coef_loss               | -0.0294  |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 13492    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0.04     |
+|    completion_time             | 6.42     |
+|    ep_len                      | 128      |
+|    episodes                    | 270      |
+|    grasp_rate                  | 0.4      |
+|    human_collision_rate        | 0.28     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 35.5     |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.151    |
+|    near_misses                 | 0.34     |
+|    place_err_mm                | 279      |
+|    proximity_steps             | 13.6     |
+|    safety_clamped              | 112      |
+|    success_rate                | 0        |
+|    waiting_steps               | 9.82     |
+| train/                         |          |
+|    actor_loss                  | -3.32    |
+|    critic_loss                 | 83       |
+|    ent_coef                    | 0.0499   |
+|    ent_coef_loss               | 0.58     |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 13498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0        |
+|    collision_steps             | 0.06     |
+|    completion_time             | 6.45     |
+|    ep_len                      | 129      |
+|    ep_len_mean                 | 120      |
+|    ep_rew_mean                 | -46.3    |
+|    episodes                    | 279      |
+|    grasp_rate                  | 0.42     |
+|    human_collision_rate        | 0.3      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 37.7     |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.153    |
+|    near_misses                 | 0.38     |
+|    place_err_mm                | 269      |
+|    proximity_steps             | 14.5     |
+|    safety_clamped              | 113      |
+|    success_rate                | 0.01     |
+|    waiting_steps               | 10.9     |
+| time/                          |          |
+|    episodes                    | 280      |
+|    fps                         | 82       |
+|    time_elapsed                | 400      |
+|    total_timesteps             | 33080    |
+| train/                         |          |
+|    actor_loss                  | -0.757   |
+|    critic_loss                 | 62.7     |
+|    ent_coef                    | 0.0486   |
+|    ent_coef_loss               | 1.58     |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 14038    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.02     |
+|    collision_steps             | 0.06     |
+|    completion_time             | 6.27     |
+|    ep_len                      | 125      |
+|    episodes                    | 287      |
+|    grasp_rate                  | 0.4      |
+|    human_collision_rate        | 0.32     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 40       |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.154    |
+|    near_misses                 | 0.4      |
+|    place_err_mm                | 271      |
+|    proximity_steps             | 13.6     |
+|    safety_clamped              | 108      |
+|    success_rate                | 0.02     |
+|    waiting_steps               | 10.2     |
+| train/                         |          |
+|    actor_loss                  | -2.12    |
+|    critic_loss                 | 28.1     |
+|    ent_coef                    | 0.0478   |
+|    ent_coef_loss               | 0.417    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 14498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.02     |
+|    collision_steps             | 0.06     |
+|    completion_time             | 6.29     |
+|    ep_len                      | 126      |
+|    ep_len_mean                 | 120      |
+|    ep_rew_mean                 | -50.7    |
+|    episodes                    | 289      |
+|    grasp_rate                  | 0.4      |
+|    human_collision_rate        | 0.32     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 40       |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.148    |
+|    near_misses                 | 0.4      |
+|    place_err_mm                | 270      |
+|    proximity_steps             | 14.3     |
+|    safety_clamped              | 109      |
+|    success_rate                | 0.01     |
+|    waiting_steps               | 10.4     |
+| time/                          |          |
+|    episodes                    | 290      |
+|    fps                         | 82       |
+|    time_elapsed                | 416      |
+|    total_timesteps             | 34264    |
+| train/                         |          |
+|    actor_loss                  | 1.22     |
+|    critic_loss                 | 16.8     |
+|    ent_coef                    | 0.0469   |
+|    ent_coef_loss               | -0.492   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 14630    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 0.06     |
+|    completion_time             | 5.82     |
+|    ep_len                      | 116      |
+|    ep_len_mean                 | 120      |
+|    ep_rew_mean                 | -49.6    |
+|    episodes                    | 299      |
+|    grasp_rate                  | 0.44     |
+|    human_collision_rate        | 0.34     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 42.1     |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.132    |
+|    near_misses                 | 0.5      |
+|    place_err_mm                | 256      |
+|    proximity_steps             | 14.3     |
+|    safety_clamped              | 98.3     |
+|    success_rate                | 0.02     |
+|    waiting_steps               | 8.56     |
+| time/                          |          |
+|    episodes                    | 300      |
+|    fps                         | 81       |
+|    time_elapsed                | 432      |
+|    total_timesteps             | 35432    |
+| train/                         |          |
+|    actor_loss                  | 0.561    |
+|    critic_loss                 | 27.3     |
+|    ent_coef                    | 0.0465   |
+|    ent_coef_loss               | -0.723   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 15214    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.06     |
+|    collision_steps             | 0.06     |
+|    completion_time             | 5.58     |
+|    ep_len                      | 112      |
+|    episodes                    | 303      |
+|    grasp_rate                  | 0.48     |
+|    human_collision_rate        | 0.38     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 47.4     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.128    |
+|    near_misses                 | 0.54     |
+|    place_err_mm                | 248      |
+|    proximity_steps             | 15.5     |
+|    safety_clamped              | 93.6     |
+|    success_rate                | 0.06     |
+|    waiting_steps               | 9.02     |
+| train/                         |          |
+|    actor_loss                  | 2.2      |
+|    critic_loss                 | 36.3     |
+|    ent_coef                    | 0.0458   |
+|    ent_coef_loss               | 0.512    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 15498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.06     |
+|    collision_steps             | 0.06     |
+|    completion_time             | 5.73     |
+|    ep_len                      | 115      |
+|    ep_len_mean                 | 119      |
+|    ep_rew_mean                 | -46      |
+|    episodes                    | 309      |
+|    grasp_rate                  | 0.5      |
+|    human_collision_rate        | 0.36     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 46.6     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.122    |
+|    near_misses                 | 0.64     |
+|    place_err_mm                | 256      |
+|    proximity_steps             | 18.2     |
+|    safety_clamped              | 96.9     |
+|    success_rate                | 0.04     |
+|    waiting_steps               | 11.1     |
+| time/                          |          |
+|    episodes                    | 310      |
+|    fps                         | 81       |
+|    time_elapsed                | 448      |
+|    total_timesteps             | 36672    |
+| train/                         |          |
+|    actor_loss                  | 0.761    |
+|    critic_loss                 | 22.5     |
+|    ent_coef                    | 0.046    |
+|    ent_coef_loss               | -0.874   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 15834    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.1      |
+|    collision_steps             | 0.06     |
+|    completion_time             | 5.78     |
+|    ep_len                      | 116      |
+|    ep_len_mean                 | 123      |
+|    ep_rew_mean                 | -46.3    |
+|    episodes                    | 319      |
+|    grasp_rate                  | 0.44     |
+|    human_collision_rate        | 0.36     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 45.7     |
+|    lift_rate                   | 0.04     |
+|    minimum_human_distance      | 0.134    |
+|    near_misses                 | 0.64     |
+|    place_err_mm                | 251      |
+|    proximity_steps             | 18.2     |
+|    safety_clamped              | 98       |
+|    success_rate                | 0.05     |
+|    waiting_steps               | 11.8     |
+| time/                          |          |
+|    episodes                    | 320      |
+|    fps                         | 81       |
+|    time_elapsed                | 462      |
+|    total_timesteps             | 37740    |
+| train/                         |          |
+|    actor_loss                  | 6.72     |
+|    critic_loss                 | 17.9     |
+|    ent_coef                    | 0.045    |
+|    ent_coef_loss               | -1       |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 16368    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.1      |
+|    collision_steps             | 0.02     |
+|    completion_time             | 5.86     |
+|    ep_len                      | 117      |
+|    episodes                    | 320      |
+|    grasp_rate                  | 0.42     |
+|    human_collision_rate        | 0.36     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 45.8     |
+|    lift_rate                   | 0.04     |
+|    minimum_human_distance      | 0.131    |
+|    near_misses                 | 0.66     |
+|    place_err_mm                | 250      |
+|    proximity_steps             | 18.7     |
+|    safety_clamped              | 99.7     |
+|    success_rate                | 0.1      |
+|    waiting_steps               | 12.3     |
+| train/                         |          |
+|    actor_loss                  | 2.87     |
+|    critic_loss                 | 21.5     |
+|    ent_coef                    | 0.0446   |
+|    ent_coef_loss               | -0.412   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 16498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.14     |
+|    collision_steps             | 0        |
+|    completion_time             | 5.73     |
+|    ep_len                      | 115      |
+|    ep_len_mean                 | 121      |
+|    ep_rew_mean                 | -42.3    |
+|    episodes                    | 329      |
+|    grasp_rate                  | 0.42     |
+|    human_collision_rate        | 0.32     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 42.5     |
+|    lift_rate                   | 0.04     |
+|    minimum_human_distance      | 0.145    |
+|    near_misses                 | 0.64     |
+|    place_err_mm                | 246      |
+|    proximity_steps             | 20.6     |
+|    safety_clamped              | 96       |
+|    success_rate                | 0.07     |
+|    waiting_steps               | 10.9     |
+| time/                          |          |
+|    episodes                    | 330      |
+|    fps                         | 81       |
+|    time_elapsed                | 481      |
+|    total_timesteps             | 39136    |
+| train/                         |          |
+|    actor_loss                  | 5.29     |
+|    critic_loss                 | 38.6     |
+|    ent_coef                    | 0.0443   |
+|    ent_coef_loss               | -0.81    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 17066    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.14     |
+|    collision_steps             | 0        |
+|    completion_time             | 5.8      |
+|    ep_len                      | 116      |
+|    episodes                    | 337      |
+|    grasp_rate                  | 0.42     |
+|    human_collision_rate        | 0.3      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 40.2     |
+|    lift_rate                   | 0.04     |
+|    minimum_human_distance      | 0.139    |
+|    near_misses                 | 0.64     |
+|    place_err_mm                | 245      |
+|    proximity_steps             | 22.2     |
+|    safety_clamped              | 97.5     |
+|    success_rate                | 0.14     |
+|    waiting_steps               | 11.4     |
+| train/                         |          |
+|    actor_loss                  | 4.21     |
+|    critic_loss                 | 25.9     |
+|    ent_coef                    | 0.0428   |
+|    ent_coef_loss               | -1.44    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 17498    |
+---------------------------------------------
+Eval num_timesteps=40000, episode_reward=-100.09 +/- 48.75
+Episode length: 137.90 +/- 54.26
+Success rate: 0.00%
+---------------------------------
+| eval/              |          |
+|    mean_ep_length  | 138      |
+|    mean_reward     | -100     |
+|    success_rate    | 0        |
+| time/              |          |
+|    total_timesteps | 40000    |
+---------------------------------
+New best mean reward!
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.14     |
+|    collision_steps             | 0        |
+|    completion_time             | 5.82     |
+|    ep_len                      | 116      |
+|    ep_len_mean                 | 121      |
+|    ep_rew_mean                 | -41.5    |
+|    episodes                    | 339      |
+|    grasp_rate                  | 0.42     |
+|    human_collision_rate        | 0.32     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 42.9     |
+|    lift_rate                   | 0.04     |
+|    minimum_human_distance      | 0.138    |
+|    near_misses                 | 0.66     |
+|    place_err_mm                | 248      |
+|    proximity_steps             | 23.1     |
+|    safety_clamped              | 97.3     |
+|    success_rate                | 0.08     |
+|    waiting_steps               | 12.3     |
+| time/                          |          |
+|    episodes                    | 340      |
+|    fps                         | 73       |
+|    time_elapsed                | 543      |
+|    total_timesteps             | 40080    |
+| train/                         |          |
+|    actor_loss                  | 3.05     |
+|    critic_loss                 | 13.1     |
+|    ent_coef                    | 0.0427   |
+|    ent_coef_loss               | -0.603   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 17538    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.18     |
+|    collision_steps             | 0        |
+|    completion_time             | 5.62     |
+|    ep_len                      | 112      |
+|    ep_len_mean                 | 114      |
+|    ep_rew_mean                 | -32.2    |
+|    episodes                    | 349      |
+|    grasp_rate                  | 0.42     |
+|    human_collision_rate        | 0.28     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 38.8     |
+|    lift_rate                   | 0.04     |
+|    minimum_human_distance      | 0.165    |
+|    near_misses                 | 0.54     |
+|    place_err_mm                | 237      |
+|    proximity_steps             | 23       |
+|    safety_clamped              | 92.6     |
+|    success_rate                | 0.11     |
+|    waiting_steps               | 12.5     |
+| time/                          |          |
+|    episodes                    | 350      |
+|    fps                         | 73       |
+|    time_elapsed                | 559      |
+|    total_timesteps             | 41292    |
+| train/                         |          |
+|    actor_loss                  | 5.38     |
+|    critic_loss                 | 49.8     |
+|    ent_coef                    | 0.0438   |
+|    ent_coef_loss               | 0.632    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 18144    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.18     |
+|    collision_steps             | 0        |
+|    completion_time             | 5.69     |
+|    ep_len                      | 114      |
+|    episodes                    | 356      |
+|    grasp_rate                  | 0.42     |
+|    human_collision_rate        | 0.26     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 36.2     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.165    |
+|    near_misses                 | 0.52     |
+|    place_err_mm                | 231      |
+|    proximity_steps             | 23.2     |
+|    safety_clamped              | 93.5     |
+|    success_rate                | 0.18     |
+|    waiting_steps               | 13.3     |
+| train/                         |          |
+|    actor_loss                  | 7.46     |
+|    critic_loss                 | 40.3     |
+|    ent_coef                    | 0.0424   |
+|    ent_coef_loss               | -0.84    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 18498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.18     |
+|    collision_steps             | 0        |
+|    completion_time             | 5.72     |
+|    ep_len                      | 114      |
+|    ep_len_mean                 | 114      |
+|    ep_rew_mean                 | -28.7    |
+|    episodes                    | 359      |
+|    grasp_rate                  | 0.4      |
+|    human_collision_rate        | 0.28     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 38.2     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.165    |
+|    near_misses                 | 0.5      |
+|    place_err_mm                | 230      |
+|    proximity_steps             | 22.8     |
+|    safety_clamped              | 94.3     |
+|    success_rate                | 0.12     |
+|    waiting_steps               | 12.8     |
+| time/                          |          |
+|    episodes                    | 360      |
+|    fps                         | 73       |
+|    time_elapsed                | 572      |
+|    total_timesteps             | 42252    |
+| train/                         |          |
+|    actor_loss                  | 2.96     |
+|    critic_loss                 | 23.4     |
+|    ent_coef                    | 0.0418   |
+|    ent_coef_loss               | 0.804    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 18624    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.14     |
+|    collision_steps             | 0        |
+|    completion_time             | 5.81     |
+|    ep_len                      | 116      |
+|    ep_len_mean                 | 115      |
+|    ep_rew_mean                 | -38.8    |
+|    episodes                    | 369      |
+|    grasp_rate                  | 0.36     |
+|    human_collision_rate        | 0.36     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 50.7     |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.125    |
+|    near_misses                 | 0.6      |
+|    place_err_mm                | 240      |
+|    proximity_steps             | 26.3     |
+|    safety_clamped              | 97.1     |
+|    success_rate                | 0.12     |
+|    waiting_steps               | 14.8     |
+| time/                          |          |
+|    episodes                    | 370      |
+|    fps                         | 73       |
+|    time_elapsed                | 590      |
+|    total_timesteps             | 43584    |
+| train/                         |          |
+|    actor_loss                  | 1.73     |
+|    critic_loss                 | 20.6     |
+|    ent_coef                    | 0.0436   |
+|    ent_coef_loss               | -0.361   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 19290    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.14     |
+|    collision_steps             | 0        |
+|    completion_time             | 5.67     |
+|    ep_len                      | 113      |
+|    episodes                    | 373      |
+|    grasp_rate                  | 0.34     |
+|    human_collision_rate        | 0.38     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 53.3     |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.123    |
+|    near_misses                 | 0.6      |
+|    place_err_mm                | 239      |
+|    proximity_steps             | 26.2     |
+|    safety_clamped              | 95.5     |
+|    success_rate                | 0.14     |
+|    waiting_steps               | 16.8     |
+| train/                         |          |
+|    actor_loss                  | 3.69     |
+|    critic_loss                 | 17.9     |
+|    ent_coef                    | 0.0432   |
+|    ent_coef_loss               | -0.408   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 19498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.1      |
+|    collision_steps             | 0.14     |
+|    completion_time             | 5.98     |
+|    ep_len                      | 120      |
+|    ep_len_mean                 | 119      |
+|    ep_rew_mean                 | -42.9    |
+|    episodes                    | 379      |
+|    grasp_rate                  | 0.3      |
+|    human_collision_rate        | 0.38     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 54.7     |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.0989   |
+|    near_misses                 | 0.66     |
+|    place_err_mm                | 251      |
+|    proximity_steps             | 27.2     |
+|    safety_clamped              | 103      |
+|    success_rate                | 0.11     |
+|    waiting_steps               | 18.4     |
+| time/                          |          |
+|    episodes                    | 380      |
+|    fps                         | 73       |
+|    time_elapsed                | 612      |
+|    total_timesteps             | 45200    |
+| train/                         |          |
+|    actor_loss                  | 7.62     |
+|    critic_loss                 | 17.5     |
+|    ent_coef                    | 0.0431   |
+|    ent_coef_loss               | -0.472   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 20098    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.08     |
+|    collision_steps             | 1.24     |
+|    completion_time             | 6.27     |
+|    ep_len                      | 125      |
+|    episodes                    | 387      |
+|    grasp_rate                  | 0.28     |
+|    human_collision_rate        | 0.38     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 60.4     |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.0898   |
+|    near_misses                 | 0.74     |
+|    place_err_mm                | 258      |
+|    proximity_steps             | 32.9     |
+|    safety_clamped              | 109      |
+|    success_rate                | 0.08     |
+|    waiting_steps               | 23.8     |
+| train/                         |          |
+|    actor_loss                  | 9.14     |
+|    critic_loss                 | 28.5     |
+|    ent_coef                    | 0.0428   |
+|    ent_coef_loss               | 0.372    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 20498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.08     |
+|    collision_steps             | 1.24     |
+|    completion_time             | 6.19     |
+|    ep_len                      | 124      |
+|    ep_len_mean                 | 121      |
+|    ep_rew_mean                 | -45.5    |
+|    episodes                    | 389      |
+|    grasp_rate                  | 0.28     |
+|    human_collision_rate        | 0.38     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 60.4     |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.091    |
+|    near_misses                 | 0.74     |
+|    place_err_mm                | 254      |
+|    proximity_steps             | 31.9     |
+|    safety_clamped              | 107      |
+|    success_rate                | 0.11     |
+|    waiting_steps               | 23.2     |
+| time/                          |          |
+|    episodes                    | 390      |
+|    fps                         | 73       |
+|    time_elapsed                | 628      |
+|    total_timesteps             | 46424    |
+| train/                         |          |
+|    actor_loss                  | 7.92     |
+|    critic_loss                 | 24.1     |
+|    ent_coef                    | 0.043    |
+|    ent_coef_loss               | 2.16     |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 20710    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 1.24     |
+|    completion_time             | 6.29     |
+|    ep_len                      | 126      |
+|    ep_len_mean                 | 120      |
+|    ep_rew_mean                 | -38.6    |
+|    episodes                    | 399      |
+|    grasp_rate                  | 0.32     |
+|    human_collision_rate        | 0.38     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 59.3     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.0929   |
+|    near_misses                 | 0.74     |
+|    place_err_mm                | 263      |
+|    proximity_steps             | 31.2     |
+|    safety_clamped              | 110      |
+|    success_rate                | 0.11     |
+|    waiting_steps               | 24.2     |
+| time/                          |          |
+|    episodes                    | 400      |
+|    fps                         | 73       |
+|    time_elapsed                | 641      |
+|    total_timesteps             | 47408    |
+| train/                         |          |
+|    actor_loss                  | 7.62     |
+|    critic_loss                 | 21.1     |
+|    ent_coef                    | 0.0436   |
+|    ent_coef_loss               | 0.519    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 21202    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.02     |
+|    collision_steps             | 1.24     |
+|    completion_time             | 6.18     |
+|    ep_len                      | 124      |
+|    episodes                    | 404      |
+|    grasp_rate                  | 0.38     |
+|    human_collision_rate        | 0.38     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 58.2     |
+|    lift_rate                   | 0.08     |
+|    minimum_human_distance      | 0.0882   |
+|    near_misses                 | 0.7      |
+|    place_err_mm                | 260      |
+|    proximity_steps             | 29.7     |
+|    safety_clamped              | 108      |
+|    success_rate                | 0.02     |
+|    waiting_steps               | 23       |
+| train/                         |          |
+|    actor_loss                  | 6.59     |
+|    critic_loss                 | 31.1     |
+|    ent_coef                    | 0.0428   |
+|    ent_coef_loss               | 0.602    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 21498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.02     |
+|    collision_steps             | 1.24     |
+|    completion_time             | 6.28     |
+|    ep_len                      | 126      |
+|    ep_len_mean                 | 120      |
+|    ep_rew_mean                 | -38      |
+|    episodes                    | 409      |
+|    grasp_rate                  | 0.36     |
+|    human_collision_rate        | 0.36     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 55.9     |
+|    lift_rate                   | 0.08     |
+|    minimum_human_distance      | 0.0927   |
+|    near_misses                 | 0.68     |
+|    place_err_mm                | 265      |
+|    proximity_steps             | 30.4     |
+|    safety_clamped              | 110      |
+|    success_rate                | 0.09     |
+|    waiting_steps               | 24.2     |
+| time/                          |          |
+|    episodes                    | 410      |
+|    fps                         | 73       |
+|    time_elapsed                | 659      |
+|    total_timesteps             | 48688    |
+| train/                         |          |
+|    actor_loss                  | 7.14     |
+|    critic_loss                 | 39.4     |
+|    ent_coef                    | 0.0424   |
+|    ent_coef_loss               | -0.23    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 21842    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 1.24     |
+|    completion_time             | 6.29     |
+|    ep_len                      | 126      |
+|    ep_len_mean                 | 120      |
+|    ep_rew_mean                 | -34.4    |
+|    episodes                    | 419      |
+|    grasp_rate                  | 0.42     |
+|    human_collision_rate        | 0.26     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 41.8     |
+|    lift_rate                   | 0.12     |
+|    minimum_human_distance      | 0.126    |
+|    near_misses                 | 0.56     |
+|    place_err_mm                | 241      |
+|    proximity_steps             | 26.8     |
+|    safety_clamped              | 111      |
+|    success_rate                | 0.09     |
+|    waiting_steps               | 23.2     |
+| time/                          |          |
+|    episodes                    | 420      |
+|    fps                         | 73       |
+|    time_elapsed                | 675      |
+|    total_timesteps             | 49888    |
+| train/                         |          |
+|    actor_loss                  | 7.81     |
+|    critic_loss                 | 33.9     |
+|    ent_coef                    | 0.0419   |
+|    ent_coef_loss               | -1.23    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 22442    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 1.24     |
+|    completion_time             | 6.32     |
+|    ep_len                      | 126      |
+|    episodes                    | 420      |
+|    grasp_rate                  | 0.44     |
+|    human_collision_rate        | 0.24     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 39.6     |
+|    lift_rate                   | 0.12     |
+|    minimum_human_distance      | 0.128    |
+|    near_misses                 | 0.54     |
+|    place_err_mm                | 242      |
+|    proximity_steps             | 26.5     |
+|    safety_clamped              | 111      |
+|    success_rate                | 0.04     |
+|    waiting_steps               | 22.9     |
+| train/                         |          |
+|    actor_loss                  | 5.4      |
+|    critic_loss                 | 24.8     |
+|    ent_coef                    | 0.0416   |
+|    ent_coef_loss               | -0.185   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 22498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 1.1      |
+|    completion_time             | 6.18     |
+|    ep_len                      | 124      |
+|    ep_len_mean                 | 122      |
+|    ep_rew_mean                 | -38.9    |
+|    episodes                    | 429      |
+|    grasp_rate                  | 0.44     |
+|    human_collision_rate        | 0.26     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 39.3     |
+|    lift_rate                   | 0.14     |
+|    minimum_human_distance      | 0.136    |
+|    near_misses                 | 0.46     |
+|    place_err_mm                | 238      |
+|    proximity_steps             | 22.9     |
+|    safety_clamped              | 108      |
+|    success_rate                | 0.07     |
+|    waiting_steps               | 19.6     |
+| time/                          |          |
+|    episodes                    | 430      |
+|    fps                         | 73       |
+|    time_elapsed                | 691      |
+|    total_timesteps             | 51084    |
+| train/                         |          |
+|    actor_loss                  | 9.87     |
+|    critic_loss                 | 11.1     |
+|    ent_coef                    | 0.04     |
+|    ent_coef_loss               | -0.817   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 23040    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 0        |
+|    completion_time             | 6.14     |
+|    ep_len                      | 123      |
+|    episodes                    | 435      |
+|    grasp_rate                  | 0.44     |
+|    human_collision_rate        | 0.26     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 33.8     |
+|    lift_rate                   | 0.14     |
+|    minimum_human_distance      | 0.137    |
+|    near_misses                 | 0.4      |
+|    place_err_mm                | 237      |
+|    proximity_steps             | 19.5     |
+|    safety_clamped              | 107      |
+|    success_rate                | 0.04     |
+|    waiting_steps               | 16.7     |
+| train/                         |          |
+|    actor_loss                  | 11.5     |
+|    critic_loss                 | 26.9     |
+|    ent_coef                    | 0.0391   |
+|    ent_coef_loss               | -0.258   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 23498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 0        |
+|    completion_time             | 6.29     |
+|    ep_len                      | 126      |
+|    ep_len_mean                 | 125      |
+|    ep_rew_mean                 | -39.3    |
+|    episodes                    | 439      |
+|    grasp_rate                  | 0.46     |
+|    human_collision_rate        | 0.22     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 29.8     |
+|    lift_rate                   | 0.14     |
+|    minimum_human_distance      | 0.144    |
+|    near_misses                 | 0.36     |
+|    place_err_mm                | 242      |
+|    proximity_steps             | 19.2     |
+|    safety_clamped              | 110      |
+|    success_rate                | 0.06     |
+|    waiting_steps               | 16.4     |
+| time/                          |          |
+|    episodes                    | 440      |
+|    fps                         | 73       |
+|    time_elapsed                | 713      |
+|    total_timesteps             | 52764    |
+| train/                         |          |
+|    actor_loss                  | 11.3     |
+|    critic_loss                 | 30.7     |
+|    ent_coef                    | 0.0387   |
+|    ent_coef_loss               | 1.68     |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 23880    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 0        |
+|    completion_time             | 6.59     |
+|    ep_len                      | 132      |
+|    episodes                    | 447      |
+|    grasp_rate                  | 0.38     |
+|    human_collision_rate        | 0.2      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 27       |
+|    lift_rate                   | 0.12     |
+|    minimum_human_distance      | 0.142    |
+|    near_misses                 | 0.34     |
+|    place_err_mm                | 251      |
+|    proximity_steps             | 17.9     |
+|    safety_clamped              | 116      |
+|    success_rate                | 0.04     |
+|    waiting_steps               | 14.6     |
+| train/                         |          |
+|    actor_loss                  | 10.2     |
+|    critic_loss                 | 23.8     |
+|    ent_coef                    | 0.0377   |
+|    ent_coef_loss               | 0.532    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 24498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.02     |
+|    collision_steps             | 0        |
+|    completion_time             | 6.75     |
+|    ep_len                      | 135      |
+|    ep_len_mean                 | 129      |
+|    ep_rew_mean                 | -44      |
+|    episodes                    | 449      |
+|    grasp_rate                  | 0.36     |
+|    human_collision_rate        | 0.2      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 27.8     |
+|    lift_rate                   | 0.12     |
+|    minimum_human_distance      | 0.13     |
+|    near_misses                 | 0.36     |
+|    place_err_mm                | 254      |
+|    proximity_steps             | 18.8     |
+|    safety_clamped              | 119      |
+|    success_rate                | 0.04     |
+|    waiting_steps               | 15.6     |
+| time/                          |          |
+|    episodes                    | 450      |
+|    fps                         | 73       |
+|    time_elapsed                | 732      |
+|    total_timesteps             | 54136    |
+| train/                         |          |
+|    actor_loss                  | 11.5     |
+|    critic_loss                 | 21.1     |
+|    ent_coef                    | 0.0377   |
+|    ent_coef_loss               | 0.291    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 24566    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 0        |
+|    completion_time             | 6.75     |
+|    ep_len                      | 135      |
+|    ep_len_mean                 | 130      |
+|    ep_rew_mean                 | -48.9    |
+|    episodes                    | 459      |
+|    grasp_rate                  | 0.3      |
+|    human_collision_rate        | 0.22     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 31.2     |
+|    lift_rate                   | 0.06     |
+|    minimum_human_distance      | 0.138    |
+|    near_misses                 | 0.38     |
+|    place_err_mm                | 264      |
+|    proximity_steps             | 19.3     |
+|    safety_clamped              | 121      |
+|    success_rate                | 0.03     |
+|    waiting_steps               | 15.7     |
+| time/                          |          |
+|    episodes                    | 460      |
+|    fps                         | 73       |
+|    time_elapsed                | 747      |
+|    total_timesteps             | 55340    |
+| train/                         |          |
+|    actor_loss                  | 7.18     |
+|    critic_loss                 | 28       |
+|    ent_coef                    | 0.0379   |
+|    ent_coef_loss               | -0.187   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 25168    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 0        |
+|    completion_time             | 6.93     |
+|    ep_len                      | 139      |
+|    episodes                    | 463      |
+|    grasp_rate                  | 0.26     |
+|    human_collision_rate        | 0.26     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 35.3     |
+|    lift_rate                   | 0.06     |
+|    minimum_human_distance      | 0.132    |
+|    near_misses                 | 0.4      |
+|    place_err_mm                | 271      |
+|    proximity_steps             | 19.6     |
+|    safety_clamped              | 124      |
+|    success_rate                | 0.04     |
+|    waiting_steps               | 16       |
+| train/                         |          |
+|    actor_loss                  | 9.09     |
+|    critic_loss                 | 13.9     |
+|    ent_coef                    | 0.0377   |
+|    ent_coef_loss               | -0.442   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 25498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.02     |
+|    collision_steps             | 0        |
+|    completion_time             | 7.25     |
+|    ep_len                      | 145      |
+|    ep_len_mean                 | 136      |
+|    ep_rew_mean                 | -43.1    |
+|    episodes                    | 469      |
+|    grasp_rate                  | 0.22     |
+|    human_collision_rate        | 0.26     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 35.4     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.121    |
+|    near_misses                 | 0.4      |
+|    place_err_mm                | 279      |
+|    proximity_steps             | 21.7     |
+|    safety_clamped              | 130      |
+|    success_rate                | 0.03     |
+|    waiting_steps               | 17       |
+| time/                          |          |
+|    episodes                    | 470      |
+|    fps                         | 74       |
+|    time_elapsed                | 772      |
+|    total_timesteps             | 57172    |
+| train/                         |          |
+|    actor_loss                  | 9.16     |
+|    critic_loss                 | 95.6     |
+|    ent_coef                    | 0.0371   |
+|    ent_coef_loss               | 1.65     |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 26084    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.02     |
+|    collision_steps             | 0        |
+|    completion_time             | 7.1      |
+|    ep_len                      | 142      |
+|    episodes                    | 478      |
+|    grasp_rate                  | 0.28     |
+|    human_collision_rate        | 0.24     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 32.4     |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.128    |
+|    near_misses                 | 0.4      |
+|    place_err_mm                | 266      |
+|    proximity_steps             | 21.1     |
+|    safety_clamped              | 128      |
+|    success_rate                | 0.02     |
+|    waiting_steps               | 16.9     |
+| train/                         |          |
+|    actor_loss                  | 10.3     |
+|    critic_loss                 | 36       |
+|    ent_coef                    | 0.0359   |
+|    ent_coef_loss               | 0.902    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 26498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.02     |
+|    collision_steps             | 0        |
+|    completion_time             | 7.1      |
+|    ep_len                      | 142      |
+|    ep_len_mean                 | 132      |
+|    ep_rew_mean                 | -39      |
+|    episodes                    | 479      |
+|    grasp_rate                  | 0.28     |
+|    human_collision_rate        | 0.24     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 32.4     |
+|    lift_rate                   | 0        |
+|    minimum_human_distance      | 0.13     |
+|    near_misses                 | 0.4      |
+|    place_err_mm                | 266      |
+|    proximity_steps             | 21.1     |
+|    safety_clamped              | 128      |
+|    success_rate                | 0.03     |
+|    waiting_steps               | 16.9     |
+| time/                          |          |
+|    episodes                    | 480      |
+|    fps                         | 74       |
+|    time_elapsed                | 785      |
+|    total_timesteps             | 58192    |
+| train/                         |          |
+|    actor_loss                  | 11.7     |
+|    critic_loss                 | 18.5     |
+|    ent_coef                    | 0.0357   |
+|    ent_coef_loss               | 0.219    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 26594    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.02     |
+|    collision_steps             | 0        |
+|    completion_time             | 6.78     |
+|    ep_len                      | 136      |
+|    ep_len_mean                 | 130      |
+|    ep_rew_mean                 | -33.1    |
+|    episodes                    | 489      |
+|    grasp_rate                  | 0.3      |
+|    human_collision_rate        | 0.24     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 32.9     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.132    |
+|    near_misses                 | 0.42     |
+|    place_err_mm                | 254      |
+|    proximity_steps             | 19.4     |
+|    safety_clamped              | 122      |
+|    success_rate                | 0.03     |
+|    waiting_steps               | 16       |
+| time/                          |          |
+|    episodes                    | 490      |
+|    fps                         | 74       |
+|    time_elapsed                | 802      |
+|    total_timesteps             | 59432    |
+| train/                         |          |
+|    actor_loss                  | 12       |
+|    critic_loss                 | 28.6     |
+|    ent_coef                    | 0.0352   |
+|    ent_coef_loss               | 0.276    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 27214    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.02     |
+|    collision_steps             | 0        |
+|    completion_time             | 6.64     |
+|    ep_len                      | 133      |
+|    episodes                    | 494      |
+|    grasp_rate                  | 0.3      |
+|    human_collision_rate        | 0.24     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 33.6     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.125    |
+|    near_misses                 | 0.44     |
+|    place_err_mm                | 257      |
+|    proximity_steps             | 19.8     |
+|    safety_clamped              | 119      |
+|    success_rate                | 0.02     |
+|    waiting_steps               | 16.4     |
+| train/                         |          |
+|    actor_loss                  | 10.6     |
+|    critic_loss                 | 16.3     |
+|    ent_coef                    | 0.0348   |
+|    ent_coef_loss               | -1.43    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 27498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 0        |
+|    completion_time             | 6.55     |
+|    ep_len                      | 131      |
+|    ep_len_mean                 | 133      |
+|    ep_rew_mean                 | -36.8    |
+|    episodes                    | 499      |
+|    grasp_rate                  | 0.32     |
+|    human_collision_rate        | 0.26     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 35.8     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.128    |
+|    near_misses                 | 0.46     |
+|    place_err_mm                | 259      |
+|    proximity_steps             | 20       |
+|    safety_clamped              | 117      |
+|    success_rate                | 0.03     |
+|    waiting_steps               | 15.9     |
+| time/                          |          |
+|    episodes                    | 500      |
+|    fps                         | 74       |
+|    time_elapsed                | 818      |
+|    total_timesteps             | 60652    |
+| train/                         |          |
+|    actor_loss                  | 12.7     |
+|    critic_loss                 | 34.9     |
+|    ent_coef                    | 0.0339   |
+|    ent_coef_loss               | -0.861   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 27824    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 0.02     |
+|    completion_time             | 6.31     |
+|    ep_len                      | 126      |
+|    ep_len_mean                 | 131      |
+|    ep_rew_mean                 | -45.2    |
+|    episodes                    | 509      |
+|    grasp_rate                  | 0.32     |
+|    human_collision_rate        | 0.3      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 40.7     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.121    |
+|    near_misses                 | 0.5      |
+|    place_err_mm                | 262      |
+|    proximity_steps             | 19.1     |
+|    safety_clamped              | 111      |
+|    success_rate                | 0.04     |
+|    waiting_steps               | 14.8     |
+| time/                          |          |
+|    episodes                    | 510      |
+|    fps                         | 74       |
+|    time_elapsed                | 833      |
+|    total_timesteps             | 61832    |
+| train/                         |          |
+|    actor_loss                  | 11.5     |
+|    critic_loss                 | 22.4     |
+|    ent_coef                    | 0.0342   |
+|    ent_coef_loss               | 0.556    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 28414    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 0.02     |
+|    completion_time             | 6.23     |
+|    ep_len                      | 125      |
+|    episodes                    | 511      |
+|    grasp_rate                  | 0.34     |
+|    human_collision_rate        | 0.26     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 36.3     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.128    |
+|    near_misses                 | 0.48     |
+|    place_err_mm                | 265      |
+|    proximity_steps             | 18       |
+|    safety_clamped              | 110      |
+|    success_rate                | 0.04     |
+|    waiting_steps               | 13.7     |
+| train/                         |          |
+|    actor_loss                  | 12.7     |
+|    critic_loss                 | 18.1     |
+|    ent_coef                    | 0.0348   |
+|    ent_coef_loss               | 0.046    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 28498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.06     |
+|    collision_steps             | 0.02     |
+|    completion_time             | 5.86     |
+|    ep_len                      | 117      |
+|    ep_len_mean                 | 131      |
+|    ep_rew_mean                 | -45.3    |
+|    episodes                    | 519      |
+|    grasp_rate                  | 0.38     |
+|    human_collision_rate        | 0.24     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 34.1     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.128    |
+|    near_misses                 | 0.54     |
+|    place_err_mm                | 272      |
+|    proximity_steps             | 17.3     |
+|    safety_clamped              | 102      |
+|    success_rate                | 0.04     |
+|    waiting_steps               | 13.2     |
+| time/                          |          |
+|    episodes                    | 520      |
+|    fps                         | 74       |
+|    time_elapsed                | 850      |
+|    total_timesteps             | 63064    |
+| train/                         |          |
+|    actor_loss                  | 12.5     |
+|    critic_loss                 | 20.1     |
+|    ent_coef                    | 0.0348   |
+|    ent_coef_loss               | -1.53    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 29030    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.08     |
+|    collision_steps             | 0.02     |
+|    completion_time             | 6.07     |
+|    ep_len                      | 121      |
+|    episodes                    | 527      |
+|    grasp_rate                  | 0.34     |
+|    human_collision_rate        | 0.28     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 39.3     |
+|    lift_rate                   | 0.04     |
+|    minimum_human_distance      | 0.126    |
+|    near_misses                 | 0.56     |
+|    place_err_mm                | 285      |
+|    proximity_steps             | 19.6     |
+|    safety_clamped              | 106      |
+|    success_rate                | 0.08     |
+|    waiting_steps               | 13.9     |
+| train/                         |          |
+|    actor_loss                  | 11.1     |
+|    critic_loss                 | 21.6     |
+|    ent_coef                    | 0.0352   |
+|    ent_coef_loss               | 0.598    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 29498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.08     |
+|    collision_steps             | 0.02     |
+|    completion_time             | 6.01     |
+|    ep_len                      | 120      |
+|    ep_len_mean                 | 132      |
+|    ep_rew_mean                 | -45.5    |
+|    episodes                    | 529      |
+|    grasp_rate                  | 0.32     |
+|    human_collision_rate        | 0.3      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 42.6     |
+|    lift_rate                   | 0.04     |
+|    minimum_human_distance      | 0.121    |
+|    near_misses                 | 0.58     |
+|    place_err_mm                | 288      |
+|    proximity_steps             | 21       |
+|    safety_clamped              | 105      |
+|    success_rate                | 0.05     |
+|    waiting_steps               | 15.3     |
+| time/                          |          |
+|    episodes                    | 530      |
+|    fps                         | 74       |
+|    time_elapsed                | 867      |
+|    total_timesteps             | 64356    |
+| train/                         |          |
+|    actor_loss                  | 8.18     |
+|    critic_loss                 | 12.1     |
+|    ent_coef                    | 0.0349   |
+|    ent_coef_loss               | 0.454    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 29676    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.1      |
+|    collision_steps             | 0.02     |
+|    completion_time             | 6.11     |
+|    ep_len                      | 122      |
+|    ep_len_mean                 | 129      |
+|    ep_rew_mean                 | -46.6    |
+|    episodes                    | 539      |
+|    grasp_rate                  | 0.3      |
+|    human_collision_rate        | 0.32     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 45.6     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.12     |
+|    near_misses                 | 0.56     |
+|    place_err_mm                | 290      |
+|    proximity_steps             | 23       |
+|    safety_clamped              | 107      |
+|    success_rate                | 0.06     |
+|    waiting_steps               | 16.6     |
+| time/                          |          |
+|    episodes                    | 540      |
+|    fps                         | 74       |
+|    time_elapsed                | 881      |
+|    total_timesteps             | 65408    |
+| train/                         |          |
+|    actor_loss                  | 10.9     |
+|    critic_loss                 | 9.08     |
+|    ent_coef                    | 0.0345   |
+|    ent_coef_loss               | -0.483   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 30202    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.1      |
+|    collision_steps             | 0.02     |
+|    completion_time             | 6.08     |
+|    ep_len                      | 122      |
+|    episodes                    | 543      |
+|    grasp_rate                  | 0.34     |
+|    human_collision_rate        | 0.36     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 50.7     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.116    |
+|    near_misses                 | 0.58     |
+|    place_err_mm                | 282      |
+|    proximity_steps             | 24.3     |
+|    safety_clamped              | 106      |
+|    success_rate                | 0.1      |
+|    waiting_steps               | 18.3     |
+| train/                         |          |
+|    actor_loss                  | 10.4     |
+|    critic_loss                 | 15.7     |
+|    ent_coef                    | 0.0342   |
+|    ent_coef_loss               | -0.715   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 30498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.08     |
+|    collision_steps             | 0.02     |
+|    completion_time             | 6.14     |
+|    ep_len                      | 123      |
+|    ep_len_mean                 | 127      |
+|    ep_rew_mean                 | -51.1    |
+|    episodes                    | 549      |
+|    grasp_rate                  | 0.34     |
+|    human_collision_rate        | 0.38     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 53.2     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.0996   |
+|    near_misses                 | 0.64     |
+|    place_err_mm                | 284      |
+|    proximity_steps             | 26.8     |
+|    safety_clamped              | 107      |
+|    success_rate                | 0.05     |
+|    waiting_steps               | 20.7     |
+| time/                          |          |
+|    episodes                    | 550      |
+|    fps                         | 74       |
+|    time_elapsed                | 898      |
+|    total_timesteps             | 66708    |
+| train/                         |          |
+|    actor_loss                  | 12       |
+|    critic_loss                 | 22.8     |
+|    ent_coef                    | 0.0344   |
+|    ent_coef_loss               | -0.354   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 30852    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.08     |
+|    collision_steps             | 0.22     |
+|    completion_time             | 6.27     |
+|    ep_len                      | 125      |
+|    episodes                    | 559      |
+|    grasp_rate                  | 0.4      |
+|    human_collision_rate        | 0.3      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 44       |
+|    lift_rate                   | 0.04     |
+|    minimum_human_distance      | 0.113    |
+|    near_misses                 | 0.62     |
+|    place_err_mm                | 273      |
+|    proximity_steps             | 27.8     |
+|    safety_clamped              | 110      |
+|    success_rate                | 0.08     |
+|    waiting_steps               | 21.9     |
+| train/                         |          |
+|    actor_loss                  | 13       |
+|    critic_loss                 | 28.6     |
+|    ent_coef                    | 0.0342   |
+|    ent_coef_loss               | 0.884    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 31498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.08     |
+|    collision_steps             | 0.22     |
+|    completion_time             | 6.27     |
+|    ep_len                      | 125      |
+|    ep_len_mean                 | 126      |
+|    ep_rew_mean                 | -44.9    |
+|    episodes                    | 559      |
+|    grasp_rate                  | 0.4      |
+|    human_collision_rate        | 0.3      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 44       |
+|    lift_rate                   | 0.04     |
+|    minimum_human_distance      | 0.113    |
+|    near_misses                 | 0.62     |
+|    place_err_mm                | 273      |
+|    proximity_steps             | 27.8     |
+|    safety_clamped              | 110      |
+|    success_rate                | 0.06     |
+|    waiting_steps               | 21.9     |
+| time/                          |          |
+|    episodes                    | 560      |
+|    fps                         | 74       |
+|    time_elapsed                | 916      |
+|    total_timesteps             | 68044    |
+| train/                         |          |
+|    actor_loss                  | 9.93     |
+|    critic_loss                 | 22       |
+|    ent_coef                    | 0.0342   |
+|    ent_coef_loss               | 0.671    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 31520    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.08     |
+|    collision_steps             | 0.22     |
+|    completion_time             | 6        |
+|    ep_len                      | 120      |
+|    ep_len_mean                 | 120      |
+|    ep_rew_mean                 | -42.5    |
+|    episodes                    | 569      |
+|    grasp_rate                  | 0.38     |
+|    human_collision_rate        | 0.38     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 53.3     |
+|    lift_rate                   | 0.06     |
+|    minimum_human_distance      | 0.118    |
+|    near_misses                 | 0.6      |
+|    place_err_mm                | 266      |
+|    proximity_steps             | 29.2     |
+|    safety_clamped              | 103      |
+|    success_rate                | 0.07     |
+|    waiting_steps               | 23.8     |
+| time/                          |          |
+|    episodes                    | 570      |
+|    fps                         | 74       |
+|    time_elapsed                | 929      |
+|    total_timesteps             | 69064    |
+| train/                         |          |
+|    actor_loss                  | 14.2     |
+|    critic_loss                 | 22.3     |
+|    ent_coef                    | 0.0341   |
+|    ent_coef_loss               | 1.53     |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 32030    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.06     |
+|    collision_steps             | 0.22     |
+|    completion_time             | 6.09     |
+|    ep_len                      | 122      |
+|    episodes                    | 576      |
+|    grasp_rate                  | 0.34     |
+|    human_collision_rate        | 0.34     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 48.9     |
+|    lift_rate                   | 0.04     |
+|    minimum_human_distance      | 0.11     |
+|    near_misses                 | 0.6      |
+|    place_err_mm                | 260      |
+|    proximity_steps             | 27.8     |
+|    safety_clamped              | 104      |
+|    success_rate                | 0.06     |
+|    waiting_steps               | 23.2     |
+| train/                         |          |
+|    actor_loss                  | 11       |
+|    critic_loss                 | 19       |
+|    ent_coef                    | 0.0336   |
+|    ent_coef_loss               | -0.158   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 32498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.06     |
+|    collision_steps             | 0.22     |
+|    completion_time             | 6.19     |
+|    ep_len                      | 124      |
+|    ep_len_mean                 | 122      |
+|    ep_rew_mean                 | -43.5    |
+|    episodes                    | 579      |
+|    grasp_rate                  | 0.34     |
+|    human_collision_rate        | 0.3      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 43.1     |
+|    lift_rate                   | 0.04     |
+|    minimum_human_distance      | 0.117    |
+|    near_misses                 | 0.56     |
+|    place_err_mm                | 263      |
+|    proximity_steps             | 26.6     |
+|    safety_clamped              | 107      |
+|    success_rate                | 0.07     |
+|    waiting_steps               | 22.2     |
+| time/                          |          |
+|    episodes                    | 580      |
+|    fps                         | 74       |
+|    time_elapsed                | 948      |
+|    total_timesteps             | 70508    |
+| train/                         |          |
+|    actor_loss                  | 8.78     |
+|    critic_loss                 | 23.2     |
+|    ent_coef                    | 0.0325   |
+|    ent_coef_loss               | 0.521    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 32752    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.08     |
+|    collision_steps             | 0.22     |
+|    completion_time             | 5.93     |
+|    ep_len                      | 119      |
+|    ep_len_mean                 | 120      |
+|    ep_rew_mean                 | -39.3    |
+|    episodes                    | 589      |
+|    grasp_rate                  | 0.4      |
+|    human_collision_rate        | 0.32     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 43       |
+|    lift_rate                   | 0.08     |
+|    minimum_human_distance      | 0.129    |
+|    near_misses                 | 0.6      |
+|    place_err_mm                | 253      |
+|    proximity_steps             | 24.7     |
+|    safety_clamped              | 102      |
+|    success_rate                | 0.09     |
+|    waiting_steps               | 19       |
+| time/                          |          |
+|    episodes                    | 590      |
+|    fps                         | 74       |
+|    time_elapsed                | 960      |
+|    total_timesteps             | 71384    |
+| train/                         |          |
+|    actor_loss                  | 14.9     |
+|    critic_loss                 | 22.2     |
+|    ent_coef                    | 0.0327   |
+|    ent_coef_loss               | 0.482    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 33190    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.08     |
+|    collision_steps             | 0.22     |
+|    completion_time             | 6.06     |
+|    ep_len                      | 121      |
+|    episodes                    | 592      |
+|    grasp_rate                  | 0.36     |
+|    human_collision_rate        | 0.26     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 35.7     |
+|    lift_rate                   | 0.08     |
+|    minimum_human_distance      | 0.142    |
+|    near_misses                 | 0.54     |
+|    place_err_mm                | 257      |
+|    proximity_steps             | 22.9     |
+|    safety_clamped              | 104      |
+|    success_rate                | 0.08     |
+|    waiting_steps               | 17.5     |
+| train/                         |          |
+|    actor_loss                  | 6.94     |
+|    critic_loss                 | 12.3     |
+|    ent_coef                    | 0.033    |
+|    ent_coef_loss               | 1.1      |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 33498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.08     |
+|    collision_steps             | 0.22     |
+|    completion_time             | 6.09     |
+|    ep_len                      | 122      |
+|    ep_len_mean                 | 122      |
+|    ep_rew_mean                 | -42.2    |
+|    episodes                    | 599      |
+|    grasp_rate                  | 0.36     |
+|    human_collision_rate        | 0.3      |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 41.9     |
+|    lift_rate                   | 0.08     |
+|    minimum_human_distance      | 0.138    |
+|    near_misses                 | 0.54     |
+|    place_err_mm                | 248      |
+|    proximity_steps             | 23.8     |
+|    safety_clamped              | 104      |
+|    success_rate                | 0.08     |
+|    waiting_steps               | 18.5     |
+| time/                          |          |
+|    episodes                    | 600      |
+|    fps                         | 74       |
+|    time_elapsed                | 980      |
+|    total_timesteps             | 72896    |
+| train/                         |          |
+|    actor_loss                  | 13.3     |
+|    critic_loss                 | 16.6     |
+|    ent_coef                    | 0.0331   |
+|    ent_coef_loss               | -0.544   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 33946    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.08     |
+|    collision_steps             | 0.02     |
+|    completion_time             | 6.12     |
+|    ep_len                      | 122      |
+|    episodes                    | 608      |
+|    grasp_rate                  | 0.32     |
+|    human_collision_rate        | 0.34     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 45.3     |
+|    lift_rate                   | 0.08     |
+|    minimum_human_distance      | 0.134    |
+|    near_misses                 | 0.5      |
+|    place_err_mm                | 243      |
+|    proximity_steps             | 22.3     |
+|    safety_clamped              | 105      |
+|    success_rate                | 0.08     |
+|    waiting_steps               | 16.6     |
+| train/                         |          |
+|    actor_loss                  | 7.41     |
+|    critic_loss                 | 22.9     |
+|    ent_coef                    | 0.0331   |
+|    ent_coef_loss               | 2.1      |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 34498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.08     |
+|    collision_steps             | 0.02     |
+|    completion_time             | 6.1      |
+|    ep_len                      | 122      |
+|    ep_len_mean                 | 124      |
+|    ep_rew_mean                 | -38.4    |
+|    episodes                    | 609      |
+|    grasp_rate                  | 0.3      |
+|    human_collision_rate        | 0.36     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 47.5     |
+|    lift_rate                   | 0.08     |
+|    minimum_human_distance      | 0.131    |
+|    near_misses                 | 0.52     |
+|    place_err_mm                | 246      |
+|    proximity_steps             | 22.5     |
+|    safety_clamped              | 104      |
+|    success_rate                | 0.08     |
+|    waiting_steps               | 16.8     |
+| time/                          |          |
+|    episodes                    | 610      |
+|    fps                         | 74       |
+|    time_elapsed                | 997      |
+|    total_timesteps             | 74196    |
+| train/                         |          |
+|    actor_loss                  | 8.28     |
+|    critic_loss                 | 19.1     |
+|    ent_coef                    | 0.0328   |
+|    ent_coef_loss               | -0.374   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 34596    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.06     |
+|    collision_steps             | 0.02     |
+|    completion_time             | 6.41     |
+|    ep_len                      | 128      |
+|    ep_len_mean                 | 125      |
+|    ep_rew_mean                 | -42.2    |
+|    episodes                    | 619      |
+|    grasp_rate                  | 0.32     |
+|    human_collision_rate        | 0.32     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 42.9     |
+|    lift_rate                   | 0.06     |
+|    minimum_human_distance      | 0.127    |
+|    near_misses                 | 0.5      |
+|    place_err_mm                | 248      |
+|    proximity_steps             | 20       |
+|    safety_clamped              | 110      |
+|    success_rate                | 0.07     |
+|    waiting_steps               | 14.3     |
+| time/                          |          |
+|    episodes                    | 620      |
+|    fps                         | 74       |
+|    time_elapsed                | 1013     |
+|    total_timesteps             | 75396    |
+| train/                         |          |
+|    actor_loss                  | 10.5     |
+|    critic_loss                 | 28.9     |
+|    ent_coef                    | 0.0331   |
+|    ent_coef_loss               | 0.72     |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 35196    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.06     |
+|    collision_steps             | 0.02     |
+|    completion_time             | 6.37     |
+|    ep_len                      | 127      |
+|    episodes                    | 624      |
+|    grasp_rate                  | 0.32     |
+|    human_collision_rate        | 0.32     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 42.3     |
+|    lift_rate                   | 0.06     |
+|    minimum_human_distance      | 0.136    |
+|    near_misses                 | 0.46     |
+|    place_err_mm                | 251      |
+|    proximity_steps             | 19.2     |
+|    safety_clamped              | 109      |
+|    success_rate                | 0.06     |
+|    waiting_steps               | 13.5     |
+| train/                         |          |
+|    actor_loss                  | 12.3     |
+|    critic_loss                 | 21.1     |
+|    ent_coef                    | 0.0331   |
+|    ent_coef_loss               | -1.11    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 35498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.06     |
+|    collision_steps             | 0.02     |
+|    completion_time             | 6.37     |
+|    ep_len                      | 127      |
+|    ep_len_mean                 | 125      |
+|    ep_rew_mean                 | -40.7    |
+|    episodes                    | 629      |
+|    grasp_rate                  | 0.36     |
+|    human_collision_rate        | 0.34     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 46.1     |
+|    lift_rate                   | 0.06     |
+|    minimum_human_distance      | 0.136    |
+|    near_misses                 | 0.48     |
+|    place_err_mm                | 251      |
+|    proximity_steps             | 19.6     |
+|    safety_clamped              | 109      |
+|    success_rate                | 0.06     |
+|    waiting_steps               | 14.1     |
+| time/                          |          |
+|    episodes                    | 630      |
+|    fps                         | 74       |
+|    time_elapsed                | 1033     |
+|    total_timesteps             | 76920    |
+| train/                         |          |
+|    actor_loss                  | 9.39     |
+|    critic_loss                 | 22.2     |
+|    ent_coef                    | 0.0329   |
+|    ent_coef_loss               | 0.229    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 35958    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 0.02     |
+|    completion_time             | 6.5      |
+|    ep_len                      | 130      |
+|    episodes                    | 638      |
+|    grasp_rate                  | 0.3      |
+|    human_collision_rate        | 0.32     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 44.2     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.137    |
+|    near_misses                 | 0.42     |
+|    place_err_mm                | 263      |
+|    proximity_steps             | 18.4     |
+|    safety_clamped              | 112      |
+|    success_rate                | 0.04     |
+|    waiting_steps               | 14.5     |
+| train/                         |          |
+|    actor_loss                  | 9.88     |
+|    critic_loss                 | 34.5     |
+|    ent_coef                    | 0.0324   |
+|    ent_coef_loss               | -0.716   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 36498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.02     |
+|    collision_steps             | 0.02     |
+|    completion_time             | 6.62     |
+|    ep_len                      | 132      |
+|    ep_len_mean                 | 125      |
+|    ep_rew_mean                 | -40.1    |
+|    episodes                    | 639      |
+|    grasp_rate                  | 0.28     |
+|    human_collision_rate        | 0.32     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 44.3     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.127    |
+|    near_misses                 | 0.44     |
+|    place_err_mm                | 270      |
+|    proximity_steps             | 18.9     |
+|    safety_clamped              | 115      |
+|    success_rate                | 0.05     |
+|    waiting_steps               | 15       |
+| time/                          |          |
+|    episodes                    | 640      |
+|    fps                         | 74       |
+|    time_elapsed                | 1051     |
+|    total_timesteps             | 78240    |
+| train/                         |          |
+|    actor_loss                  | 13       |
+|    critic_loss                 | 12.5     |
+|    ent_coef                    | 0.0325   |
+|    ent_coef_loss               | -0.642   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 36618    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 0.02     |
+|    completion_time             | 6.28     |
+|    ep_len                      | 126      |
+|    ep_len_mean                 | 125      |
+|    ep_rew_mean                 | -34      |
+|    episodes                    | 649      |
+|    grasp_rate                  | 0.32     |
+|    human_collision_rate        | 0.26     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 34.5     |
+|    lift_rate                   | 0.04     |
+|    minimum_human_distance      | 0.157    |
+|    near_misses                 | 0.38     |
+|    place_err_mm                | 271      |
+|    proximity_steps             | 14       |
+|    safety_clamped              | 111      |
+|    success_rate                | 0.06     |
+|    waiting_steps               | 10.5     |
+| time/                          |          |
+|    episodes                    | 650      |
+|    fps                         | 74       |
+|    time_elapsed                | 1065     |
+|    total_timesteps             | 79292    |
+| train/                         |          |
+|    actor_loss                  | 12.8     |
+|    critic_loss                 | 29.4     |
+|    ent_coef                    | 0.0321   |
+|    ent_coef_loss               | 0.0746   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 37144    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 0        |
+|    completion_time             | 6.31     |
+|    ep_len                      | 126      |
+|    episodes                    | 656      |
+|    grasp_rate                  | 0.32     |
+|    human_collision_rate        | 0.22     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 29.4     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.166    |
+|    near_misses                 | 0.34     |
+|    place_err_mm                | 275      |
+|    proximity_steps             | 12.3     |
+|    safety_clamped              | 112      |
+|    success_rate                | 0.04     |
+|    waiting_steps               | 10       |
+| train/                         |          |
+|    actor_loss                  | 10.2     |
+|    critic_loss                 | 20.9     |
+|    ent_coef                    | 0.0319   |
+|    ent_coef_loss               | 0.772    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 37498    |
+---------------------------------------------
+Eval num_timesteps=80000, episode_reward=-58.99 +/- 48.46
+Episode length: 181.50 +/- 28.32
+Success rate: 0.00%
+---------------------------------
+| eval/              |          |
+|    mean_ep_length  | 182      |
+|    mean_reward     | -59      |
+|    success_rate    | 0        |
+| time/              |          |
+|    total_timesteps | 80000    |
+---------------------------------
+New best mean reward!
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.04     |
+|    collision_steps             | 0        |
+|    completion_time             | 6.36     |
+|    ep_len                      | 127      |
+|    ep_len_mean                 | 125      |
+|    ep_rew_mean                 | -35.2    |
+|    episodes                    | 659      |
+|    grasp_rate                  | 0.3      |
+|    human_collision_rate        | 0.24     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 31.7     |
+|    lift_rate                   | 0.02     |
+|    minimum_human_distance      | 0.158    |
+|    near_misses                 | 0.36     |
+|    place_err_mm                | 274      |
+|    proximity_steps             | 12.6     |
+|    safety_clamped              | 113      |
+|    success_rate                | 0.06     |
+|    waiting_steps               | 10.3     |
+| time/                          |          |
+|    episodes                    | 660      |
+|    fps                         | 70       |
+|    time_elapsed                | 1146     |
+|    total_timesteps             | 80532    |
+| train/                         |          |
+|    actor_loss                  | 9.78     |
+|    critic_loss                 | 25.3     |
+|    ent_coef                    | 0.0319   |
+|    ent_coef_loss               | 0.341    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 37764    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.08     |
+|    collision_steps             | 0        |
+|    completion_time             | 6.13     |
+|    ep_len                      | 123      |
+|    ep_len_mean                 | 124      |
+|    ep_rew_mean                 | -32.8    |
+|    episodes                    | 669      |
+|    grasp_rate                  | 0.3      |
+|    human_collision_rate        | 0.24     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 31.6     |
+|    lift_rate                   | 0.06     |
+|    minimum_human_distance      | 0.16     |
+|    near_misses                 | 0.34     |
+|    place_err_mm                | 271      |
+|    proximity_steps             | 12.2     |
+|    safety_clamped              | 110      |
+|    success_rate                | 0.07     |
+|    waiting_steps               | 10.2     |
+| time/                          |          |
+|    episodes                    | 670      |
+|    fps                         | 70       |
+|    time_elapsed                | 1159     |
+|    total_timesteps             | 81552    |
+| train/                         |          |
+|    actor_loss                  | 13.8     |
+|    critic_loss                 | 17.1     |
+|    ent_coef                    | 0.0316   |
+|    ent_coef_loss               | -0.92    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 38274    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.08     |
+|    collision_steps             | 0        |
+|    completion_time             | 5.98     |
+|    ep_len                      | 120      |
+|    episodes                    | 674      |
+|    grasp_rate                  | 0.34     |
+|    human_collision_rate        | 0.28     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 36       |
+|    lift_rate                   | 0.06     |
+|    minimum_human_distance      | 0.146    |
+|    near_misses                 | 0.38     |
+|    place_err_mm                | 269      |
+|    proximity_steps             | 11.8     |
+|    safety_clamped              | 108      |
+|    success_rate                | 0.08     |
+|    waiting_steps               | 10.3     |
+| train/                         |          |
+|    actor_loss                  | 8.14     |
+|    critic_loss                 | 24.7     |
+|    ent_coef                    | 0.0306   |
+|    ent_coef_loss               | -1       |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 38498    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.1      |
+|    collision_steps             | 0        |
+|    completion_time             | 5.89     |
+|    ep_len                      | 118      |
+|    ep_len_mean                 | 124      |
+|    ep_rew_mean                 | -31.2    |
+|    episodes                    | 679      |
+|    grasp_rate                  | 0.32     |
+|    human_collision_rate        | 0.26     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 33.6     |
+|    lift_rate                   | 0.08     |
+|    minimum_human_distance      | 0.147    |
+|    near_misses                 | 0.4      |
+|    place_err_mm                | 264      |
+|    proximity_steps             | 12.8     |
+|    safety_clamped              | 107      |
+|    success_rate                | 0.08     |
+|    waiting_steps               | 11.2     |
+| time/                          |          |
+|    episodes                    | 680      |
+|    fps                         | 70       |
+|    time_elapsed                | 1175     |
+|    total_timesteps             | 82752    |
+| train/                         |          |
+|    actor_loss                  | 11.5     |
+|    critic_loss                 | 35.4     |
+|    ent_coef                    | 0.0295   |
+|    ent_coef_loss               | 1.31     |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 38874    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.12     |
+|    collision_steps             | 0        |
+|    completion_time             | 5.97     |
+|    ep_len                      | 119      |
+|    ep_len_mean                 | 125      |
+|    ep_rew_mean                 | -30.6    |
+|    episodes                    | 689      |
+|    grasp_rate                  | 0.34     |
+|    human_collision_rate        | 0.26     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 33.7     |
+|    lift_rate                   | 0.12     |
+|    minimum_human_distance      | 0.143    |
+|    near_misses                 | 0.44     |
+|    place_err_mm                | 259      |
+|    proximity_steps             | 13       |
+|    safety_clamped              | 109      |
+|    success_rate                | 0.08     |
+|    waiting_steps               | 9.42     |
+| time/                          |          |
+|    episodes                    | 690      |
+|    fps                         | 70       |
+|    time_elapsed                | 1192     |
+|    total_timesteps             | 83988    |
+| train/                         |          |
+|    actor_loss                  | 8.58     |
+|    critic_loss                 | 67.2     |
+|    ent_coef                    | 0.0296   |
+|    ent_coef_loss               | -0.164   |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 39492    |
+---------------------------------------------
+---------------------------------------------
+| rollout/                       |          |
+|    collision_free_success_rate | 0.14     |
+|    collision_steps             | 0        |
+|    completion_time             | 5.93     |
+|    ep_len                      | 119      |
+|    episodes                    | 690      |
+|    grasp_rate                  | 0.36     |
+|    human_collision_rate        | 0.26     |
+|    human_difficulty            | 1        |
+|    human_safety_cost           | 33.7     |
+|    lift_rate                   | 0.12     |
+|    minimum_human_distance      | 0.148    |
+|    near_misses                 | 0.44     |
+|    place_err_mm                | 252      |
+|    proximity_steps             | 12.9     |
+|    safety_clamped              | 108      |
+|    success_rate                | 0.14     |
+|    waiting_steps               | 9.28     |
+| train/                         |          |
+|    actor_loss                  | 11.5     |
+|    critic_loss                 | 29.4     |
+|    ent_coef                    | 0.0296   |
+|    ent_coef_loss               | -1.54    |
+|    learning_rate_actor         | 0.0003   |
+|    learning_rate_critic        | 0.0003   |
+|    n_updates                   | 39498    |
+---------------------------------------------
+wall-clock budget of 1200 s reached at 84,584 steps; stopping
+
+saved runs\rate_test\sbx4_g2\final_model.zip  (1200 s, 2000000 steps)
+best model (by eval reward): runs\rate_test\sbx4_g2\best\best_model.zip
