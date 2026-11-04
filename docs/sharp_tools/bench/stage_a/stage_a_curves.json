@@ -1,0 +1,58 @@
+{
+ "ppo16": {
+  "hours": 3.3790498350063958,
+  "steps": 2000000,
+  "steps_per_s": 164.41176741464187,
+  "best_success": 0.04,
+  "hours_to_50": null,
+  "hours_to_80": null
+ },
+ "sb3_sac_utd025": {
+  "hours": 5.99711763381958,
+  "steps": 1240000,
+  "steps_per_s": 57.43499885712045,
+  "best_success": 0.02,
+  "hours_to_50": null,
+  "hours_to_80": null
+ },
+ "sb3_sac_utd1": {
+  "hours": 5.6664589702420765,
+  "steps": 520000,
+  "steps_per_s": 25.49113038725023,
+  "best_success": 0.02,
+  "hours_to_50": null,
+  "hours_to_80": null
+ },
+ "sbx_crossq_utd1": {
+  "hours": 5.86178998099433,
+  "steps": 480000,
+  "steps_per_s": 22.74618056355477,
+  "best_success": 0.0,
+  "hours_to_50": null,
+  "hours_to_80": null
+ },
+ "sbx_sac_utd025": {
+  "hours": 6.02668411705229,
+  "steps": 1640000,
+  "steps_per_s": 75.58975162918813,
+  "best_success": 0.12,
+  "hours_to_50": null,
+  "hours_to_80": null
+ },
+ "sbx_sac_utd05": {
+  "hours": 5.926754847168922,
+  "steps": 1160000,
+  "steps_per_s": 54.36739506378276,
+  "best_success": 0.38,
+  "hours_to_50": null,
+  "hours_to_80": null
+ },
+ "sbx_sac_utd1": {
+  "hours": 5.960279028614362,
+  "steps": 720000,
+  "steps_per_s": 33.5554760171179,
+  "best_success": 0.14,
+  "hours_to_50": null,
+  "hours_to_80": null
+ }
+}
