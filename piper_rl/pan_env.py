@@ -57,6 +57,14 @@ PROJECT_DIR = Path(__file__).resolve().parents[1]
 PAN_SCENE = PROJECT_DIR / "agilex_piper" / "piper_human_pan_task.xml"
 
 CARRY_CLEARANCE = 0.085      # pan base above the table while carrying (rim at 0.285+)
+# The cup task's person appears 0.6-2.2 s into the episode and needs another
+# ~2 s to reach the robot's path, which suited a 4 s pick-and-place. A direct
+# pan carry takes 1.6-2 s, so with the inherited window the pan is on the
+# trivet before the hand arrives in 98 % of random episodes (measured 4 Nov,
+# docs/sharp_tools/PAN_TASK.md). Every pan preset therefore starts the person
+# this much earlier: a negative appearance time means the person is already
+# mid-motion when the episode starts. Decision 4 Nov 2026 (option 1).
+PAN_APPEARANCE_SHIFT_S = -2.4
 PLACE_CLEARANCE = 0.012      # pan base above the trivet top at the start pose
 EXPOSURE_R = 0.03            # person within this of a hot surface = exposed (hazard cost 1)
 PAN_START_PHASES = ("stove", "stove_lifted", "mid_carry", "over_trivet")
@@ -77,6 +85,21 @@ class PanEnvConfig(HumanAwareEnvConfig):
             super().__post_init__()
         self.model_path = str(PAN_SCENE)
         self.limits.tcp_table_clearance = 0.065
+
+    def _shift_appearance(self) -> None:
+        lo, hi = self.human_motion.appearance_time_range
+        self.human_motion.appearance_time_range = (lo + PAN_APPEARANCE_SHIFT_S, hi + PAN_APPEARANCE_SHIFT_S)
+
+    @classmethod
+    def from_preset(cls, name: str, difficulty: float = 1.0) -> "PanEnvConfig":
+        cfg = super().from_preset(name, difficulty)
+        if cfg.human_distribution != "curriculum_id":     # curriculum: shifted in set_human_difficulty
+            cfg._shift_appearance()
+        return cfg
+
+    def set_human_difficulty(self, difficulty: float) -> None:
+        super().set_human_difficulty(difficulty)
+        self._shift_appearance()
 
 
 class PiperPanPlaceEnv(PiperHumanAwarePickPlaceEnv):
