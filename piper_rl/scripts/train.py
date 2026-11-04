@@ -86,6 +86,7 @@ def _versions() -> dict:
 from piper_rl.piper_env import PiperPickPlaceEnv
 from piper_rl.human_config import HumanAwareEnvConfig
 from piper_rl.human_aware_env import PiperHumanAwarePickPlaceEnv
+from piper_rl.pan_env import PanEnvConfig, PiperPanPlaceEnv
 from piper_rl.callbacks import (TaskMetricsCallback, PeriodicDumpCallback,
                                 HumanCurriculumCallback)
 
@@ -163,7 +164,9 @@ def make_env(cfg: EnvConfig, seed: int, rank: int = 0, monitor_dir=None,
              fourier: int = 0, fourier_sigma: float = 1.0):
     def _init():
         c = copy.deepcopy(cfg)
-        if isinstance(c, HumanAwareEnvConfig):
+        if isinstance(c, PanEnvConfig):
+            env = PiperPanPlaceEnv(c)
+        elif isinstance(c, HumanAwareEnvConfig):
             env = PiperHumanAwarePickPlaceEnv(c)
         elif solver is not None and not solver.is_identity():
             # A solver cell must use the instrumented env, which is the only
@@ -262,7 +265,7 @@ def main(argv=None):
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--algo", choices=list(ALGOS), default="sac",
                    help="sac/td3/ppo (SB3); tqc, crossq (sb3-contrib); sbx_sac, sbx_crossq, sbx_tqc (SBX, JAX)")
-    p.add_argument("--task", choices=["pick-place", "human-aware"],
+    p.add_argument("--task", choices=["pick-place", "human-aware", "pan"],
                    default="pick-place", help="environment task; default unchanged")
     p.add_argument("--human-preset",
                    choices=["fixed", "fixed-exact-h036-v1", "randomized", "curriculum"],
@@ -388,7 +391,7 @@ def main(argv=None):
                    args.human_near_miss_distance,
                    args.human_proximity_penalty_weight,
                    args.human_collision_penalty)
-    if args.task != "human-aware" and any(value is not None for value in safety_args):
+    if args.task not in ("human-aware", "pan") and any(value is not None for value in safety_args):
         p.error("human safety overrides require --task human-aware")
     if any(value is not None and value <= 0 for value in safety_args):
         p.error("human safety overrides must be positive")
@@ -431,9 +434,9 @@ def main(argv=None):
     (out / "best").mkdir(parents=True, exist_ok=True)
 
     # ------------------------------------------------------------------ cfg
-    if args.task == "human-aware":
-        cfg = HumanAwareEnvConfig.from_preset(
-            args.human_preset, difficulty=args.human_difficulty)
+    if args.task in ("human-aware", "pan"):
+        cfg_cls = PanEnvConfig if args.task == "pan" else HumanAwareEnvConfig
+        cfg = cfg_cls.from_preset(args.human_preset, difficulty=args.human_difficulty)
         cfg.include_human_state = not args.no_human_state
     else:
         cfg = EnvConfig()
@@ -451,7 +454,7 @@ def main(argv=None):
         cfg.reward.w_precision = args.w_precision
     if args.hard_corner_frac is not None:
         cfg.domain_rand.hard_corner_frac = args.hard_corner_frac
-    if args.task == "human-aware":
+    if args.task in ("human-aware", "pan"):
         safety = cfg.human_safety
         if args.human_safe_separation_distance is not None:
             safety.safe_separation_distance = args.human_safe_separation_distance
@@ -581,7 +584,7 @@ def main(argv=None):
     ]
     if args.max_wall_seconds > 0:
         callback_items.append(WallClockBudgetCallback(args.max_wall_seconds))
-    if args.task == "human-aware" and args.human_preset == "curriculum":
+    if args.task in ("human-aware", "pan") and args.human_preset == "curriculum":
         callback_items.append(HumanCurriculumCallback(
             total_timesteps=(args.curriculum_total_timesteps or args.timesteps),
             start=args.human_difficulty, end=1.0,
