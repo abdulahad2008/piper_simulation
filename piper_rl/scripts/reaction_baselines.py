@@ -263,6 +263,10 @@ def run_episode(env, reaction: str, seed: int, task_env: bool = False,
     exposure_1s = 0
     min_tcp_speed_when_placed = np.inf
     prev_tcp = env.tcp_pos.copy()
+    # the env's own episode end (success or collision terminates it for a
+    # learner); contacts after it are the placed pan's hazard, not the robot's
+    t_env_done = None
+    pre = {"hot": 0, "handle": 0, "robot": 0, "exposure": 0}
     for k in range(env.cfg.max_episode_steps):
         t = k * dt
         st = env.human_state
@@ -320,6 +324,13 @@ def run_episode(env, reaction: str, seed: int, task_env: bool = False,
             exposure_total += 1
             if t_intrusion is not None and t <= t_intrusion + 1.0:
                 exposure_1s += 1
+        if t_env_done is None:
+            pre["hot"] += int(met["hot_contact"])
+            pre["handle"] += int(met["handle_contact"])
+            pre["robot"] += int(met["robot_contact"])
+            pre["exposure"] += int(met["hot"] < EXPOSURE_R)
+            if te:
+                t_env_done = t + dt
         if placed and tcp_speed < STOPPED_SPEED:
             placed_steps += 1
             if t_complete is None:
@@ -351,6 +362,11 @@ def run_episode(env, reaction: str, seed: int, task_env: bool = False,
         "exposure_1s_after_intrusion_s": exposure_1s * dt,
         "exposure_total_s": exposure_total * dt,
         "pan_final_error_m": pan_final,
+        "env_done_time_s": t_env_done if t_env_done is not None else "",
+        "hot_contact_steps_pre_done": pre["hot"],
+        "handle_contact_steps_pre_done": pre["handle"],
+        "robot_contact_steps_pre_done": pre["robot"],
+        "exposure_pre_done_s": pre["exposure"] * dt,
     }
 
 
@@ -404,6 +420,12 @@ def summarise(rows: list[dict]) -> dict:
             "robot_contact_pct": 100 * sum(r["robot_contact_steps"] > 0 for r in sel) / n,
             "mean_exposure_1s_after_intrusion_s": mean([r["exposure_1s_after_intrusion_s"] for r in intr]),
             "mean_exposure_total_s": mean([r["exposure_total_s"] for r in sel]),
+            # up to the env's own episode end (what a learner is scored on)
+            "hot_contact_pre_done_pct": 100 * sum(r["hot_contact_steps_pre_done"] > 0 for r in sel) / n,
+            "handle_contact_pre_done_pct": 100 * sum(r["handle_contact_steps_pre_done"] > 0 for r in sel) / n,
+            "robot_contact_pre_done_pct": 100 * sum(r["robot_contact_steps_pre_done"] > 0 for r in sel) / n,
+            "mean_exposure_pre_done_s": mean([r["exposure_pre_done_s"] for r in sel]),
+            "mean_env_done_time_s": mean([r["env_done_time_s"] for r in sel]),
             "p5_min_hot_distance_mm": 1000 * float(np.percentile([r["min_hot_surface_distance_m"] for r in sel], 5)),
             "mean_completion_time_s": mean([r["completion_time_s"] for r in sel]),
             "mean_reaction_time_s": mean([r["reaction_time_s"] for r in intr]),
