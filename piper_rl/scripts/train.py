@@ -88,7 +88,7 @@ from piper_rl.human_config import HumanAwareEnvConfig
 from piper_rl.human_aware_env import PiperHumanAwarePickPlaceEnv
 from piper_rl.pan_env import PanEnvConfig, PiperPanPlaceEnv
 from piper_rl.callbacks import (TaskMetricsCallback, PeriodicDumpCallback,
-                                HumanCurriculumCallback)
+                                HumanCurriculumCallback, HazardBudgetCallback)
 
 ALGOS = {"sac": SAC, "td3": TD3, "ppo": PPO,
          # loaded on use: sb3-contrib and SBX (JAX) learners for the Phase 2 benchmark
@@ -184,8 +184,13 @@ def make_env(cfg: EnvConfig, seed: int, rank: int = 0, monitor_dir=None,
         env.reset(seed=seed + rank)
         env.action_space.seed(seed + rank)
         path = None if monitor_dir is None else str(Path(monitor_dir) / f"m{rank}")
-        keywords = (("is_success", "human_collision", "collision_free_success")
-                    if isinstance(c, HumanAwareEnvConfig) else ("is_success",))
+        if isinstance(c, PanEnvConfig):
+            keywords = ("is_success", "human_collision", "collision_free_success",
+                        "hot_contact_steps", "exposure_steps", "hazard_free_success")
+        elif isinstance(c, HumanAwareEnvConfig):
+            keywords = ("is_success", "human_collision", "collision_free_success")
+        else:
+            keywords = ("is_success",)
         return Monitor(env, filename=path, info_keywords=keywords)
     return _init
 
@@ -265,6 +270,13 @@ def main(argv=None):
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--algo", choices=list(ALGOS), default="sac",
                    help="sac/td3/ppo (SB3); tqc, crossq (sb3-contrib); sbx_sac, sbx_crossq, sbx_tqc (SBX, JAX)")
+    p.add_argument("--hazard-budget", type=float, default=None,
+                   help="pan task only: Lagrangian budget, seconds per episode the person may spend "
+                        "within 3 cm of a hot surface (e.g. 0.1). Off when not given.")
+    p.add_argument("--hazard-lr", type=float, default=2.0,
+                   help="multiplier change per update per second of budget violation")
+    p.add_argument("--hazard-update-episodes", type=int, default=50)
+    p.add_argument("--hazard-lambda-init", type=float, default=0.0)
     p.add_argument("--task", choices=["pick-place", "human-aware", "pan"],
                    default="pick-place", help="environment task; default unchanged")
     p.add_argument("--human-preset",
@@ -584,6 +596,10 @@ def main(argv=None):
     ]
     if args.max_wall_seconds > 0:
         callback_items.append(WallClockBudgetCallback(args.max_wall_seconds))
+    if args.task == "pan" and args.hazard_budget is not None:
+        callback_items.append(HazardBudgetCallback(
+            budget_s=args.hazard_budget, lr=args.hazard_lr, every=args.hazard_update_episodes,
+            lambda_init=args.hazard_lambda_init, verbose=1, path=out / "hazard_lambda.json"))
     if args.task in ("human-aware", "pan") and args.human_preset == "curriculum":
         callback_items.append(HumanCurriculumCallback(
             total_timesteps=(args.curriculum_total_timesteps or args.timesteps),
