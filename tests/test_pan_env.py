@@ -135,16 +135,35 @@ class TestTask:
 
 
 class TestPerson:
+    def test_pan_presets_start_the_person_earlier_than_the_cup_presets(self):
+        from piper_rl.pan_env import PAN_APPEARANCE_SHIFT_S
+        for preset in ("evaluation_id", "fixed_exact_h036_v1", "evaluation_ood"):
+            cup = HumanAwareEnvConfig.from_preset(preset).human_motion.appearance_time_range
+            pan = PanEnvConfig.from_preset(preset).human_motion.appearance_time_range
+            assert pan == pytest.approx((cup[0] + PAN_APPEARANCE_SHIFT_S, cup[1] + PAN_APPEARANCE_SHIFT_S))
+        # the curriculum callback recomputes the window: the shift must survive it
+        cfg = PanEnvConfig.from_preset("curriculum", 0.3)
+        cfg.set_human_difficulty(1.0)
+        full = HumanAwareEnvConfig.from_preset("curriculum", 1.0).human_motion.appearance_time_range
+        assert cfg.human_motion.appearance_time_range == pytest.approx(
+            (full[0] + PAN_APPEARANCE_SHIFT_S, full[1] + PAN_APPEARANCE_SHIFT_S))
+
+    def test_direct_carry_meets_the_exact_crossing(self):
+        """The point of the shift: on the exact crossing a direct carry now
+        passes through the hand (hot contact) instead of finishing first."""
+        env = make_env(preset="fixed_exact_h036_v1", human_collision_terminates=False)
+        for seed in range(3):
+            _, info = rollout(env, lambda e, k: carry_action(e, k, lift_steps=0), seed)
+            assert info["episode_summary"]["hot_contact_steps"] > 0
+
     def test_person_pan_contact_is_classed_not_a_robot_collision(self):
         """On the exact crossing, carrying through the person touches the pan's
         hot surface; that counts as hot contact and exposure, not as a
         robot-body collision (the pan is not a robot link)."""
         env = make_env(preset="fixed_exact_h036_v1", human_collision_terminates=False)
-        env.cfg.human_motion.appearance_time_range = (0.4, 0.4)
         hot = 0
         for seed in range(4):
-            # hold on the stove for 3 s so the carry meets the crossing hand
-            total, info = rollout(env, lambda e, k: carry_action(e, k, lift_steps=60), seed)
+            total, info = rollout(env, lambda e, k: carry_action(e, k, lift_steps=0), seed)
             s = info["episode_summary"]
             hot += s["hot_contact_steps"]
             if s["hot_contact_steps"]:
@@ -155,11 +174,10 @@ class TestPerson:
 
     def test_hazard_cost_is_a_per_step_flag(self):
         env = make_env(preset="fixed_exact_h036_v1", human_collision_terminates=False)
-        env.cfg.human_motion.appearance_time_range = (0.4, 0.4)
         env.reset(seed=0)
         seen = set()
         for k in range(120):
-            _, _, te, tr, info = env.step(carry_action(env, k, lift_steps=60))
+            _, _, te, tr, info = env.step(carry_action(env, k, lift_steps=0))
             seen.add(info["hazard_cost"])
             if te or tr:
                 break
