@@ -54,6 +54,8 @@ import time
 from pathlib import Path
 
 import mujoco
+from dataclasses import replace
+
 import numpy as np
 
 from piper_rl.human_config import HumanAwareEnvConfig
@@ -74,7 +76,12 @@ TEST_SETS = {
 INTRUSION_R = 0.25
 HUMAN_REACT_DELAY = 0.25
 HUMAN_RELEASE_R = 0.30
-T_R, T_S, V_R, S_S = 0.05, 0.30, 0.30, 0.006
+# ISO/TS 15066 inputs. T_r, T_s as before. v_r and S_s re-measured on the
+# training env on 9 Nov (no person, hold commanded mid-carry, 3 seeds x 6
+# instants): pan speed 0.33-0.51 m/s; after the hold the pan overshoots by
+# 18-23 mm (peak 0.10 s after the command) and springs back to 4 mm. S_s is
+# the peak, since that is what reaches the hand. 30 Oct used v_r 0.30, S_s 0.006.
+T_R, T_S, V_R, S_S = 0.05, 0.30, 0.50, 0.023
 RESUME_MARGIN = 0.05
 STOPPED_SPEED = 0.02
 SUCCESS_R = 0.045
@@ -158,7 +165,15 @@ class PersonClockMixin:
                 self.rate = 1.0
             # the clock never runs back past the appearance (start pose)
             self.t_h = max(traj.appearance_time, self.t_h + self.rate * dt)
-        self._set_human_state(traj.state(self.t_h))
+        st = traj.state(self.t_h)
+        if self.rate != 1.0:
+            # the trajectory's velocity is per unit of its own clock; a halted
+            # hand is still, a withdrawing one moves the other way (bug before
+            # 9 Nov: a halted hand kept reporting its approach speed, which
+            # inflated the ISO protective distance for the stop reaction)
+            st = replace(st, hand_velocity=self.rate * st.hand_velocity,
+                         elbow_velocity=self.rate * st.elbow_velocity)
+        self._set_human_state(st)
 
     def _after_physics_substep(self, substep):
         self._update_human_contacts_and_distance()
@@ -270,13 +285,19 @@ def run_episode(env, reaction: str, seed: int, task_env: bool = False,
         if reaction in ("stop", "retract"):
             if trigger and not reacting:
                 reacting = True
+                if reaction == "stop":
+                    # hold the joint position measured once, at the trigger.
+                    # Bug before 9 Nov: the target was re-measured every step,
+                    # so the controller's gravity sag ratcheted into a slow
+                    # drift (about 3 cm over 2 s on the exact crossing, which
+                    # is what put the halted hand onto the pan).
+                    env.hold_q = env.data.qpos[env.arm_qadr].copy()
                 if t_react is None and t_intrusion is not None:
                     t_react = t
             elif reacting and release:
                 reacting = False
             if reacting:
                 if reaction == "stop":
-                    env.hold_q = env.data.qpos[env.arm_qadr].copy()
                     act = np.zeros(5); act[4] = -1.0
                     stopped_steps += 1
                 else:
@@ -292,8 +313,6 @@ def run_episode(env, reaction: str, seed: int, task_env: bool = False,
             else:
                 env.hold_q = None
         obs, r, te, tr, info = env.step(act)
-        if reaction == "stop" and env.hold_q is not None:
-            env.hold_q = None
         met = env.control_step_metrics()
         tcp_speed = float(np.linalg.norm(env.tcp_pos - prev_tcp) / dt)
         prev_tcp = env.tcp_pos.copy()
