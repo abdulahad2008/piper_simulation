@@ -1,0 +1,68 @@
+{
+ "evaluation_id": {
+  "random_policy": {
+   "n": 100,
+   "success": 0.0,
+   "hazard_free_success": 0.0,
+   "hot_contact": 67.0,
+   "robot_contact": 49.0,
+   "person_robot_contact": 49.0,
+   "mean_exposure_s": 1.541,
+   "mean_length": 136.68
+  },
+  "scripted_carry": {
+   "n": 100,
+   "success": 99.0,
+   "hazard_free_success": 70.0,
+   "hot_contact": 30.0,
+   "robot_contact": 1.0,
+   "person_robot_contact": 1.0,
+   "mean_exposure_s": 0.24,
+   "mean_length": 31.99
+  }
+ },
+ "fixed_exact_h036_v1": {
+  "random_policy": {
+   "n": 20,
+   "success": 0.0,
+   "hazard_free_success": 0.0,
+   "hot_contact": 20.0,
+   "robot_contact": 100.0,
+   "person_robot_contact": 100.0,
+   "mean_exposure_s": 0.47000000000000003,
+   "mean_length": 92.25
+  },
+  "scripted_carry": {
+   "n": 20,
+   "success": 100.0,
+   "hazard_free_success": 0.0,
+   "hot_contact": 100.0,
+   "robot_contact": 0.0,
+   "person_robot_contact": 0.0,
+   "mean_exposure_s": 0.6,
+   "mean_length": 32.0
+  }
+ },
+ "evaluation_ood": {
+  "random_policy": {
+   "n": 100,
+   "success": 0.0,
+   "hazard_free_success": 0.0,
+   "hot_contact": 74.0,
+   "robot_contact": 79.0,
+   "person_robot_contact": 79.0,
+   "mean_exposure_s": 1.2089999999999999,
+   "mean_length": 76.39
+  },
+  "scripted_carry": {
+   "n": 100,
+   "success": 87.0,
+   "hazard_free_success": 77.0,
+   "hot_contact": 19.0,
+   "robot_contact": 14.000000000000002,
+   "person_robot_contact": 14.000000000000002,
+   "mean_exposure_s": 0.1585,
+   "mean_length": 31.06
+  }
+ }
+}
