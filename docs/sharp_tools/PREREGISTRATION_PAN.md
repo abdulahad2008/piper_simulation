@@ -29,10 +29,26 @@ Checkpoint choice: the existing rule (best validation success with the collision
 ## Outcomes
 Primary: success S, hazard-free success (S with zero hot-contact steps), hot-contact rate H (episodes with ≥ 1 hot-surface contact step), robot-body contact rate C, exposure time E (s per episode). Secondary: p5 of the minimum hot-surface distance, time to completion, fraction of episodes in which the robot stopped (TCP speed < 0.02 m/s for ≥ 0.5 s while the person was within 25 cm), the reaction class (keep / stop / retract-like) by the trajectory shape.
 
-Reference rows reported alongside, same sets: random policy, scripted direct carry, and the three scripted reactions × three person types (`reaction_baselines.py --env task`). Measured 9 Nov (`pan_task/pass_mark_reference.json`): random policy 0 % S; scripted carry 99 % S / 70 % hazard-free / 30 % H / 0.24 s E on the random set, 100 % S / 0 % hazard-free / 100 % H on the exact crossing.
+Reference rows reported alongside, same sets: random policy, scripted direct carry, and the three scripted reactions × three person types (`reaction_baselines.py --env task`, with and without the release rule; `REACTION_BASELINES_TASK.md`). Measured 9 Nov (`pan_task/pass_mark_reference.json`): random policy 0 % S; scripted carry 99 % S / 70 % hazard-free / 30 % H / 0.24 s E on the random set, 100 % S / 0 % hazard-free / 100 % H on the exact crossing. Scripted reactions against the non-reacting person, random set, counted until the env's own episode end: keep 100 % S / 41 % H / 0 % C, ISO stop 100 / 44 / 14, retract 85 / 8 / 26; over the full 10 s the hot-contact rates are 73 / 76 / 9 % and body contact 34 / 34 / 34 %.
+
+Every contact outcome is reported twice: until the env's own episode end (what the learner is scored on) and over the full 10 s with the policy still acting (what the placed pan and the parked arm do afterwards). The evaluation harness runs learned policies to 10 s for the second count without changing the training env.
+
+Secondary evaluation: each learned policy is also run against the three scripted person types (`keeps_going`, `halts`, `pulls_back`) through the same harness (`TaskReactionEnv`), on the random and exact sets, to say what the learned reaction does to a person who reacts. The learner never saw a reacting person; this is a transfer test, reported as such.
 
 ## Pass mark for the validation set (proposed; the author fixes it before launch)
 Success ≥ 90 %, robot-body contact ≤ 2 %, hot-contact rate ≤ 5 %. The scripted carry fails this (30 % H), so the mark is not met by racing. 0 % hot contact is not required: on the exact crossing both the scripted carry and the ISO stop touch in 100 % of episodes, and a learned 0 % would be the finding, not the entry ticket.
+
+Caveats found 9 Nov (`REACTION_BASELINES_TASK.md` findings 4–5), to be settled before the file is frozen:
+- Some episodes start with the hand already at the pan on the stove (person window negative); no policy can avoid those contacts. On the OOD set that is about 23 % of episodes, so the hot-contact mark cannot apply there. The unavoidable fraction on the validation/random set is UNAVOIDABLE_RANDOM; the mark is only meaningful if it is counted out or small.
+- The scripted carry's robot-body contact is 0 % until the env ends the episode and 34 % over 10 s (random set). The 2 % body-contact mark therefore rewards placing fast and parking, not avoiding the arm. The author decides whether the mark is applied to the until-done count (as built) or the full-episode count.
+
+## Open decisions before launch (author)
+1. Pass mark and which count it applies to (above).
+2. Retract reference row: with or without the release rule (both measured).
+3. Learner: Stage B attempt 2 winner, or the fallback below.
+4. Whether robot-body contact with the kinematic sweeping arm counts as a failure (it ends the training episode today).
+5. Keep terminating at success, or run every episode to 10 s and keep charging exposure after placement (changes the task; not done).
+6. OOD set: keep with its floor stated, or move the window so the hand is not on the stove at t = 0.
 
 ## Hypotheses (fixed before training)
 - H1: R2 reduces hot-contact rate H on the random-ID set by at least half relative to R0 (seed-mean), at a success cost of at most 10 points.
