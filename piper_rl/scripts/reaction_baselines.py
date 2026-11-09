@@ -54,11 +54,18 @@ import time
 from pathlib import Path
 
 import mujoco
+from dataclasses import replace
+
 import numpy as np
 
 from piper_rl.human_config import HumanAwareEnvConfig
 from piper_rl.scripts.make_pan_scene import CENTRE_X, HEIGHT as PAN_HEIGHT, STOVE_XY, TRIVET_XY, TRIVET_TOP, TOP_R
 from piper_rl.scripts.render_previews import PanPreviewEnv, SCENES, CARRY_Z, PLACE_Z
+from piper_rl.pan_env import (CARRY_CLEARANCE, PLACE_CLEARANCE, PanEnvConfig, PiperPanPlaceEnv)
+from piper_rl.piper_env import TABLE_TOP
+
+TASK_CARRY_Z = TABLE_TOP + CARRY_CLEARANCE + PAN_HEIGHT     # TCP height, pan env's carry
+TASK_PLACE_Z = TRIVET_TOP + PAN_HEIGHT + PLACE_CLEARANCE
 
 TEST_SETS = {
     # name: (preset, default episodes, seed)
@@ -69,15 +76,21 @@ TEST_SETS = {
 INTRUSION_R = 0.25
 HUMAN_REACT_DELAY = 0.25
 HUMAN_RELEASE_R = 0.30
-T_R, T_S, V_R, S_S = 0.05, 0.30, 0.30, 0.006
+# ISO/TS 15066 inputs. T_r, T_s as before. v_r and S_s re-measured on the
+# training env on 9 Nov (no person, hold commanded mid-carry, 3 seeds x 6
+# instants): pan speed 0.33-0.51 m/s; after the hold the pan overshoots by
+# 18-23 mm (peak 0.10 s after the command) and springs back to 4 mm. S_s is
+# the peak, since that is what reaches the hand. 30 Oct used v_r 0.30, S_s 0.006.
+T_R, T_S, V_R, S_S = 0.05, 0.30, 0.50, 0.023
 RESUME_MARGIN = 0.05
 STOPPED_SPEED = 0.02
 SUCCESS_R = 0.045
 EXPOSURE_R = 0.03
 
 
-class ReactionEnv(PanPreviewEnv):
-    """Pan preview env plus the human clock and cheap per-substep distances."""
+class PersonClockMixin:
+    """The human clock (person types) and per-step contact classes, usable on
+    the preview env (30 Oct tables) and on the training env (`--env task`)."""
 
     def __init__(self, cfg, person_type: str):
         self.person_type = person_type
@@ -152,7 +165,15 @@ class ReactionEnv(PanPreviewEnv):
                 self.rate = 1.0
             # the clock never runs back past the appearance (start pose)
             self.t_h = max(traj.appearance_time, self.t_h + self.rate * dt)
-        self._set_human_state(traj.state(self.t_h))
+        st = traj.state(self.t_h)
+        if self.rate != 1.0:
+            # the trajectory's velocity is per unit of its own clock; a halted
+            # hand is still, a withdrawing one moves the other way (bug before
+            # 9 Nov: a halted hand kept reporting its approach speed, which
+            # inflated the ISO protective distance for the stop reaction)
+            st = replace(st, hand_velocity=self.rate * st.hand_velocity,
+                         elbow_velocity=self.rate * st.elbow_velocity)
+        self._set_human_state(st)
 
     def _after_physics_substep(self, substep):
         self._update_human_contacts_and_distance()
@@ -187,28 +208,30 @@ class ReactionEnv(PanPreviewEnv):
 
 
 class Carry:
-    """The scripted carry with a per-episode start delay."""
+    """The scripted carry with a per-episode start delay (0 on the task env)."""
 
-    def __init__(self, env: ReactionEnv, start_delay: float):
+    def __init__(self, env, start_delay: float, carry_z: float = CARRY_Z, place_z: float = PLACE_Z,
+                 lift_time: float = 0.6):
         self.env = env
         self.start = start_delay
+        self.carry_z, self.place_z, self.lift_time = carry_z, place_z, lift_time
 
     def action(self, t: float) -> tuple[np.ndarray, bool]:
         env = self.env
         tcp = env.tcp_pos
         pan = env.pan_centre()
         if t < self.start:
-            goal_xy, goal_z = np.array(STOVE_XY), PLACE_Z
-        elif t < self.start + 0.6:
-            goal_xy, goal_z = np.array(STOVE_XY), CARRY_Z
+            goal_xy, goal_z = np.array(STOVE_XY), self.place_z
+        elif t < self.start + self.lift_time:
+            goal_xy, goal_z = np.array(STOVE_XY), self.carry_z
         else:
             goal_xy = np.array(TRIVET_XY)
-            goal_z = CARRY_Z if np.linalg.norm(pan[:2] - goal_xy) > 0.02 else PLACE_Z
+            goal_z = self.carry_z if np.linalg.norm(pan[:2] - goal_xy) > 0.02 else self.place_z
         delta = np.array([goal_xy[0] - pan[0], goal_xy[1] - pan[1], goal_z - tcp[2]])
         act = np.zeros(5)
         act[:3] = np.clip(delta / env.cfg.max_step_dist * 0.5, -1.0, 1.0)
         act[4] = -1.0
-        placed = np.linalg.norm(pan[:2] - np.array(TRIVET_XY)) < SUCCESS_R and abs(tcp[2] - PLACE_Z) < 0.01
+        placed = np.linalg.norm(pan[:2] - np.array(TRIVET_XY)) < SUCCESS_R and abs(tcp[2] - self.place_z) < 0.01
         return act, placed
 
 
@@ -216,11 +239,19 @@ def protective_distance(hand_speed: float) -> float:
     return hand_speed * (T_R + T_S) + V_R * T_R + S_S
 
 
-def run_episode(env: ReactionEnv, reaction: str, seed: int) -> dict:
+def run_episode(env, reaction: str, seed: int, task_env: bool = False,
+                release_when_done: bool = False) -> dict:
+    """One episode. `task_env`: the training env (no start hold, its carry
+    heights). `release_when_done`: once the pan has been placed, the reaction
+    no longer fires (the "task done, let go" rule; off = 30 Oct behaviour)."""
     obs, info = env.reset(seed=seed)
     rng = np.random.default_rng(seed + 7)
-    start_delay = float(rng.uniform(0.0, 3.0))
-    carry = Carry(env, start_delay)
+    if task_env:
+        start_delay = 0.0
+        carry = Carry(env, 0.0, TASK_CARRY_Z, TASK_PLACE_Z, lift_time=0.5)
+    else:
+        start_delay = float(rng.uniform(0.0, 3.0))
+        carry = Carry(env, start_delay)
     dt = env.dt
     stopped_steps = 0
     reacting = False
@@ -232,6 +263,10 @@ def run_episode(env: ReactionEnv, reaction: str, seed: int) -> dict:
     exposure_1s = 0
     min_tcp_speed_when_placed = np.inf
     prev_tcp = env.tcp_pos.copy()
+    # the env's own episode end (success or collision terminates it for a
+    # learner); contacts after it are the placed pan's hazard, not the robot's
+    t_env_done = None
+    pre = {"hot": 0, "handle": 0, "robot": 0, "exposure": 0}
     for k in range(env.cfg.max_episode_steps):
         t = k * dt
         st = env.human_state
@@ -248,16 +283,25 @@ def run_episode(env: ReactionEnv, reaction: str, seed: int) -> dict:
         else:
             trigger = st.human_present and d_disc < S
             release = (not st.human_present) or d_disc > S + RESUME_MARGIN
+        if release_when_done and t_complete is not None:
+            trigger = False
+            release = True
         if reaction in ("stop", "retract"):
             if trigger and not reacting:
                 reacting = True
+                if reaction == "stop":
+                    # hold the joint position measured once, at the trigger.
+                    # Bug before 9 Nov: the target was re-measured every step,
+                    # so the controller's gravity sag ratcheted into a slow
+                    # drift (about 3 cm over 2 s on the exact crossing, which
+                    # is what put the halted hand onto the pan).
+                    env.hold_q = env.data.qpos[env.arm_qadr].copy()
                 if t_react is None and t_intrusion is not None:
                     t_react = t
             elif reacting and release:
                 reacting = False
             if reacting:
                 if reaction == "stop":
-                    env.hold_q = env.data.qpos[env.arm_qadr].copy()
                     act = np.zeros(5); act[4] = -1.0
                     stopped_steps += 1
                 else:
@@ -273,8 +317,6 @@ def run_episode(env: ReactionEnv, reaction: str, seed: int) -> dict:
             else:
                 env.hold_q = None
         obs, r, te, tr, info = env.step(act)
-        if reaction == "stop" and env.hold_q is not None:
-            env.hold_q = None
         met = env.control_step_metrics()
         tcp_speed = float(np.linalg.norm(env.tcp_pos - prev_tcp) / dt)
         prev_tcp = env.tcp_pos.copy()
@@ -282,6 +324,13 @@ def run_episode(env: ReactionEnv, reaction: str, seed: int) -> dict:
             exposure_total += 1
             if t_intrusion is not None and t <= t_intrusion + 1.0:
                 exposure_1s += 1
+        if t_env_done is None:
+            pre["hot"] += int(met["hot_contact"])
+            pre["handle"] += int(met["handle_contact"])
+            pre["robot"] += int(met["robot_contact"])
+            pre["exposure"] += int(met["hot"] < EXPOSURE_R)
+            if te:
+                t_env_done = t + dt
         if placed and tcp_speed < STOPPED_SPEED:
             placed_steps += 1
             if t_complete is None:
@@ -292,8 +341,10 @@ def run_episode(env: ReactionEnv, reaction: str, seed: int) -> dict:
             break
     pan_final = np.linalg.norm(env.pan_centre()[:2] - np.array(TRIVET_XY))
     success = pan_final < SUCCESS_R and placed_steps >= 10   # held for the last 0.5 s
+    env_success = int(bool(info.get("episode_summary", {}).get("success", False))) if task_env else ""
     return {
         "seed": seed, "reaction": reaction, "person_type": env.person_type,
+        "env_success": env_success,
         "trajectory_type": env.human_trajectory.trajectory_type,
         "start_delay_s": start_delay,
         "success": int(success),
@@ -311,7 +362,29 @@ def run_episode(env: ReactionEnv, reaction: str, seed: int) -> dict:
         "exposure_1s_after_intrusion_s": exposure_1s * dt,
         "exposure_total_s": exposure_total * dt,
         "pan_final_error_m": pan_final,
+        "env_done_time_s": t_env_done if t_env_done is not None else "",
+        "hot_contact_steps_pre_done": pre["hot"],
+        "handle_contact_steps_pre_done": pre["handle"],
+        "robot_contact_steps_pre_done": pre["robot"],
+        "exposure_pre_done_s": pre["exposure"] * dt,
     }
+
+
+class ReactionEnv(PersonClockMixin, PanPreviewEnv):
+    """30 Oct set-up: preview scene, cup person windows, 0-3 s start hold."""
+
+
+class TaskReactionEnv(PersonClockMixin, PiperPanPlaceEnv):
+    """The training env itself (shifted person windows, pan start on the stove)."""
+
+
+def make_task_env(preset: str, person_type: str) -> TaskReactionEnv:
+    cfg = PanEnvConfig.from_preset(preset).eval_variant()
+    cfg.curriculum = False
+    cfg.domain_rand.enabled = False
+    cfg.noise.enabled = False
+    cfg.human_safety.terminate_on_human_collision = False
+    return TaskReactionEnv(cfg, person_type)
 
 
 def make_env(preset: str, person_type: str) -> ReactionEnv:
@@ -338,6 +411,7 @@ def summarise(rows: list[dict]) -> dict:
         out[f"{reaction}/{person}"] = {
             "episodes": n,
             "success_pct": 100 * sum(r["success"] for r in sel) / n,
+            "env_success_pct": (100 * sum(r["env_success"] for r in sel) / n) if sel[0]["env_success"] != "" else None,
             "completed_any_time_pct": 100 * sum(r["completed_any_time"] for r in sel) / n,
             "intrusion_before_completion_pct": 100 * len(intr) / n,
             "success_pct_given_intrusion": (100 * sum(r["success"] for r in intr) / len(intr)) if intr else None,
@@ -346,6 +420,12 @@ def summarise(rows: list[dict]) -> dict:
             "robot_contact_pct": 100 * sum(r["robot_contact_steps"] > 0 for r in sel) / n,
             "mean_exposure_1s_after_intrusion_s": mean([r["exposure_1s_after_intrusion_s"] for r in intr]),
             "mean_exposure_total_s": mean([r["exposure_total_s"] for r in sel]),
+            # up to the env's own episode end (what a learner is scored on)
+            "hot_contact_pre_done_pct": 100 * sum(r["hot_contact_steps_pre_done"] > 0 for r in sel) / n,
+            "handle_contact_pre_done_pct": 100 * sum(r["handle_contact_steps_pre_done"] > 0 for r in sel) / n,
+            "robot_contact_pre_done_pct": 100 * sum(r["robot_contact_steps_pre_done"] > 0 for r in sel) / n,
+            "mean_exposure_pre_done_s": mean([r["exposure_pre_done_s"] for r in sel]),
+            "mean_env_done_time_s": mean([r["env_done_time_s"] for r in sel]),
             "p5_min_hot_distance_mm": 1000 * float(np.percentile([r["min_hot_surface_distance_m"] for r in sel], 5)),
             "mean_completion_time_s": mean([r["completion_time_s"] for r in sel]),
             "mean_reaction_time_s": mean([r["reaction_time_s"] for r in intr]),
@@ -361,6 +441,10 @@ def main(argv=None):
     p.add_argument("--reactions", nargs="+", default=["keep", "stop", "retract"])
     p.add_argument("--person-types", nargs="+", default=["keeps_going", "halts", "pulls_back"])
     p.add_argument("--out", default="out/reactions")
+    p.add_argument("--env", choices=["preview", "task"], default="task",
+                   help="preview = 30 Oct set-up (cup windows, 0-3 s hold); task = the training env")
+    p.add_argument("--release-when-done", action="store_true",
+                   help="reactions stop firing once the pan has been placed")
     args = p.parse_args(argv)
     preset, n_default, seed0 = TEST_SETS[args.set]
     n = args.episodes or n_default
@@ -368,11 +452,13 @@ def main(argv=None):
     out.mkdir(parents=True, exist_ok=True)
     rows = []
     t0 = time.time()
+    task_env = args.env == "task"
     for person in args.person_types:
-        env = make_env(preset, person)
+        env = make_task_env(preset, person) if task_env else make_env(preset, person)
         for reaction in args.reactions:
             for ep in range(n):
-                rows.append(run_episode(env, reaction, seed0 + ep))
+                rows.append(run_episode(env, reaction, seed0 + ep, task_env=task_env,
+                                        release_when_done=args.release_when_done))
             print(f"{args.set} {person:<12}{reaction:<8} {n} episodes done ({time.time()-t0:.0f} s)")
         env.close()
     csv_path = out / f"reactions_{args.set}.csv"
@@ -383,6 +469,8 @@ def main(argv=None):
     summary = summarise(rows)
     (out / f"reactions_{args.set}_summary.json").write_text(json.dumps(
         {"set": args.set, "preset": preset, "episodes_per_cell": n, "seed0": seed0,
+         "env": args.env, "release_when_done": args.release_when_done,
+         "appearance_window_s": list(env.cfg.human_motion.appearance_time_range),
          "parameters": {"T_r": T_R, "T_s": T_S, "v_r": V_R, "S_s": S_S, "intrusion_r": INTRUSION_R,
                         "human_delay": HUMAN_REACT_DELAY, "exposure_r": EXPOSURE_R},
          "cells": summary}, indent=1))

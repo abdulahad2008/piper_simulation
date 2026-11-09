@@ -198,3 +198,55 @@ class TestDeterminism:
             assert np.array_equal(oa, ob) and ra == rb and (tea, tra) == (teb, trb)
             if tea or tra:
                 break
+
+
+class TestHazardBudget:
+    def test_lambda_charges_the_exposed_steps_only(self):
+        env = make_env(preset="fixed_exact_h036_v1", human_collision_terminates=False)
+        env.set_hazard_lambda(10.0)
+        _, info = rollout(env, lambda e, k: carry_action(e, k, lift_steps=0), 0)
+        s = info["episode_summary"]
+        assert s["exposure_steps"] > 0
+        assert s["reward_terms"]["hazard"] == pytest.approx(-10.0 * s["exposure_steps"])
+        env.set_hazard_lambda(0.0)
+        _, info = rollout(env, lambda e, k: carry_action(e, k, lift_steps=0), 0)
+        assert info["episode_summary"]["reward_terms"].get("hazard", 0.0) == 0.0
+
+    def test_callback_moves_lambda_towards_the_budget(self):
+        from piper_rl.callbacks import HazardBudgetCallback
+
+        class FakeVecEnv:
+            def __init__(self):
+                self.lam = None
+
+            def env_method(self, name, *a):
+                assert name == "set_hazard_lambda"
+                self.lam = a[0]
+
+        cb = HazardBudgetCallback(budget_s=0.1, lr=2.0, every=4)
+
+        class L:
+            def record(self, *a, **k): pass
+
+        class M:                      # stands in for the model the callback is attached to
+            num_timesteps = 0
+            logger = L()
+        cb.model = M()
+        cb.training_env_fake = FakeVecEnv()
+        type(cb).training_env = property(lambda self: self.training_env_fake)
+
+        class L:
+            def record(self, *a, **k): pass
+        cb._logger = L()
+        cb._on_training_start()
+        assert cb.training_env_fake.lam == 0.0
+        cb.locals = {"infos": [{"episode_summary": {"exposure_time": 0.5}}] * 4}
+        cb._on_step()
+        assert cb.lam == pytest.approx(2.0 * (0.5 - 0.1))        # rose
+        assert cb.training_env_fake.lam == cb.lam
+        cb.locals = {"infos": [{"episode_summary": {"exposure_time": 0.0}}] * 4}
+        cb._on_step()
+        assert cb.lam == pytest.approx(0.8 - 0.2)                 # fell
+        for _ in range(10):
+            cb._on_step()
+        assert cb.lam == 0.0                                       # clipped at zero

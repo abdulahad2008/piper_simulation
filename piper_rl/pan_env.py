@@ -78,7 +78,15 @@ class PanEnvConfig(HumanAwareEnvConfig):
     clearance must grow from 1.5 cm to 6.5 cm or the layer lets the pan
     scrape the counter. Everything else is inherited, including every human
     preset (``PanEnvConfig.from_preset("curriculum")``).
+
+    ``hazard_lambda`` is the Lagrange multiplier on the per-step hazard cost
+    (person within 3 cm of a hot surface): the reward charges
+    ``hazard_lambda * hazard_cost`` per step. 0 = off. During training the
+    ``HazardBudgetCallback`` moves it so the mean exposure per episode tracks
+    the budget; evaluation environments keep 0 (the cost is reported, not
+    charged).
     """
+    hazard_lambda: float = 0.0
 
     def __post_init__(self):
         if hasattr(super(), "__post_init__"):
@@ -311,6 +319,9 @@ class PiperPanPlaceEnv(PiperHumanAwarePickPlaceEnv):
         self._exposure_steps += int(exposed)
         self._hazard_cost = 1.0 if exposed else 0.0
 
+    def set_hazard_lambda(self, lam: float) -> None:
+        self.cfg.hazard_lambda = float(max(0.0, lam))
+
     # ------------------------------------------------------------- reward
     def _compute_reward(self, action, safety_report):
         R = self.cfg.reward
@@ -370,6 +381,9 @@ class PiperPanPlaceEnv(PiperHumanAwarePickPlaceEnv):
 
         self._max_lift = max(self._max_lift, self._pan_height())
         self._update_pan_person_metrics()
+        if self.cfg.hazard_lambda > 0.0 and self._hazard_cost > 0.0:
+            _t = self.cfg.hazard_lambda * self._hazard_cost
+            r -= _t; C["hazard"] -= _t
         info = dict(
             grasped=True, lifted=bool(self._pan_height() > R.lift_height),
             lift_height=self._pan_height(), d_reach=0.0, d_place=d_xy,

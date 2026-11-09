@@ -125,3 +125,70 @@ class HumanCurriculumCallback(BaseCallback):
             self.logger.record("rollout/human_difficulty", difficulty)
             self._last_update = self.num_timesteps
         return True
+
+
+class HazardBudgetCallback(BaseCallback):
+    """Lagrangian hazard budget for the pan task.
+
+    Every `every` finished training episodes, reads the mean exposure time
+    (seconds the person spent within 3 cm of a hot surface) from the episode
+    summaries and moves the multiplier:
+
+        lambda <- max(0, lambda + lr * (mean_exposure_s - budget_s))
+
+    then pushes it into every training env (`set_hazard_lambda`), where the
+    reward charges lambda per exposed step. Evaluation envs are untouched.
+    Approximation, stated in the paper: transitions already in the replay
+    buffer keep the lambda they were collected under.
+    """
+
+    def __init__(self, budget_s: float, lr: float = 2.0, every: int = 50,
+                 lambda_init: float = 0.0, lambda_max: float = 200.0, verbose: int = 0,
+                 path=None):
+        super().__init__(verbose)
+        self.path = path
+        self.budget_s = float(budget_s)
+        self.lr = float(lr)
+        self.every = int(every)
+        self.lam = float(lambda_init)
+        self.lambda_max = float(lambda_max)
+        self._exposures: list[float] = []
+        self._n_updates = 0
+        self.history: list[dict] = []
+
+    def _on_training_start(self) -> None:
+        self.training_env.env_method("set_hazard_lambda", self.lam)
+
+    def _on_step(self) -> bool:
+        for info in self.locals.get("infos", []):
+            summary = info.get("episode_summary")
+            if summary is not None and "exposure_time" in summary:
+                self._exposures.append(float(summary["exposure_time"]))
+        if len(self._exposures) >= self.every:
+            mean_exp = float(np.mean(self._exposures))
+            self.lam = float(np.clip(self.lam + self.lr * (mean_exp - self.budget_s), 0.0, self.lambda_max))
+            self.training_env.env_method("set_hazard_lambda", self.lam)
+            self._n_updates += 1
+            self.history.append({"timesteps": int(self.num_timesteps), "lambda": self.lam,
+                                 "mean_exposure_s": mean_exp, "episodes": len(self._exposures)})
+            self.logger.record("hazard/lambda", self.lam)
+            self.logger.record("hazard/mean_exposure_s", mean_exp)
+            self.logger.record("hazard/budget_s", self.budget_s)
+            if self.verbose:
+                print(f"hazard budget: mean exposure {mean_exp:.3f} s vs budget {self.budget_s:.3f} s"
+                      f" -> lambda {self.lam:.2f} (update {self._n_updates})")
+            self._exposures.clear()
+            self._dump()
+        return True
+
+    def _dump(self) -> None:
+        if self.path is None:
+            return
+        import json
+        from pathlib import Path
+        Path(self.path).parent.mkdir(parents=True, exist_ok=True)
+        Path(self.path).write_text(json.dumps(
+            {"budget_s": self.budget_s, "lr": self.lr, "every": self.every, "history": self.history}, indent=1))
+
+    def _on_training_end(self) -> None:
+        self._dump()

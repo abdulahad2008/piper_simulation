@@ -1,0 +1,21 @@
+exact keeps_going keep     200 episodes done (214 s)
+exact keeps_going stop     200 episodes done (432 s)
+exact keeps_going retract  200 episodes done (639 s)
+exact halts       keep     200 episodes done (858 s)
+exact halts       stop     200 episodes done (1078 s)
+exact halts       retract  200 episodes done (1293 s)
+exact pulls_back  keep     200 episodes done (1505 s)
+exact pulls_back  stop     200 episodes done (1712 s)
+exact pulls_back  retract  200 episodes done (1923 s)
+
+cell                      succ%  done%  intr% succ|intr  hot%  hndl% robot%  exp1s p5hot mm t_done t_react
+keep/halts                100.0  100.0  100.0     100.0   0.0    0.0    0.0   0.80        5   2.05       -
+keep/keeps_going          100.0  100.0  100.0     100.0 100.0  100.0  100.0   0.80      -43   2.05       -
+keep/pulls_back           100.0  100.0  100.0     100.0   0.0    0.0    0.0   0.10       26   2.05       -
+retract/halts               0.0  100.0  100.0       0.0   0.0  100.0  100.0   0.00       58   7.80    0.00
+retract/keeps_going       100.0  100.0  100.0     100.0   0.0  100.0  100.0   0.00       52   6.65    0.00
+retract/pulls_back          0.0  100.0  100.0       0.0   0.0  100.0  100.0   0.00       61   8.60    0.00
+stop/halts                100.0  100.0  100.0     100.0 100.0    0.0    0.0   0.55       -4   2.20    0.20
+stop/keeps_going          100.0  100.0  100.0     100.0 100.0  100.0  100.0   0.80      -49   6.50    0.20
+stop/pulls_back           100.0  100.0  100.0     100.0   0.0    0.0    0.0   0.00       34   2.35    0.20
+written out/reactions_task_v2/reactions_exact.csv
