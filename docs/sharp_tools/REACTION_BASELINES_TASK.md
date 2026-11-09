@@ -72,9 +72,9 @@ Only the retract rows change by design (keep has no reaction; the stop's hold en
 
 | person | success | hot contact | robot body |
 |---|---|---|---|
-| keeps going | 85 → RELEASE_RANDOM_KG | 8 / 9 → RELEASE_RANDOM_KG_HOT | 26 / 34 → RELEASE_RANDOM_KG_BODY |
-| halts | 77 → RELEASE_RANDOM_H | 8 / 9 → RELEASE_RANDOM_H_HOT | 26 / 34 → RELEASE_RANDOM_H_BODY |
-| pulls back | 64 → RELEASE_RANDOM_PB | 8 / 9 → RELEASE_RANDOM_PB_HOT | 25 / 33 → RELEASE_RANDOM_PB_BODY |
+| keeps going | 85 → 93 | 8 / 9 → 8 / 20 | 26 / 34 → 26 / 34 |
+| halts | 77 → 86 | 8 / 9 → 8 / 8 | 26 / 34 → 26 / 26 |
+| pulls back | 64 → 76 | 8 / 9 → 8 / 8 | 25 / 33 → 25 / 26 |
 
 RELEASE_OOD_EXACT_PARAGRAPH
 
@@ -85,7 +85,7 @@ RELEASE_OOD_EXACT_PARAGRAPH
 3. **Stopping or carrying on next to a frozen hand means long exposure without contact.** [Certain] Exact crossing, `halts`: keep places the pan 5 mm from the hand and leaves it there for the remaining 8.9 s; the fixed stop holds, resumes, brushes the hand for 0.10 s (−4 mm) and parks 4 mm away for 8.65 s. OOD, stop/halts: 2.31 s of exposure per episode while the robot holds next to the frozen hand. The pass mark counts contact; exposure time is the metric that sees this, and it is the one the Lagrangian budget constrains.
 4. **About a fifth of the OOD set, and some of the random set, start with the hand already at the pan on the stove.** [Certain] All hot contacts against the halting and pulling-back persons on OOD (115 of 500 episodes) have intrusion at t = 0.00 s; replaying 40 of them with a robot that never moves gives hot contact in 38. The OOD window (−2.4 to +1.6 s after the −2.4 s shift) puts the person mid-motion at the stove when the episode begins. No policy can avoid these; they set a floor of roughly 23 % hot contact on OOD for every reaction, learned or scripted, and the pass mark cannot be applied to that set as it stands. On the random set (the validation distribution) the same replay gives 3 of the 97 hot-contact episodes against the halting person, i.e. under 1 % of episodes: there the pass mark is meaningful. Against the person who keeps going, a pan left motionless on the stove is touched in 248 of 500 random episodes within 10 s (the arm's sweep passes over the stove), so the full-episode hot-contact count has a floor of about 50 % for any policy that does not move the pan, and the until-done count has none.
 5. **A learner scored at the env's own episode end does not see about half of the hot contacts and all of the body contacts.** [Certain] Random set, keep / keeps going: 41 % hot until done vs 73 % over 10 s; robot body 0 % vs 34 %. Stop / keeps going: 44 vs 76 %, 14 vs 34 %. The pan is placed in 2.05 s and the hand arrives afterwards. A policy that races and parks is rewarded for it by the current task. Whether that is the task we mean is decision 5 below.
-6. **The release rule is a trade, not a fix.** [Certain] RELEASE_FINDING_SENTENCE
+6. **The release rule is a trade, not a fix.** [Certain] Random set, retract: success rises by 8–12 points (85 → 93, 77 → 86, 64 → 76) and the post-placement body contact against reacting persons disappears (34 → 26 %, i.e. only the pre-placement contacts remain); but against the person who keeps going the full-episode hot-contact rate rises from 9 % to 20 %, because the placed pan is now left where the hand sweeps. Until the env's own end nothing changes (8 % hot, 26 % body), so a learner scored there sees no difference between the two rules. On the exact crossing the rule never fires (the intrusion precedes placement) and the tables are identical.
 7. **Reaction times.** The stop fires 0.19–0.21 s after the 25 cm mark against reacting persons on the random set and 0.82 s against the one who keeps going (the hand is faster, S is larger, and the trigger comes later relative to the intrusion mark); on OOD 0.04 s, because the hand is already inside S when the episode starts. Retract's 0.00 s is still the definition of its trigger, not a measurement (30 Oct finding 4).
 
 ## What this does and does not show
