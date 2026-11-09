@@ -39,7 +39,7 @@ Secondary evaluation: each learned policy is also run against the three scripted
 Success ≥ 90 %, robot-body contact ≤ 2 %, hot-contact rate ≤ 5 %. The scripted carry fails this (30 % H), so the mark is not met by racing. 0 % hot contact is not required: on the exact crossing both the scripted carry and the ISO stop touch in 100 % of episodes, and a learned 0 % would be the finding, not the entry ticket.
 
 Caveats found 9 Nov (`REACTION_BASELINES_TASK.md` findings 4–5), to be settled before the file is frozen:
-- Some episodes start with the hand already at the pan on the stove (person window negative); no policy can avoid those contacts. On the OOD set that is about 23 % of episodes, so the hot-contact mark cannot apply there. The unavoidable fraction on the validation/random set is UNAVOIDABLE_RANDOM; the mark is only meaningful if it is counted out or small.
+- Some episodes start with the hand already at the pan on the stove (person window negative); no policy can avoid those contacts. On the OOD set that is about 23 % of episodes, so the hot-contact mark cannot apply there. The unavoidable fraction on the validation/random set is under 1 % (3 of 500 episodes against the halting person, replayed with a motionless robot), so the mark is meaningful there.
 - The scripted carry's robot-body contact is 0 % until the env ends the episode and 34 % over 10 s (random set). The 2 % body-contact mark therefore rewards placing fast and parking, not avoiding the arm. The author decides whether the mark is applied to the until-done count (as built) or the full-episode count.
 
 ## Open decisions before launch (author)
