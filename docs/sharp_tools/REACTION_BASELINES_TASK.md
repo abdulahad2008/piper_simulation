@@ -76,7 +76,7 @@ Only the retract rows change by design (keep has no reaction; the stop's hold en
 | halts | 77 → 86 | 8 / 9 → 8 / 8 | 26 / 34 → 26 / 26 |
 | pulls back | 64 → 76 | 8 / 9 → 8 / 8 | 25 / 33 → 25 / 26 |
 
-RELEASE_OOD_EXACT_PARAGRAPH
+OOD, retract, off → on: success 97 / 89 / 78 → 100 / 100 / 96 (keeps going / halts / pulls back); hot contact until done unchanged at 20–21 %; full-episode hot contact against the person who keeps going 20 → 36 %; robot body full episode 44 / 41 / 39 → 47 / 25 / 24 %. Exact crossing: identical tables with the rule on and off (the intrusion precedes placement, so the rule never fires). Full tables: `reactions_task_release/TABLES.md`.
 
 ## Findings
 
